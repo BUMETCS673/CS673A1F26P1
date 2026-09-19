@@ -14,3 +14,6 @@ This is my last year at BU, and I have done almost exclusively computer science 
 I'm currently working on IoT security research with Professor Shengzhi Zhang.
 
 I'm looking forward to working with you all, let's have some fun!
+
+Yuchen:
+Hello, my name is Yuchen Xu and I am a graduate student majoring in Computer Science at Boston University. My academic background also includes business and healthcare management. I am interested in artificial intelligence and software development, and I look forward to learning more about software engineering and working with everyone in this class.
