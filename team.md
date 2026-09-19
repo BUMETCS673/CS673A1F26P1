@@ -53,3 +53,13 @@ My name is **Junshuo Huang**. I am currently pursuing a master's degree in **Com
 I have experience with **Java** and **Python**, but I have limited experience in software engineering.
 
 I hope to improve my **software development** and **teamwork** skills through this project.
+
+---
+
+## Ji
+
+Hello everyone, my name is **Ji Wu**, and I am currently pursuing a master's degree in **Computer Science** at Boston University.
+
+My main interests are **Artificial Intelligence**, **Machine Learning**. I have experience with **Python** through several research projects.
+
+I look forward to improving my **software engineering** skills and working with everyone on this project.
