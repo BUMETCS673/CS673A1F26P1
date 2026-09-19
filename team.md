@@ -17,3 +17,6 @@ I'm looking forward to working with you all, let's have some fun!
 
 Yuchen:
 Hello, my name is Yuchen Xu and I am a graduate student majoring in Computer Science at Boston University. My academic background also includes business and healthcare management. I am interested in artificial intelligence and software development, and I look forward to learning more about software engineering and working with everyone in this class.
+
+Ryan:
+Hello everyone ~ my name is Yung Cheng Chiu,you can call me Ryan. This is my first semester at Boston University. And I major in Computer Science. And my concentration is AI and Machine learning.
