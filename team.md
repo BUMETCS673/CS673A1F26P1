@@ -20,3 +20,6 @@ Hello, my name is Yuchen Xu and I am a graduate student majoring in Computer Sci
 
 Ryan:
 Hello everyone ~ my name is Yung Cheng Chiu,you can call me Ryan. This is my first semester at Boston University. And I major in Computer Science. And my concentration is AI and Machine learning.
+
+Junshuo:
+My name is Junshuo Huang. I am currently pursuing a master's degree in Computer Science at Boston University. I have experience with Java and Python, but I have limited experience in software engineering. I hope to improve my software development and teamwork skills through this project.
