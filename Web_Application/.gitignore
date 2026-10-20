@@ -1,0 +1,5 @@
+# npm downloads packages here. Teammates recreate this with npm install.
+node_modules/
+
+# npm run build creates this folder. Keep the source code in Git instead.
+dist/
