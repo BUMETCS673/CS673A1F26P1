@@ -1,0 +1,13 @@
+services:
+  website:
+    build: .
+    ports:
+      # Only make this development website available on this computer.
+      # Use 3000 outside Docker so a separate local Vite session can use 5173.
+      - "127.0.0.1:3000:5173"
+    healthcheck:
+      # Node checks that Vite actually serves a page before setup reports success.
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:5173').then(response => process.exit(response.ok ? 0 : 1)).catch(() => process.exit(1))"]
+      interval: 5s
+      timeout: 3s
+      retries: 10

@@ -1,0 +1,87 @@
+/* Include padding and borders in an element's width for predictable sizing. */
+* {
+  box-sizing: border-box;
+}
+
+/* These defaults apply to the whole page. */
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  line-height: 1.6;
+  color: #222;
+  background-color: #f5f5f5;
+}
+
+/* Center the content, but allow it to shrink on smaller screens. */
+main {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+h1 {
+  line-height: 1.2;
+}
+
+/* A dot selects a className from the JSX, such as className="demo-note". */
+.demo-note {
+  padding: 12px;
+  background-color: #fff3cd;
+}
+
+section {
+  margin-top: 24px;
+}
+
+.chat-messages {
+  padding: 16px;
+  border: 1px solid #ccc;
+  background-color: white;
+  /* Wrap long words so pasted text cannot stretch the page sideways. */
+  overflow-wrap: anywhere;
+}
+
+label {
+  display: block;
+  margin-top: 16px;
+}
+
+/* Form controls inherit the readable font used by the rest of the page. */
+input,
+button {
+  font: inherit;
+  padding: 10px;
+}
+
+input {
+  width: 100%;
+  margin-top: 6px;
+  border: 1px solid #777;
+}
+
+/* Flex puts buttons next to each other; wrap lets them fit on phones. */
+.buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+button {
+  cursor: pointer;
+}
+
+button:disabled {
+  cursor: default;
+}
+
+.movie {
+  margin-top: 12px;
+  padding: 16px;
+  border: 1px solid #ccc;
+  background-color: white;
+}
+
+.movie h3 {
+  margin-top: 0;
+}

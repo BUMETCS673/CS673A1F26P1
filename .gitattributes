@@ -1,0 +1,2 @@
+# Keep Bash scripts compatible with Linux/WSL even when cloned on Windows.
+*.sh text eol=lf

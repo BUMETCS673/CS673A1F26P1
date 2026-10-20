@@ -1,0 +1,4 @@
+# Docker installs its own dependencies; do not copy local generated files.
+node_modules
+dist
+.git
