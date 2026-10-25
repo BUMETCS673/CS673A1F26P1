@@ -31,7 +31,7 @@ echo "You do not need to install npm packages yourself."
 echo "[1/3] Starting PostgreSQL and creating sample users if the database is empty..."
 docker compose --project-directory "$PROJECT_ROOT/User_Database" up -d --build --force-recreate --wait --wait-timeout 120
 
-echo "[2/3] Building and starting the AI backend..."
+echo "[2/3] Building and starting the FastAPI backend..."
 docker compose --project-directory "$PROJECT_ROOT/AI_Movie_Chatbot" up -d --build --force-recreate --wait --wait-timeout 120
 
 echo "[3/3] Installing React dependencies inside Docker and starting the website..."
@@ -42,9 +42,10 @@ echo "The project is ready!"
 echo "Website: http://localhost:3000"
 echo "  This is the React movie chat demo. Replies are still sample data."
 echo "  Right-click the address to open it, or copy and paste it into your browser."
-echo "AI backend: http://localhost:8080"
-echo "  Open this in your browser to see the backend's running-status message."
-echo "  The AI recommendation feature is not implemented yet."
+echo "Python API docs: http://localhost:8080/docs"
+echo "  Try the health endpoint at http://localhost:8080/api/health"
+echo "  The original status page is at http://localhost:8080/"
+echo "  Event recommendations are future work."
 echo "User database: localhost:5432 (PostgreSQL, not a webpage)"
 echo "  It stores two sample users. The apps are not connected to it yet."
 echo "  Open its SQL terminal from the repository folder with:"

@@ -76,7 +76,10 @@ that blank messages cannot be sent and the page fits a narrow browser window.
 ## Connect the backend later
 
 The server in `../AI_Movie_Chatbot/app/main.py` currently returns a plain text
-status message. It does not have a chat API. Once the team adds one, update
+status message at `/` and has a FastAPI health endpoint at `/api/health`.
+Its API docs are at `http://localhost:8080/docs` in Docker; see
+[`../AI_Movie_Chatbot/README.md`](../AI_Movie_Chatbot/README.md).
+It does not have a chat API. Once the team adds one, update
 `handleSubmit` in `src/App.jsx` to send the message to it and display the returned
 reply and movie data. That step will also need loading/error handling and a
 development proxy or backend CORS configuration so the browser can reach it.

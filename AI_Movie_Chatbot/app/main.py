@@ -1,12 +1,26 @@
-﻿from http.server import BaseHTTPRequestHandler, HTTPServer
+"""Assemble the API. Importing this module does not start a server."""
 
-class MovieChatbot(BaseHTTPRequestHandler):
-    def do_GET(self):
-        self.send_response(200)
-        self.send_header("Content-type", "text/plain")
-        self.end_headers()
-        self.wfile.write(b"AI Movie Recommendation Chatbot is running")
+from fastapi import FastAPI
+from fastapi.responses import PlainTextResponse
 
-server = HTTPServer(("0.0.0.0", 8000), MovieChatbot)
-print("Movie Chatbot server started", flush=True)
-server.serve_forever()
+from app.routes import health
+
+
+def create_app() -> FastAPI:
+    """Create an independent application for Uvicorn or tests."""
+    application = FastAPI(
+        title="Event Planning API",
+        description="API foundation for the team's event-planning application.",
+        version="0.1.0",
+    )
+    application.include_router(health.router, prefix="/api")
+
+    @application.get("/", response_class=PlainTextResponse, include_in_schema=False)
+    async def status() -> str:
+        # Keep the existing startup page useful while features are added.
+        return "AI Movie Recommendation Chatbot is running"
+
+    return application
+
+
+app = create_app()
