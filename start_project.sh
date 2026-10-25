@@ -40,7 +40,8 @@ docker compose --project-directory "$PROJECT_ROOT/Web_Application" up -d --build
 echo
 echo "The project is ready!"
 echo "Website: http://localhost:3000"
-echo "  This is the React movie chat demo. Replies are still sample data."
+echo "  This is the Boston events scaffold. Use the explicitly fake login to continue."
+echo "  Events, filters, and chat replies are local samples; real features come later."
 echo "Stack diagnostic: http://localhost:3000/api/health/database"
 echo "  This goes through Vite and Python and checks PostgreSQL with SELECT 1."
 echo "  Right-click the address to open it, or copy and paste it into your browser."

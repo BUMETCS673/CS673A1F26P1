@@ -1,120 +1,79 @@
 import React, { useState } from 'react';
+import FakeLogin from './components/FakeLogin.jsx';
+import EventFeed from './components/EventFeed.jsx';
+import FilterPanel from './components/FilterPanel.jsx';
+import ChatPanel from './components/ChatPanel.jsx';
+import { sampleEvents } from './sampleEvents.js';
 
-// These are fixed examples, not results from an AI or a movie API.
-// Keeping the data here makes the first version easy to read and change.
-const sampleMovies = [
-  {
-    title: 'Toy Story',
-    year: 1995,
-    genre: 'Animation / Adventure',
-    description: 'A cowboy toy meets a new space ranger toy.',
-  },
-  {
-    title: 'Finding Nemo',
-    year: 2003,
-    genre: 'Animation / Adventure',
-    description: 'A father fish crosses the ocean to find his son.',
-  },
-  {
-    title: 'WALL-E',
-    year: 2008,
-    genre: 'Animation / Science fiction',
-    description: 'A small robot discovers a new purpose beyond cleaning Earth.',
-  },
-];
+function Dashboard({ onLogout }) {
+  const [category, setCategory] = useState('');
+  const [date, setDate] = useState('');
 
-const welcomeMessage = {
-  sender: 'Bot',
-  text: 'What would you like to watch? Tell me a genre, mood, year, or runtime.',
-};
+  // These filters work only on our fictional local samples. Replace the source
+  // with the event API later; the feed and chatbot should share one catalog.
+  const visibleEvents = sampleEvents.filter((event) => (
+    (category === '' || event.category === category)
+    && (date === '' || event.date === date)
+  ));
 
-// A component is a function that returns the part of the page it displays.
-export default function App() {
-  // State is information React remembers. Calling a setter redraws the page.
-  // draft holds the input text; messages holds the conversation as an array.
-  const [draft, setDraft] = useState('');
-  const [messages, setMessages] = useState([welcomeMessage]);
-
-  function handleSubmit(event) {
-    // Forms normally reload the page. Prevent that so our chat stays visible.
-    event.preventDefault();
-    const request = draft.trim(); // Remove spaces at either end.
-    if (request === '') return; // Do not add an empty message.
-
-    // ... copies the existing array, then we add the two new messages.
-    // The callback receives the latest state, even after rapid updates.
-    setMessages((previousMessages) => [
-      ...previousMessages,
-      { sender: 'You', text: request },
-      {
-        sender: 'Bot',
-        text: 'This demo shows the same three sample movies for every request. Personalized recommendations and preference recognition will be added later.',
-      },
-    ]);
-    // Future step: send request to a backend chat endpoint and use its reply.
-    // The current Python server has no chat endpoint yet. Keep API keys there,
-    // on the server, rather than putting them in this browser code.
-    setDraft(''); // Empty the input after sending.
+  function clearFilters() {
+    setCategory('');
+    setDate('');
   }
 
-  function clearChat() {
-    setMessages([welcomeMessage]);
-    setDraft('');
-  }
-
-  // JSX looks like HTML. Braces { } insert JavaScript values or expressions.
   return (
-    <main>
-      <h1>AI Movie Recommendation Chat Bot</h1>
-      <p>Describe what you want to watch and discover movies.</p>
-      <p className="demo-note">Frontend demo: sample replies only. AI is not connected yet.</p>
+    <div className="app-shell">
+      <header className="top-bar">
+        <a className="brand" href="#events">Boston Events <span>Prototype</span></a>
+        <nav aria-label="Main menu">
+          <a className="nav-current" href="#events" aria-current="page">Explore events</a>
+          <button type="button" disabled>Calendar (later)</button>
+          <button type="button" disabled>Friends (later)</button>
+        </nav>
+        <button className="secondary-button" type="button" onClick={onLogout}>Log Out (fake)</button>
+      </header>
 
-      <section aria-labelledby="chat-heading">
-        <h2 id="chat-heading">Chat</h2>
-        {/* role="log" lets screen readers announce new chat messages. */}
-        <div className="chat-messages" role="log" aria-label="Conversation">
-          {/* map turns each message in the array into a paragraph. */}
-          {messages.map((message, index) => (
-            // An index is enough here because messages only append or reset.
-            <p key={index}>
-              <strong>{message.sender}:</strong> {message.text}
-            </p>
-          ))}
+      <main id="events" className="dashboard">
+        <div className="page-heading">
+          <p className="eyebrow">Discover Boston</p>
+          <h1>Find your next plan.</h1>
+          <p>Browse events, narrow your choices, and plan with a chat.</p>
+          <p className="prototype-note">
+            Scaffold only: fictional events, local sample filters, and preset chat replies.
+            Real accounts, event data, and AI still need to be connected.
+          </p>
         </div>
 
-        {/* A form lets the user click Send or press Enter. */}
-        <form onSubmit={handleSubmit}>
-          <label htmlFor="movie-request">What would you like to watch?</label>
-          <input
-            id="movie-request"
-            type="text"
-            placeholder="For example: a funny movie under two hours"
-            value={draft}
-            // Keep React's draft state in sync with what the user types.
-            onChange={(event) => setDraft(event.target.value)}
-          />
-          <div className="buttons">
-            <button type="submit" disabled={draft.trim() === ''}>Send</button>
-            {/* type="button" prevents Clear chat from submitting the form. */}
-            <button type="button" onClick={clearChat}>Clear chat</button>
-          </div>
-        </form>
-      </section>
+        <div className="dashboard-grid">
+          <EventFeed events={visibleEvents} onClearFilters={clearFilters} />
+          <aside className="dashboard-sidebar" aria-label="Filters and event chat">
+            <FilterPanel
+              category={category}
+              date={date}
+              onCategoryChange={setCategory}
+              onDateChange={setDate}
+              onClear={clearFilters}
+            />
+            <ChatPanel />
+          </aside>
+        </div>
+      </main>
+    </div>
+  );
+}
 
-      {/* && shows this section only after the user sends a message. */}
-      {messages.length > 1 && (
-        <section aria-labelledby="movies-heading">
-          <h2 id="movies-heading">Sample recommendations</h2>
-          <p>These examples do not change based on your request.</p>
-          {sampleMovies.map((movie) => (
-            <article className="movie" key={movie.title}>
-              <h3>{movie.title} ({movie.year})</h3>
-              <p>{movie.genre}</p>
-              <p>{movie.description}</p>
-            </article>
-          ))}
-        </section>
-      )}
-    </main>
+export default function App() {
+  // This flag is a visual demo gate, not authentication. Reloading locks it again.
+  // Replace it with real server-verified sessions when login is implemented.
+  const [hasDemoAccess, setHasDemoAccess] = useState(false);
+
+  return (
+    <>
+      <div inert={!hasDemoAccess}>
+        {/* Changing the key clears local filters/messages when leaving the demo. */}
+        <Dashboard key={hasDemoAccess ? 'demo' : 'locked'} onLogout={() => setHasDemoAccess(false)} />
+      </div>
+      {!hasDemoAccess && <FakeLogin onContinue={() => setHasDemoAccess(true)} />}
+    </>
   );
 }

@@ -38,7 +38,7 @@ parts respond. You can close the terminal afterward; the containers keep running
 
 | Part | Address | What it does right now |
 | --- | --- | --- |
-| React website | **http://localhost:3000** | Movie chat demo with fixed sample replies and recommendations. |
+| React website | **http://localhost:3000** | Boston events scaffold with an explicitly fake login, fictional event cards, sample filters, and preset chat replies. |
 | Python API | **http://localhost:8080/docs** | FastAPI documentation with a working `/api/health` endpoint. The original status page remains at `/`; recommendations are future work. |
 | PostgreSQL user database | **localhost:5432** | Stores the two sample users; this is a database connection, not a browser page. |
 
