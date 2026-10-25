@@ -4,7 +4,7 @@ Please make sure to modify this readme file as well as the "about" property of t
 ## Web application
 
 The basic React frontend is in [Web_Application](Web_Application/README.md),
-alongside the Python backend in `AI_Movie_Chatbot`.
+alongside the [Python FastAPI backend](AI_Movie_Chatbot/README.md).
 
 ## User database
 

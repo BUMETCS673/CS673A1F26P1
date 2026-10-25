@@ -15,8 +15,7 @@ folder containing this file). You do not need to start each app separately.
 2. On Windows, use an Ubuntu/WSL terminal and enable that distribution under
    Docker Desktop's **Settings > Resources > WSL Integration**. On macOS or
    Linux, use your normal Bash-capable terminal.
-3. Clone this repository with Git (select `boilerplate_initialization` until
-   these changes are merged), or download and extract the branch's ZIP from
+3. Clone this repository's `main` branch with Git, or download and extract its ZIP from
    GitHub. Open the project folder in your editor and open its terminal.
 
 **You do not need to install Node.js, npm, Python, PostgreSQL, or nginx locally
@@ -25,7 +24,7 @@ Local Node.js and npm are only needed for the optional frontend-only workflow
 in `Web_Application/README.md`.
 
 Keep Docker running. The first start needs an internet connection to download
-images and npm packages. Ports **3000**, **8080**, and **5432** must be free.
+images and Python/npm packages. Ports **3000**, **8080**, and **5432** must be free.
 
 ## Start the whole project
 
@@ -40,7 +39,7 @@ parts respond. You can close the terminal afterward; the containers keep running
 | Part | Address | What it does right now |
 | --- | --- | --- |
 | React website | **http://localhost:3000** | Movie chat demo with fixed sample replies and recommendations. |
-| AI backend | **http://localhost:8080** | Shows "AI Movie Recommendation Chatbot is running"; no AI recommendations yet. |
+| Python API | **http://localhost:8080/docs** | FastAPI documentation with a working `/api/health` endpoint. The original status page remains at `/`; recommendations are future work. |
 | PostgreSQL user database | **localhost:5432** | Stores the two sample users; this is a database connection, not a browser page. |
 
 For either website address, right-click the address in your terminal to open it
@@ -48,7 +47,8 @@ For either website address, right-click the address in your terminal to open it
 address bar. These addresses are for your own computer.
 
 The three parts run together but are **not integrated yet**. Sending a website
-message does not contact the backend or save anything in PostgreSQL.
+message does not contact the backend or save anything in PostgreSQL. Backend
+development and test instructions are in [AI_Movie_Chatbot/README.md](AI_Movie_Chatbot/README.md).
 
 To view the database, open a second terminal in the repository root and run:
 

@@ -4,7 +4,7 @@ services:
     restart: unless-stopped
     # Wait until Python serves a response before calling the backend ready.
     healthcheck:
-      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000', timeout=2)"]
+      test: ["CMD", "python", "-c", "import json, urllib.request; response = urllib.request.urlopen('http://127.0.0.1:8000/api/health', timeout=2); assert response.status == 200 and json.load(response) == {'status': 'ok'}"]
       interval: 5s
       timeout: 3s
       retries: 10
@@ -21,7 +21,7 @@ services:
     restart: unless-stopped
     # Check the same nginx address that forwards requests to Python.
     healthcheck:
-      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://127.0.0.1/"]
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://127.0.0.1/api/health"]
       interval: 5s
       timeout: 3s
       retries: 10
