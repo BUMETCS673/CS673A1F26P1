@@ -1,87 +1,112 @@
-/* Include padding and borders in an element's width for predictable sizing. */
-* {
-  box-sizing: border-box;
-}
-
-/* These defaults apply to the whole page. */
+/* Basic layout and colors. No UI library is required to change this scaffold. */
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
 body {
   margin: 0;
   font-family: Arial, sans-serif;
-  line-height: 1.6;
-  color: #222;
-  background-color: #f5f5f5;
+  line-height: 1.5;
+  color: #20353e;
+  background: #f2f6f7;
 }
+h1, h2, h3, p { margin: 0; }
+h1 { font-size: clamp(1.8rem, 3vw, 2.6rem); line-height: 1.2; }
+h2 { font-size: 1.2rem; }
+h3 { font-size: 1.12rem; }
+button, input, select, textarea { font: inherit; }
+button, summary { cursor: pointer; }
+button, input, select, textarea { border-radius: 8px; }
+button { padding: 9px 14px; border: 2px solid transparent; }
+button:disabled { cursor: default; opacity: .55; }
+a { color: inherit; }
+:focus-visible { outline: 3px solid #ce8500; outline-offset: 3px; }
 
-/* Center the content, but allow it to shrink on smaller screens. */
-main {
-  max-width: 720px;
-  margin: 0 auto;
-  padding: 20px;
-}
-
-h1 {
-  line-height: 1.2;
-}
-
-/* A dot selects a className from the JSX, such as className="demo-note". */
-.demo-note {
-  padding: 12px;
-  background-color: #fff3cd;
-}
-
-section {
-  margin-top: 24px;
-}
-
-.chat-messages {
-  padding: 16px;
-  border: 1px solid #ccc;
-  background-color: white;
-  /* Wrap long words so pasted text cannot stretch the page sideways. */
-  overflow-wrap: anywhere;
-}
-
-label {
-  display: block;
-  margin-top: 16px;
-}
-
-/* Form controls inherit the readable font used by the rest of the page. */
-input,
-button {
-  font: inherit;
-  padding: 10px;
-}
-
-input {
-  width: 100%;
-  margin-top: 6px;
-  border: 1px solid #777;
-}
-
-/* Flex puts buttons next to each other; wrap lets them fit on phones. */
-.buttons {
+.top-bar {
   display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-top: 12px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 18px max(24px, calc((100vw - 1400px) / 2));
+  background: white;
+  border-bottom: 2px solid #9eb2bc;
 }
+.brand { font-size: 1.2rem; font-weight: bold; text-decoration: none; }
+.brand span { display: block; color: #637780; font-size: .75rem; font-weight: normal; }
+.top-bar nav { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.top-bar nav button { color: #4f626b; background: transparent; }
+.nav-current { padding: 9px 14px; background: #e6f2ee; border-radius: 8px; text-decoration: none; font-weight: bold; }
+.dashboard { max-width: 1400px; margin: 0 auto; padding: 32px 24px 48px; }
+.page-heading > p { margin-top: 10px; }
+.eyebrow { color: #256354; font-size: .8rem; font-weight: bold; letter-spacing: .08em; text-transform: uppercase; }
+.page-heading .eyebrow { margin-top: 0; margin-bottom: 8px; }
+.prototype-note { padding: 12px 16px; border: 2px solid #d8bf7f; border-radius: 8px; background: #fff8e4; font-size: .9rem; }
 
-button {
-  cursor: pointer;
+/* The event queue fills the left/center; filters and chat share the right side. */
+.dashboard-grid { display: grid; grid-template-columns: minmax(0, 1.8fr) minmax(320px, 1fr); gap: 24px; margin-top: 28px; align-items: stretch; }
+.dashboard-sidebar { display: flex; flex-direction: column; gap: 20px; min-width: 0; min-height: 0; }
+.section-heading { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
+.event-feed > .section-heading { margin-bottom: 16px; }
+.muted-text { color: #576b75; font-size: .86rem; }
+.panel { padding: 20px; background: white; border: 2px solid #9eb2bc; border-radius: 12px; }
+.count-badge, .category-badge, .placeholder-badge { display: inline-block; padding: 4px 9px; border-radius: 6px; font-size: .76rem; font-weight: bold; }
+.count-badge { background: #e4edf0; white-space: nowrap; }
+.category-badge { background: #e6f2ee; color: #256354; }
+.placeholder-badge { background: #fff0cb; color: #715014; }
+.event-list { display: grid; gap: 14px; }
+.event-card { display: flex; align-items: flex-start; gap: 18px; }
+.event-date { flex: 0 0 64px; padding: 8px; text-align: center; border: 2px solid #9ab9ad; border-radius: 9px; color: #256354; background: #f0f7f4; }
+.event-date span { display: block; font-size: .8rem; text-transform: uppercase; }
+.event-date strong { display: block; font-size: 1.6rem; line-height: 1.2; }
+.event-content { min-width: 0; overflow-wrap: anywhere; }
+.event-badges { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-bottom: 8px; }
+.event-content h3 { margin-bottom: 6px; }
+.event-content > p { color: #576b75; font-size: .9rem; }
+details { margin-top: 10px; font-size: .88rem; }
+summary { color: #256354; font-weight: bold; }
+details p { margin-top: 8px; }
+.empty-state p { margin: 10px 0 16px; }
+
+label { display: block; margin-top: 16px; margin-bottom: 6px; font-weight: bold; font-size: .88rem; }
+input, select, textarea { width: 100%; min-width: 0; padding: 10px; border: 2px solid #8da6b1; background: white; color: inherit; }
+textarea { display: block; resize: vertical; }
+.filter-panel > .muted-text, .chat-panel > .muted-text { margin-top: 6px; }
+.filter-panel { flex: 0 0 auto; }
+/* Fill the queue's height; keep long conversations scrolling inside the panel. */
+.chat-panel { display: flex; flex-direction: column; flex: 1; min-height: 0; }
+.chat-panel > form { flex: 0 0 auto; }
+.filter-hint { margin-top: 10px; color: #576b75; font-size: .8rem; }
+.primary-button { background: #256354; color: white; font-weight: bold; }
+.primary-button:hover:not(:disabled) { background: #184a3e; }
+.secondary-button { background: white; border-color: #8da6b1; color: #20353e; }
+.text-button { background: transparent; color: #256354; text-decoration: underline; padding: 5px; }
+.buttons { display: flex; align-items: center; flex-wrap: wrap; gap: 12px; margin-top: 12px; }
+.chat-messages { display: flex; flex-direction: column; flex: 1; gap: 12px; height: 0; min-height: 220px; contain: size; overflow-y: auto; margin-top: 16px; padding: 12px; border-radius: 8px; background: #f2f6f7; overflow-wrap: anywhere; }
+.chat-message { flex-shrink: 0; padding: 12px; background: white; border: 2px solid #b1c2c9; border-radius: 8px; font-size: .88rem; }
+.chat-message strong { font-size: .78rem; color: #256354; }
+.chat-message p { margin-top: 4px; }
+.chat-message.from-user { background: #e6f2ee; margin-left: 20px; }
+
+/* Real modal behavior keeps the demo inaccessible until the fake login is clicked. */
+.login-dialog { width: min(520px, calc(100% - 32px)); max-height: calc(100dvh - 32px); overflow-y: auto; padding: 32px; border: 2px solid #9eb2bc; border-radius: 16px; color: #20353e; box-shadow: 0 20px 70px #0c26394d; }
+.login-dialog::backdrop { background: #17323cbb; backdrop-filter: blur(4px); }
+.login-dialog .placeholder-badge { margin: 18px 0 14px; }
+.login-dialog h1 { margin-bottom: 16px; font-size: 2rem; }
+.login-explanation { margin: 20px 0; padding: 16px; border-radius: 8px; background: #fff8e4; }
+.login-explanation p { margin-top: 8px; }
+.login-button { width: 100%; white-space: normal; }
+.login-dialog > .muted-text { margin-top: 14px; }
+
+@media (max-width: 900px) {
+  .top-bar { flex-wrap: wrap; padding: 16px 20px; }
+  .top-bar nav { order: 3; width: 100%; }
+  .dashboard-grid { grid-template-columns: minmax(0, 1fr); }
 }
-
-button:disabled {
-  cursor: default;
+@media (max-width: 480px) {
+  .dashboard { padding: 24px 16px; }
+  .panel { padding: 16px; }
+  .event-card { gap: 12px; }
+  .event-date { flex-basis: 48px; }
+  .login-dialog { padding: 24px; }
 }
-
-.movie {
-  margin-top: 12px;
-  padding: 16px;
-  border: 1px solid #ccc;
-  background-color: white;
-}
-
-.movie h3 {
-  margin-top: 0;
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
 }

@@ -1,8 +1,11 @@
-# Basic movie chatbot webpage
+# Boston events website scaffold
 
-This is a small React frontend based on the core chat and movie discovery ideas
-in `../iteration0/README.md` and the SPPP. It lives beside `../AI_Movie_Chatbot`.
-It uses plain JavaScript and CSS, with comments explaining each part.
+This React scaffold demonstrates the planned Boston events layout: a top menu,
+an event queue across the left/center, and filters above a chatbot on the right.
+It uses plain JavaScript and CSS, with small components teammates can replace
+as the real features are implemented. On desktop the right column stretches to
+the event queue's height, with long chats scrolling inside their panel. On narrow
+screens the panels stack.
 
 To run all three project parts together with Docker, follow
 [HOW_TO_START_AND_STOP_PROJECT.md](../HOW_TO_START_AND_STOP_PROJECT.md).
@@ -28,30 +31,40 @@ After editing and saving a source file, Vite automatically updates the page.
 Vite is the small development tool that serves the app and builds its files.
 
 No Python server, Docker, API keys, or environment variables are needed for this
-demo. Nothing is sent to the backend. Messages disappear when you refresh.
+scaffold. Its UI uses only local sample data. Messages disappear when you refresh.
 
 ## What it does
 
-- Displays an introduction and a chat form.
-- Accepts a message using Send or Enter; ignores blank messages.
-- Adds your message and a clearly labeled sample bot reply to the conversation.
-- Shows the same three sample movies after any message.
-- Clears the conversation and sample recommendations with Clear chat.
+- Opens a modal labeled **Explicitly fake login** before the website can be used.
+- The **Log In (fake for now, click to continue)** button opens the demo without
+  checking credentials. This is a visual placeholder, not account security.
+- Reload or **Log Out (fake)** returns to the modal; logout clears local demo state.
+- Displays six fictional Boston event cards, with expandable sample details.
+- Category/date controls filter only those samples, with Clear and an empty state.
+  The sample dates are November 1–3, 2026; they are not verified event listings.
+- Accepts a chat message with Send or Enter and adds a clearly labeled preset reply.
+  Blank messages are ignored; Clear chat resets the conversation.
+- Shows disabled Calendar/Friends menu placeholders for future work.
 
-The demo does **not** understand requests or recognize preferences yet.
-AI recommendations, real movie data, posters, ratings, watchlists, and other
-features from the proposal are future work.
+Real registration, login sessions, event data, recommendation behavior, and AI
+integration still need to be implemented. The sample filters are local UI
+behavior; they do not complete the planned backend filter feature.
 
 ## Read the code in this order
 
 1. `index.html`: the HTML page and the empty element where React starts.
 2. `src/main.jsx`: attaches the React app to that element and loads the CSS.
-3. `src/App.jsx`: the page, example movie data, and chat behavior in one component.
-4. `src/styles.css`: basic spacing, colors, and layout.
+3. `src/App.jsx`: the dashboard layout, fake-access flag, and local filter state.
+4. `src/components/FakeLogin.jsx`: the native modal and explicit placeholder copy.
+5. `src/sampleEvents.js` and `src/components/EventFeed.jsx`: sample data and cards.
+6. `src/components/FilterPanel.jsx`: the category/date controls.
+7. `src/components/ChatPanel.jsx`: local messages and preset replies.
+8. `src/styles.css`: spacing, colors, modal styling, and responsive layout.
 
 JSX is HTML-like syntax inside JavaScript. A component is a function that returns
 JSX. `useState` remembers changing information and updates the display when it
-changes. This app only needs two pieces of state: the input and the messages.
+changes. Each component keeps its own relevant state; the shared event filters
+live in the dashboard so the queue and controls stay synchronized.
 
 `package.json` lists dependencies and commands. React describes the UI,
 React DOM displays it in the browser, and Vite provides development/build tools.
@@ -69,9 +82,10 @@ npm run preview
 The first command creates a production build in `dist/`. The second serves that
 build locally at the URL it prints. Press **Ctrl+C** when finished.
 
-For a quick manual check, send a message with Enter, send another with the button,
-check that both appear and the samples display, and then clear the chat. Check
-that blank messages cannot be sent and the page fits a narrow browser window.
+For a quick manual check, confirm the login modal blocks the page until the fake
+login button is clicked. Try a category and a sample date, clear the filters,
+and try a date with no results. Send a chat message, clear the chat, then log out
+and back in. Reload to confirm the fake gate returns. Check a narrow screen too.
 
 ## Connect the backend later
 
@@ -80,8 +94,8 @@ status message at `/` and has a FastAPI health endpoint at `/api/health`.
 Its API docs are at `http://localhost:8080/docs` in Docker; see
 [`../AI_Movie_Chatbot/README.md`](../AI_Movie_Chatbot/README.md).
 It does not have a chat API. Once the team adds one, update
-`handleSubmit` in `src/App.jsx` to send the message to it and display the returned
-reply and movie data. That step will also need loading/error handling.
+`handleSubmit` in `src/components/ChatPanel.jsx` to send the message to it and display the returned
+reply and event data. That step will also need loading/error handling.
 Keep third-party API keys on the Python server, never in React source files.
 
 ## Use the connected development API
