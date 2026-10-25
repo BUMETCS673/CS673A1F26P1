@@ -1,6 +1,9 @@
 services:
   website:
     build: .
+    environment:
+      # This is read by Vite's server config, never injected into browser code.
+      API_PROXY_TARGET: http://api:8000
     ports:
       # Only make this development website available on this computer.
       # Use 3000 outside Docker so a separate local Vite session can use 5173.
@@ -11,3 +14,8 @@ services:
       interval: 5s
       timeout: 3s
       retries: 10
+
+networks:
+  default:
+    external: true
+    name: cs673_event_planning

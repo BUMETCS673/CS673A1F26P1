@@ -81,6 +81,35 @@ Its API docs are at `http://localhost:8080/docs` in Docker; see
 [`../AI_Movie_Chatbot/README.md`](../AI_Movie_Chatbot/README.md).
 It does not have a chat API. Once the team adds one, update
 `handleSubmit` in `src/App.jsx` to send the message to it and display the returned
-reply and movie data. That step will also need loading/error handling and a
-development proxy or backend CORS configuration so the browser can reach it.
+reply and movie data. That step will also need loading/error handling.
 Keep third-party API keys on the Python server, never in React source files.
+
+## Use the connected development API
+
+Run `bash start_project.sh` from the repository root, then open
+http://localhost:3000/api/health/database. Vite forwards `/api` requests to Python,
+which runs `SELECT 1` against PostgreSQL. Success is
+`{"status":"ok","database":"ok"}`; an unavailable database returns HTTP 503.
+`/api/health` checks Python alone. The chat form still uses its labeled sample
+replies; feature owners will connect its real endpoints separately.
+
+Use relative API URLs in React so the same code works in Docker and local Vite:
+
+```javascript
+const response = await fetch('/api/health/database');
+if (!response.ok) throw new Error('The service is temporarily unavailable.');
+const result = await response.json();
+```
+
+`vite.config.js` forwards `/api` and its subpaths without rewriting them. Docker
+sets the server-only `API_PROXY_TARGET=http://api:8000` on the shared network.
+For local `npm run dev` with the Docker backend running, it defaults to
+`http://127.0.0.1:8080`; open http://localhost:5173/api/health/database to check it.
+For a native Python backend on port 8000, copy `.env.example` to `.env.local`
+and change the target to `http://127.0.0.1:8000`, then restart Vite.
+
+Only the Vite server reads `API_PROXY_TARGET`. Never put database passwords or API
+credentials in frontend environment files or `VITE_` variables. Git and Docker
+ignore local environment files. The proxy is a development feature; a production
+deployment needs its own `/api` reverse proxy. `npm run preview` is for checking
+the static frontend build and is not the connected development workflow.

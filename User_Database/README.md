@@ -1,8 +1,9 @@
 # Simple user database
 
 A standalone PostgreSQL database with one `users` table and two fictional users.
-It is separate from `Web_Application` and `AI_Movie_Chatbot`; neither app connects
-to it yet. There is no login or authentication feature in this starter.
+The Python API connects to it through the shared `cs673_event_planning` Docker
+network. React's development server can forward requests to that API. There is
+no login or authentication feature in this starter.
 
 To run all three project parts together, follow
 [HOW_TO_START_AND_STOP_PROJECT.md](../HOW_TO_START_AND_STOP_PROJECT.md).
@@ -111,7 +112,7 @@ so everyone can apply the same updates in order.
 Stop the container and keep your data:
 
 ```bash
-docker compose down
+docker compose stop database
 ```
 
 Start it again with the usual setup command:
@@ -141,6 +142,9 @@ docker compose up -d --wait
 
 **The `-v` option deletes the saved volume and all users and changes in it.**
 Use plain `docker compose down` when you want to keep your work.
+If the frontend/backend are running, stop those Compose projects first before
+`down`: they share this database project's network. `stop database` preserves the
+network and supports testing API outage/recovery without deleting any data.
 
 ## Sharing through GitHub
 
@@ -162,4 +166,5 @@ For a database client such as pgAdmin, the local connection settings are:
 
 The shared password is only for this local development database. Use separate,
 private credentials before any future deployment. The connection account is an
-administrator; future app integration should use a separate limited account.
+administrator used only for local development; a deployment needs a separate
+limited account. `/api/health/database` checks `SELECT 1` without reading users.

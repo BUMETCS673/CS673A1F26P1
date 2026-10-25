@@ -29,3 +29,8 @@ services:
 # A named volume stores each developer's own database on their computer.
 volumes:
   user_data:
+
+# Keep the existing database volume while sharing service DNS with the apps.
+networks:
+  default:
+    name: cs673_event_planning

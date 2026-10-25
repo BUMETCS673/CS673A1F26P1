@@ -46,8 +46,11 @@ For either website address, right-click the address in your terminal to open it
 (if your terminal supports that), or copy and paste it into your browser's
 address bar. These addresses are for your own computer.
 
-The three parts run together but are **not integrated yet**. Sending a website
-message does not contact the backend or save anything in PostgreSQL. Backend
+The development services are connected. Open
+**http://localhost:3000/api/health/database** to send a request through Vite and
+Python to PostgreSQL. Expect `{"status":"ok","database":"ok"}`; this checks
+`SELECT 1` and returns no user records. The chat form still uses sample replies.
+Sending a chat message does not yet contact the backend or save it. Backend
 development and test instructions are in [AI_Movie_Chatbot/README.md](AI_Movie_Chatbot/README.md).
 
 To view the database, open a second terminal in the repository root and run:
@@ -70,6 +73,12 @@ only). More SQL examples are in `User_Database/README.md`.
 After editing app code, run `bash start_project.sh` again. It rebuilds the images
 and replaces the containers. It keeps existing database data until you use the
 stop script. There is no automatic source-code reload in this Docker workflow.
+
+PostgreSQL owns the shared `cs673_event_planning` network. The startup script
+starts it before the apps; the stop script removes the apps before the database.
+No local environment file is required for the dummy development database.
+Optional server configuration is documented in `AI_Movie_Chatbot/README.md`;
+keep credentials out of React and browser environment variables.
 
 ## Finish and delete the local project containers
 
