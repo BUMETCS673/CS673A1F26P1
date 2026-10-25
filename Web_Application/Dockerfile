@@ -9,6 +9,7 @@ COPY package.json package-lock.json ./
 RUN npm ci
 
 COPY index.html ./
+COPY vite.config.js ./
 COPY src/ ./src/
 
 # This is a local development server, not a production deployment.

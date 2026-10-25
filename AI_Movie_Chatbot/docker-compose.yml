@@ -2,6 +2,20 @@ services:
   app:
     build: .
     restart: unless-stopped
+    environment:
+      # Dummy local defaults match User_Database; override using this folder's .env.
+      DB_HOST: ${DB_HOST:-database}
+      DB_PORT: ${DB_PORT:-5432}
+      DB_NAME: ${DB_NAME:-movie_users}
+      DB_USER: ${DB_USER:-movie_admin}
+      DB_PASSWORD: ${DB_PASSWORD:-local_dev_password}
+      DB_CONNECT_TIMEOUT: ${DB_CONNECT_TIMEOUT:-3}
+      DB_STATEMENT_TIMEOUT_MS: ${DB_STATEMENT_TIMEOUT_MS:-2000}
+    networks:
+      default:
+      development:
+        aliases:
+          - api
     # Wait until Python serves a response before calling the backend ready.
     healthcheck:
       test: ["CMD", "python", "-c", "import json, urllib.request; response = urllib.request.urlopen('http://127.0.0.1:8000/api/health', timeout=2); assert response.status == 200 and json.load(response) == {'status': 'ok'}"]
@@ -25,3 +39,9 @@ services:
       interval: 5s
       timeout: 3s
       retries: 10
+
+# PostgreSQL's Compose project owns this network; start it first.
+networks:
+  development:
+    external: true
+    name: cs673_event_planning

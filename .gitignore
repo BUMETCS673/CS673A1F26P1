@@ -1,0 +1,4 @@
+# Local configuration can contain secrets; commit only placeholder examples.
+.env
+.env.*
+!.env.example
