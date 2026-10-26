@@ -83,6 +83,23 @@ find the `app` package.
 
 ## Where to add a feature
 
+### Independent FV-117 browser demo
+
+Start the stack with `bash start_project.sh` and open http://localhost:3000.
+After the fake demo login, enter JSON in the chat panel's **Filter conditions
+(JSON)** input and click **Filter sample events**:
+
+- `{"category":"Music"}` returns two samples.
+- `{"category":"Music","date":"2026-11-01"}` returns one.
+- `{"date":"2026-11-01"}` returns the two samples on that date.
+- `{}` returns all six; `{"category":"Music","date":"2026-11-02"}` returns none.
+
+`POST /api/demo/filter-events` takes optional `category` and `date`, plus the
+browser's full existing fictional `events` list, and calls `filter_events`.
+The list is client-supplied demo data, not an authoritative catalog. No login,
+database, external model, or FV-118 parser is introduced. Natural-language text
+is deliberately not accepted in this branch. This is not complete FV-99.
+
 - `app/main.py`: `create_app()` creates FastAPI and registers feature routers.
   The exported `app` is Uvicorn's entry point. Importing it does not run a server.
 - `app/routes/health.py`: a complete small route with a typed JSON response.
