@@ -1,0 +1,5 @@
+
+ALTER TABLE users
+    ADD COLUMN IF NOT EXISTS display_name VARCHAR(100),
+    ADD COLUMN IF NOT EXISTS password_hash TEXT,
+    ADD COLUMN IF NOT EXISTS activity_preferences TEXT[] NOT NULL DEFAULT ARRAY[]::TEXT[];

@@ -8,7 +8,10 @@ CREATE TABLE users (
     -- VARCHAR limits text length. NOT NULL requires a value.
     -- UNIQUE prevents two rows from using the exact same value.
     username VARCHAR(50) NOT NULL UNIQUE,
-    email VARCHAR(255) NOT NULL UNIQUE
+    email VARCHAR(255) NOT NULL UNIQUE,
+    display_name VARCHAR(100),
+    password_hash TEXT,
+    activity_preferences TEXT[] NOT NULL DEFAULT ARRAY[]::TEXT[]
 );
 
 -- Two fictional placeholders so everyone can try viewing and editing rows.
