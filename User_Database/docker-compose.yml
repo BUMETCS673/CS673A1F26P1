@@ -3,6 +3,8 @@ services:
   database:
     # Use the same PostgreSQL major version on each teammate's computer.
     image: postgres:17
+    # Come back automatically after a reboot or Docker Desktop restart.
+    restart: unless-stopped
     environment:
       # These are shared LOCAL DEVELOPMENT credentials, not real user accounts.
       # No .env file or additional configuration is needed for this starter.

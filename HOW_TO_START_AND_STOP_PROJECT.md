@@ -1,6 +1,6 @@
 # HOW TO START AND STOP THE PROJECT
 
-**Start everything: `bash start_project.sh`**
+**Start everything: `./start_project.sh`**
 
 **Remove everything: `bash stop_project.sh`**
 
@@ -12,6 +12,8 @@ folder containing this file). You do not need to start each app separately.
 1. Install and start [Docker Desktop](https://www.docker.com/products/docker-desktop/).
    It includes Docker Compose. Linux users can instead use Docker Engine with
    the Compose plugin. Use a version supporting `docker compose up --wait`.
+   In Docker Desktop, turn on **Settings > General > Start Docker Desktop when
+   you sign in to your computer** so the project comes back after a reboot.
 2. On Windows, use an Ubuntu/WSL terminal and enable that distribution under
    Docker Desktop's **Settings > Resources > WSL Integration**. On macOS or
    Linux, use your normal Bash-capable terminal.
@@ -29,7 +31,7 @@ images and Python/npm packages. Ports **3000**, **8080**, and **5432** must be f
 ## Start the whole project
 
 ```bash
-bash start_project.sh
+./start_project.sh
 ```
 
 Wait for **"The project is ready!"** The first start may take a few minutes.
@@ -70,9 +72,44 @@ database client, use host `localhost`, port `5432`, database `movie_users`,
 username `movie_admin`, and password `local_dev_password` (local development
 only). More SQL examples are in `User_Database/README.md`.
 
-After editing app code, run `bash start_project.sh` again. It rebuilds the images
-and replaces the containers. It keeps existing database data until you use the
-stop script. There is no automatic source-code reload in this Docker workflow.
+## Edit while the project is running
+
+Leave the containers running and save your files:
+
+| What you changed | What happens / what to do |
+| --- | --- |
+| React components, CSS, HTML, or frontend sample data | Vite updates/reloads the open browser automatically. |
+| Python files under `AI_Movie_Chatbot/app` | The API server reloads automatically. Refresh the page or repeat the request to see the new response. |
+| JSON files under `AI_Movie_Chatbot/app` | The API server reloads automatically so cached sample data can be loaded again. |
+| npm/Python dependencies, Dockerfiles, Compose settings, or environment configuration | Run `./start_project.sh` again to rebuild/recreate the apps. No stop command is needed. |
+| Database SQL/schema | Apply the appropriate migration explicitly. Saving `init.sql` does not modify an existing database. |
+| You ran `git pull` or switched branches | Run `./start_project.sh` once. It is always safe, keeps database data, and picks up any new dependencies a teammate added. |
+
+### After a reboot or closing Docker Desktop
+
+You do not need to run anything. Once Docker Desktop is open again, all
+containers start by themselves (give them about a minute). To make this fully
+automatic after restarting your computer, turn on Docker Desktop's
+**Settings > General > Start Docker Desktop when you sign in to your computer**.
+
+Some frontend changes perform a full page reload and reset local demo state,
+so the explicitly fake login may appear again. A reload does not implement or
+persist a real login session.
+
+Docker sees the live source files and polls for changes to support Windows/WSL
+editors too. Frontend dependencies and Vite's cache live in a Docker volume,
+separate from host `node_modules`. The startup script refreshes that dependency
+volume from the rebuilt image, and keeps the PostgreSQL data volume. On a fresh
+checkout it creates an empty host `node_modules` directory as the mount point;
+you still do not need npm or a local package installation.
+
+The frontend project and Python app are mounted read-only inside containers;
+edit them in your normal host editor. For a production-build check inside the
+frontend container, use a writable output directory:
+
+```bash
+docker compose --project-directory Web_Application exec website npm run build -- --outDir /tmp/frontend-build
+```
 
 PostgreSQL owns the shared `cs673_event_planning` network. The startup script
 starts it before the apps; the stop script removes the apps before the database.
@@ -103,10 +140,14 @@ script also works after a partial startup and can be run more than once.
   WSL integration on Windows. Confirm `docker info` works in your terminal.
 - **`--wait` is not recognized:** update Docker Desktop or your Compose plugin.
 - **A port is already in use:** close the other program using the port. If an
-  earlier project run is still present, run `bash stop_project.sh` first.
+  earlier project run is still present, rerun `./start_project.sh`; it manages
+  this project's containers without deleting database data.
 - **Build or startup failed:** read the error above the script's explanation.
-  Check your internet connection and Docker's available disk space. Run
-  `bash stop_project.sh`, fix the cause, and run `bash start_project.sh` again.
+  Check your internet connection and Docker's available disk space. Fix the
+  cause and run `./start_project.sh` again; cleanup is not required for a rebuild.
+- **Saved changes do not appear:** wait a moment, then inspect the frontend/API
+  logs for compilation/import errors. Fix the error and save again. Verify you
+  are editing this checkout and viewing http://localhost:3000, not an old preview.
 - **Need container logs?** For example, run
   `docker compose --project-directory AI_Movie_Chatbot logs`. Replace the folder
   with `Web_Application` or `User_Database` for the other parts.

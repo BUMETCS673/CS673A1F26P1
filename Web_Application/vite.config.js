@@ -5,6 +5,10 @@ export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), 'API_PROXY_');
   return {
     server: {
+      watch: {
+        usePolling: process.env.DEV_USE_POLLING === 'true',
+        interval: 300,
+      },
       proxy: {
         '^/api(?:/|$)': {
           target: process.env.API_PROXY_TARGET || env.API_PROXY_TARGET || 'http://127.0.0.1:8080',
