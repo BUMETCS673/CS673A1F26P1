@@ -11,6 +11,25 @@ services:
       DB_PASSWORD: ${DB_PASSWORD:-local_dev_password}
       DB_CONNECT_TIMEOUT: ${DB_CONNECT_TIMEOUT:-3}
       DB_STATEMENT_TIMEOUT_MS: ${DB_STATEMENT_TIMEOUT_MS:-2000}
+      PYTHONDONTWRITEBYTECODE: "1"
+      WATCHFILES_FORCE_POLLING: "true"
+    volumes:
+      # Development source only; installed dependencies remain in the image.
+      - ./app:/app/app:ro
+    command:
+      - python
+      - -m
+      - uvicorn
+      - app.main:app
+      - --host
+      - 0.0.0.0
+      - --port
+      - "8000"
+      - --reload
+      - --reload-dir
+      - /app/app
+      - --reload-include
+      - "*.json"
     networks:
       default:
       development:
