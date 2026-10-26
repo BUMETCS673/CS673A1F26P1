@@ -83,6 +83,19 @@ find the `app` package.
 
 ## Where to add a feature
 
+### Independent FV-118 browser demo
+
+Start with `bash start_project.sh` and open http://localhost:3000. After the fake
+demo login, enter `music` or `Music on 2026-11-01` in the chat panel's **Request
+text** input and click **Parse request**. The reply shows the exact Python
+result: `category`, `date`, and `needs_clarification`. Try `music tomorrow`,
+`music and food`, or `music on 2026-02-30` to see a clarification response.
+
+`POST /api/demo/parse-event-request` accepts `{ "message": "music" }` and calls
+`parse_event_request`. No event list is sent, and no FV-117 filter, catalog,
+database, real login, or model is introduced. This unauthenticated demo only
+parses text; it does not recommend events or complete FV-99.
+
 - `app/main.py`: `create_app()` creates FastAPI and registers feature routers.
   The exported `app` is Uvicorn's entry point. Importing it does not run a server.
 - `app/routes/health.py`: a complete small route with a typed JSON response.
