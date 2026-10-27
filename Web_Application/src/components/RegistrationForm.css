@@ -1,0 +1,6 @@
+.registration-form fieldset { min-width: 0; margin: 22px 0; padding: 12px; border: 1px solid #64748b; border-radius: 6px; }
+.registration-form legend { padding: 0 4px; font-weight: 600; }
+.registration-form__choices { display: flex; flex-wrap: wrap; gap: 4px 16px; }
+.registration-form__choice { display: flex; align-items: center; gap: 8px; min-height: 44px; cursor: pointer; }
+.registration-form__choice input { width: 18px; height: 18px; accent-color: #2154b8; }
+.registration-form .registration-form__error { margin: 8px 0 0; color: #b42318; }
