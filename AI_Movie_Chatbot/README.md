@@ -83,18 +83,42 @@ find the `app` package.
 
 ## Where to add a feature
 
-### Independent FV-118 browser demo
+### FV-118 request parsing in Chatbox
 
 Start with `bash start_project.sh` and open http://localhost:3000. After the fake
-demo login, enter `music` or `Music on 2026-11-01` in the chat panel's **Request
+demo login, choose **Parse request** under **Chat action**. Enter `music` or
+`Music on 2026-11-01` in the chat panel's **Request
 text** input and click **Parse request**. The reply shows the exact Python
 result: `category`, `date`, and `needs_clarification`. Try `music tomorrow`,
 `music and food`, or `music on 2026-02-30` to see a clarification response.
 
 `POST /api/demo/parse-event-request` accepts `{ "message": "music" }` and calls
-`parse_event_request`. No event list is sent, and no FV-117 filter, catalog,
-database, real login, or model is introduced. This unauthenticated demo only
+`parse_event_request`. This action sends no event list and does not call the
+FV-117 filter, database, real login, or a model. This unauthenticated endpoint only
 parses text; it does not recommend events or complete FV-99.
+
+### FV-117 event filtering in Chatbox
+
+Start the stack with `bash start_project.sh` and open http://localhost:3000.
+After the fake demo login, choose **Filter sample events** under **Chat action**.
+Enter JSON in the chat panel's **Filter conditions
+(JSON)** input and click **Filter sample events**:
+
+- `{"category":"Music"}` returns two samples.
+- `{"category":"Music","date":"2026-11-01"}` returns one.
+- `{"date":"2026-11-01"}` returns the two samples on that date.
+- `{}` returns all six; `{"category":"Music","date":"2026-11-02"}` returns none.
+
+`POST /api/demo/filter-events` takes optional `category` and `date`, plus the
+browser's full existing fictional `events` list, and calls `filter_events`.
+The list is client-supplied demo data, not an authoritative catalog. No login,
+database, external model, or FV-118 parser is called by this action.
+Natural-language text is not accepted in filter mode. This is not complete FV-99.
+
+Switching the chat action cancels any pending request and clears the conversation.
+Both endpoints remain separate and both are available on main; no separate demo
+branch is needed. The sidebar filters do not change the full sample list sent to
+the Chatbox filter.
 
 - `app/main.py`: `create_app()` creates FastAPI and registers feature routers.
   The exported `app` is Uvicorn's entry point. Importing it does not run a server.

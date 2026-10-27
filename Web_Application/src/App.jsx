@@ -39,8 +39,8 @@ function Dashboard({ onLogout }) {
           <h1>Find your next plan.</h1>
           <p>Browse events, narrow your choices, and plan with a chat.</p>
           <p className="prototype-note">
-            Demo: fictional events, local sidebar filters, and Python request parsing in chat.
-            The chat panel displays interpreted conditions; it does not search or recommend events.
+            Demo: fictional events with request parsing and sample event filtering in chat.
+            Choose a chat action to try each feature. Real accounts and an authoritative event catalog are future work.
           </p>
         </div>
 
@@ -54,7 +54,7 @@ function Dashboard({ onLogout }) {
               onDateChange={setDate}
               onClear={clearFilters}
             />
-            <ChatPanel />
+            <ChatPanel events={sampleEvents} />
           </aside>
         </div>
       </main>

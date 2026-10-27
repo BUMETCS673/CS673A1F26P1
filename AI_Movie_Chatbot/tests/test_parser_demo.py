@@ -1,6 +1,7 @@
 """FV-118 HTTP demo works independently of event filtering or a catalog."""
 
 import unittest
+from unittest.mock import patch
 
 from fastapi.testclient import TestClient
 
@@ -40,8 +41,27 @@ class ParserDemoTests(unittest.TestCase):
             with self.subTest(payload=payload):
                 self.assertEqual(self.client.post("/api/demo/parse-event-request", json=payload).status_code, 422)
 
-    def test_no_filter_demo_is_registered(self):
-        self.assertEqual(self.client.post("/api/demo/filter-events", json={}).status_code, 404)
+    def test_parser_does_not_call_event_filter(self):
+        with patch("app.routes.filter_demo.filter_events", side_effect=AssertionError("Unexpected filtering")):
+            response = self.client.post("/api/demo/parse-event-request", json={"message": "music"})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json(), {
+            "category": "Music", "date": None, "needs_clarification": False,
+        })
+
+    def test_filter_remains_available_alongside_parser(self):
+        events = [
+            {"id": "concert", "title": "Concert", "category": "Music", "date": "2026-11-01",
+             "time": "6 PM", "location": "Boston", "description": "Sample concert"},
+            {"id": "art", "title": "Art", "category": "Arts", "date": "2026-11-01",
+             "time": "2 PM", "location": "Boston", "description": "Sample art"},
+        ]
+        with patch("app.routes.parser_demo.parse_event_request", side_effect=AssertionError("Unexpected parsing")):
+            response = self.client.post("/api/demo/filter-events", json={
+                "events": events, "category": "mUsIc", "date": "2026-11-01",
+            })
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()["events"], events[:1])
 
 
 if __name__ == "__main__":
