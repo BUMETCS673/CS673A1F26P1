@@ -1,6 +1,6 @@
 import React from 'react';
 
-export default function EventFeed({ events, onClearFilters }) {
+export default function EventFeed({ status, events, onClearFilters, onRetry }) {
   return (
     <section className="event-feed" aria-labelledby="events-title">
       <div className="section-heading">
@@ -8,10 +8,21 @@ export default function EventFeed({ events, onClearFilters }) {
           <h2 id="events-title">Boston event queue</h2>
           <p className="muted-text">Fictional showcase listings · times shown in Boston local time</p>
         </div>
-        <span className="count-badge" role="status">{events.length} sample {events.length === 1 ? 'event' : 'events'}</span>
+        <span className="count-badge" role="status">
+          {status === 'ready' ? `${events.length} sample ${events.length === 1 ? 'event' : 'events'}`
+            : status === 'error' ? 'Unavailable' : 'Loading…'}
+        </span>
       </div>
 
-      {events.length === 0 ? (
+      {status === 'loading' ? (
+        <div className="panel empty-state"><p>Loading events from the server…</p></div>
+      ) : status === 'error' ? (
+        <div className="panel empty-state">
+          <h3 role="alert">Could not load events.</h3>
+          <p>Check that the Python backend is running, then try again.</p>
+          <button className="secondary-button" type="button" onClick={onRetry}>Try again</button>
+        </div>
+      ) : events.length === 0 ? (
         <div className="panel empty-state">
           <h3>No sample events match.</h3>
           <p>Try another category or date, or clear the sample filters.</p>

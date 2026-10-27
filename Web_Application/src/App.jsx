@@ -1,17 +1,27 @@
-import React, { useState } from 'react';
-import FakeLogin from './components/FakeLogin.jsx';
+import React, { useEffect, useState } from 'react';
+import AuthDialog from './components/AuthDialog.jsx';
 import EventFeed from './components/EventFeed.jsx';
 import FilterPanel from './components/FilterPanel.jsx';
 import ChatPanel from './components/ChatPanel.jsx';
-import { sampleEvents } from './sampleEvents.js';
+import { getCurrentUser, getEvents, logOut } from './api.js';
 
-function Dashboard({ onLogout }) {
+function Dashboard({ user, onLogout }) {
   const [category, setCategory] = useState('');
   const [date, setDate] = useState('');
+  // The Python API serves the fictional catalog, sorted by date and time.
+  const [catalog, setCatalog] = useState({ status: 'loading', events: [] });
+  const [attempt, setAttempt] = useState(0);
 
-  // These filters work only on our fictional local samples. Replace the source
-  // with the event API later; the feed and chatbot should share one catalog.
-  const visibleEvents = sampleEvents.filter((event) => (
+  useEffect(() => {
+    let current = true;
+    setCatalog({ status: 'loading', events: [] });
+    getEvents()
+      .then((events) => current && setCatalog({ status: 'ready', events }))
+      .catch(() => current && setCatalog({ status: 'error', events: [] }));
+    return () => { current = false; };
+  }, [attempt]);
+
+  const visibleEvents = catalog.events.filter((event) => (
     (category === '' || event.category === category)
     && (date === '' || event.date === date)
   ));
@@ -30,7 +40,10 @@ function Dashboard({ onLogout }) {
           <button type="button" disabled>Calendar (later)</button>
           <button type="button" disabled>Friends (later)</button>
         </nav>
-        <button className="secondary-button" type="button" onClick={onLogout}>Log Out (fake)</button>
+        <div className="account-menu">
+          {user && <span className="muted-text">Signed in as <strong>{user.display_name || user.username}</strong></span>}
+          <button className="secondary-button" type="button" onClick={onLogout}>Log Out</button>
+        </div>
       </header>
 
       <main id="events" className="dashboard">
@@ -39,22 +52,28 @@ function Dashboard({ onLogout }) {
           <h1>Find your next plan.</h1>
           <p>Browse events, narrow your choices, and plan with a chat.</p>
           <p className="prototype-note">
-            Demo: fictional events with request parsing and sample event filtering in chat.
-            Choose a chat action to try each feature. Real accounts and an authoritative event catalog are future work.
+            Demo: accounts are stored in the project database; the fictional events come from the Python API.
+            Choose a chat action to try request parsing or sample event filtering.
           </p>
         </div>
 
         <div className="dashboard-grid">
-          <EventFeed events={visibleEvents} onClearFilters={clearFilters} />
+          <EventFeed
+            status={catalog.status}
+            events={visibleEvents}
+            onClearFilters={clearFilters}
+            onRetry={() => setAttempt((count) => count + 1)}
+          />
           <aside className="dashboard-sidebar" aria-label="Filters and event chat">
             <FilterPanel
+              events={catalog.events}
               category={category}
               date={date}
               onCategoryChange={setCategory}
               onDateChange={setDate}
               onClear={clearFilters}
             />
-            <ChatPanel events={sampleEvents} />
+            <ChatPanel events={catalog.events} />
           </aside>
         </div>
       </main>
@@ -63,17 +82,36 @@ function Dashboard({ onLogout }) {
 }
 
 export default function App() {
-  // This flag is a visual demo gate, not authentication. Reloading locks it again.
-  // Replace it with real server-verified sessions when login is implemented.
-  const [hasDemoAccess, setHasDemoAccess] = useState(false);
+  // null means logged out. The server decides, using the HttpOnly session cookie.
+  const [user, setUser] = useState(null);
+  const [checkingSession, setCheckingSession] = useState(true);
+
+  useEffect(() => {
+    // A reload keeps an existing session instead of asking to log in again.
+    getCurrentUser()
+      .then(setUser)
+      .catch(() => setUser(null))
+      .finally(() => setCheckingSession(false));
+  }, []);
+
+  async function handleLogout() {
+    try {
+      await logOut();
+    } catch {
+      // Still lock the page; an unreachable server cannot be asked to forget the session.
+    }
+    setUser(null);
+  }
+
+  if (checkingSession) return null;
 
   return (
     <>
-      <div inert={!hasDemoAccess}>
-        {/* Changing the key clears local filters/messages when leaving the demo. */}
-        <Dashboard key={hasDemoAccess ? 'demo' : 'locked'} onLogout={() => setHasDemoAccess(false)} />
+      <div inert={!user}>
+        {/* Changing the key clears filters/messages when the account changes. */}
+        <Dashboard key={user ? `user-${user.id}` : 'locked'} user={user} onLogout={handleLogout} />
       </div>
-      {!hasDemoAccess && <FakeLogin onContinue={() => setHasDemoAccess(true)} />}
+      {!user && <AuthDialog onLogin={setUser} />}
     </>
   );
 }

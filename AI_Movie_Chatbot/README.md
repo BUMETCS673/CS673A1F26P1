@@ -83,10 +83,37 @@ find the `app` package.
 
 ## Where to add a feature
 
+### Accounts: register, log in, log out
+
+`app/routes/auth.py` defines the endpoints; `app/users.py` holds their SQL and
+`app/passwords.py` hashes passwords with the standard library's scrypt (each
+hash has its own salt; plain passwords are never stored).
+
+| Endpoint | Result |
+| --- | --- |
+| `POST /api/auth/register` | 201 with the new user; 409 if the username or email exists (ignoring case); 422 for invalid fields |
+| `POST /api/auth/login` | 200 with the user and an HttpOnly `session` cookie; 401 `Incorrect username or password.` |
+| `GET /api/auth/me` | 200 with the logged-in user, or 401. The website calls this on load |
+| `POST /api/auth/logout` | 204; deletes the session row and clears the cookie |
+
+Usernames are 3–50 letters, numbers, `.`, `_`, or `-`; passwords need 8–128
+characters; at least one activity preference (Music, Arts, Food, Outdoors,
+Social) is required. Emails are stored lowercase. Sessions last 7 days and only
+a SHA-256 hash of each token is saved in `user_sessions`. The cookie is limited
+to `/api` with `SameSite=Lax`; set `SESSION_COOKIE_SECURE=true` when served over
+HTTPS. A database outage returns a safe 503. There is no rate limiting or email
+verification yet.
+
+### Sample events
+
+`GET /api/events` serves `app/data/sample_events.json`, sorted by date and then
+time of day, so the file's order does not matter. The website loads its event
+queue, filter choices, and chat-filter catalog from this endpoint.
+
 ### FV-118 request parsing in Chatbox
 
-Start with `bash start_project.sh` and open http://localhost:3000. After the fake
-demo login, choose **Parse request** under **Chat action**. Enter `music` or
+Start with `bash start_project.sh` and open http://localhost:3000. After logging
+in, choose **Parse request** under **Chat action**. Enter `music` or
 `Music on 2026-11-01` in the chat panel's **Request
 text** input and click **Parse request**. The reply shows the exact Python
 result: `category`, `date`, and `needs_clarification`. Try `music tomorrow`,
@@ -100,7 +127,7 @@ parses text; it does not recommend events or complete FV-99.
 ### FV-117 event filtering in Chatbox
 
 Start the stack with `bash start_project.sh` and open http://localhost:3000.
-After the fake demo login, choose **Filter sample events** under **Chat action**.
+After logging in, choose **Filter sample events** under **Chat action**.
 Enter JSON in the chat panel's **Filter conditions
 (JSON)** input and click **Filter sample events**:
 
@@ -193,7 +220,11 @@ connection/cleanup/timeout tests:
 
 ```bash
 python -m unittest discover -s tests -p live_database.py -v
+python -m unittest discover -s tests -p live_auth.py -v
 ```
+
+`live_auth.py` registers, logs in, and logs out a temporary account against the
+real database, checks what is stored, and deletes the account afterwards.
 
 These verify connection cleanup after success and failure, a real query timeout,
 and a bounded connection attempt to a deliberately unresponsive local server.

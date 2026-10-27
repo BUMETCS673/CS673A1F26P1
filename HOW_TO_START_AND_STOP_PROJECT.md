@@ -40,9 +40,9 @@ parts respond. You can close the terminal afterward; the containers keep running
 
 | Part | Address | What it does right now |
 | --- | --- | --- |
-| React website | **http://localhost:3000** | Boston events scaffold with an explicitly fake login, fictional event cards, sample filters, and preset chat replies. |
-| Python API | **http://localhost:8080/docs** | FastAPI documentation with a working `/api/health` endpoint. The original status page remains at `/`; recommendations are future work. |
-| PostgreSQL user database | **localhost:5432** | Stores the two sample users; this is a database connection, not a browser page. |
+| React website | **http://localhost:3000** | Boston events prototype. **Register** a new account or **Log in** with an existing one; accounts are checked by the Python API and saved in PostgreSQL. Fictional event cards are served by the API, soonest first. |
+| Python API | **http://localhost:8080/docs** | FastAPI documentation: health checks, `/api/auth/*` (register, login, me, logout), `/api/events`, and the chat demos. Recommendations are future work. |
+| PostgreSQL user database | **localhost:5432** | Stores registered accounts (hashed passwords) and login sessions, plus two sample users who have no password; this is a database connection, not a browser page. |
 
 For either website address, right-click the address in your terminal to open it
 (if your terminal supports that), or copy and paste it into your browser's
@@ -51,8 +51,8 @@ address bar. These addresses are for your own computer.
 The development services are connected. Open
 **http://localhost:3000/api/health/database** to send a request through Vite and
 Python to PostgreSQL. Expect `{"status":"ok","database":"ok"}`; this checks
-`SELECT 1` and returns no user records. The chat form still uses sample replies.
-Sending a chat message does not yet contact the backend or save it. Backend
+`SELECT 1` and returns no user records. The chat actions call the Python demo
+endpoints; they do not save messages. Backend
 development and test instructions are in [AI_Movie_Chatbot/README.md](AI_Movie_Chatbot/README.md).
 
 To view the database, open a second terminal in the repository root and run:
@@ -92,9 +92,11 @@ containers start by themselves (give them about a minute). To make this fully
 automatic after restarting your computer, turn on Docker Desktop's
 **Settings > General > Start Docker Desktop when you sign in to your computer**.
 
-Some frontend changes perform a full page reload and reset local demo state,
-so the explicitly fake login may appear again. A reload does not implement or
-persist a real login session.
+Logins are real server sessions stored in an HttpOnly cookie, so reloading the
+page keeps you logged in for up to 7 days. **Log Out** ends the session and shows
+the login pop-up again. Each start also applies `User_Database/migrations/*.sql`;
+they are safe to repeat, so an older local database gains the account columns
+and the `user_sessions` table without losing data.
 
 Docker sees the live source files and polls for changes to support Windows/WSL
 editors too. Frontend dependencies and Vite's cache live in a Docker volume,

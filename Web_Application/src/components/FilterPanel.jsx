@@ -1,17 +1,23 @@
 import React from 'react';
-import { sampleEvents } from '../sampleEvents.js';
 
-// Derive choices from the same sample catalog used by the event queue.
-const categories = [...new Set(sampleEvents.map((event) => event.category))].sort();
+function formatDate(value) {
+  return new Date(`${value}T12:00:00`).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+}
 
-export default function FilterPanel({ category, date, onCategoryChange, onDateChange, onClear }) {
+export default function FilterPanel({ events, category, date, onCategoryChange, onDateChange, onClear }) {
+  // Derive choices from the same catalog shown in the event queue.
+  const categories = [...new Set(events.map((event) => event.category))].sort();
+  // Events arrive sorted, so the first and last give the date range.
+  const firstDate = events[0]?.date;
+  const lastDate = events[events.length - 1]?.date;
+
   return (
     <section className="panel filter-panel" aria-labelledby="filters-title">
       <div className="section-heading">
         <h2 id="filters-title">Filter events</h2>
         <button className="text-button" type="button" onClick={onClear}>Clear</button>
       </div>
-      <p className="muted-text">Sample filters only. Real event filtering will connect here later.</p>
+      <p className="muted-text">Narrow the event queue by category and date.</p>
       <label htmlFor="event-category">Category</label>
       <select id="event-category" value={category} onChange={(event) => onCategoryChange(event.target.value)}>
         <option value="">All categories</option>
@@ -19,7 +25,11 @@ export default function FilterPanel({ category, date, onCategoryChange, onDateCh
       </select>
       <label htmlFor="event-date">Date</label>
       <input id="event-date" type="date" value={date} onChange={(event) => onDateChange(event.target.value)} />
-      <p className="filter-hint">Sample dates: November 1–3, 2026.</p>
+      {firstDate && (
+        <p className="filter-hint">
+          Sample dates: {firstDate === lastDate ? formatDate(firstDate) : `${formatDate(firstDate)} – ${formatDate(lastDate)}`}.
+        </p>
+      )}
     </section>
   );
 }

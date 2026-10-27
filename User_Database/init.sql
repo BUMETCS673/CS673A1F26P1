@@ -14,6 +14,16 @@ CREATE TABLE users (
     activity_preferences TEXT[] NOT NULL DEFAULT ARRAY[]::TEXT[]
 );
 
+-- Login sessions (same as migrations/002_user_sessions.sql). Only a hash of each
+-- browser token is stored. Deleting a user also deletes their sessions.
+CREATE TABLE user_sessions (
+    token_hash CHAR(64) PRIMARY KEY,
+    user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+    expires_at TIMESTAMPTZ NOT NULL
+);
+CREATE INDEX user_sessions_user_id_idx ON user_sessions (user_id);
+
 -- Two fictional placeholders so everyone can try viewing and editing rows.
 -- Leave out id: PostgreSQL fills it in for us.
 INSERT INTO users (username, email)

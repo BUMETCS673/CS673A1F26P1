@@ -5,7 +5,8 @@ import './RegistrationForm.css';
 const preferences = ['Music', 'Arts', 'Food', 'Outdoors', 'Social'];
 
 // onSubmit receives { username, display_name, email, password, activity_preferences }.
-export default function RegistrationForm({ onSubmit }) {
+// error is an optional message; pending disables the button while a request runs.
+export default function RegistrationForm({ onSubmit, error, pending = false }) {
   const id = useId();
   const [selected, setSelected] = useState([]);
   const [preferenceError, setPreferenceError] = useState(false);
@@ -38,11 +39,17 @@ export default function RegistrationForm({ onSubmit }) {
 
   return (
     <form className="auth-form registration-form" onSubmit={handleSubmit}>
-      <h1>Registration form</h1>
+      <h1>Create an account</h1>
       <p>All fields are required. Choose at least one activity preference.</p>
 
       <label htmlFor={`${id}-username`}>Username</label>
-      <input id={`${id}-username`} name="username" autoComplete="username" maxLength={50} required />
+      <input
+        id={`${id}-username`} name="username" autoComplete="username" minLength={3} maxLength={50}
+        pattern="[A-Za-z0-9_.\-]{3,50}" aria-describedby={`${id}-username-hint`} required autoFocus
+      />
+      <p id={`${id}-username-hint`} className="registration-form__hint">
+        3–50 letters, numbers, periods, underscores, or hyphens.
+      </p>
 
       <label htmlFor={`${id}-display-name`}>Display name</label>
       <input id={`${id}-display-name`} name="display_name" autoComplete="nickname" maxLength={100} required />
@@ -51,7 +58,11 @@ export default function RegistrationForm({ onSubmit }) {
       <input id={`${id}-email`} name="email" type="email" autoComplete="email" maxLength={255} required />
 
       <label htmlFor={`${id}-password`}>Password</label>
-      <input id={`${id}-password`} name="password" type="password" autoComplete="new-password" required />
+      <input
+        id={`${id}-password`} name="password" type="password" autoComplete="new-password"
+        minLength={8} maxLength={128} aria-describedby={`${id}-password-hint`} required
+      />
+      <p id={`${id}-password-hint`} className="registration-form__hint">At least 8 characters.</p>
 
       <fieldset aria-describedby={preferenceError ? `${id}-preference-error` : undefined}>
         <legend>Activity preferences (choose at least one)</legend>
@@ -77,7 +88,8 @@ export default function RegistrationForm({ onSubmit }) {
           </p>
         )}
       </fieldset>
-      <button type="submit">Submit</button>
+      {error && <p className="registration-form__error" role="alert">{error}</p>}
+      <button type="submit" disabled={pending}>{pending ? 'Creating account…' : 'Create account'}</button>
     </form>
   );
 }

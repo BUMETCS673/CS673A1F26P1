@@ -14,7 +14,7 @@ The commands below are an optional frontend-only workflow using local npm.
 The Docker workflow also reloads on save: run `./start_project.sh` once from the
 repository root, open http://localhost:3000, and keep editing in your normal
 editor. Vite sees saved components, CSS, HTML, and sample data without rebuilding
-the image. Some changes reload the whole page and may reopen the fake login.
+the image. Some changes reload the whole page; your login session is kept.
 After dependency or Docker/environment configuration changes, rerun the startup
 script. The container uses its own dependency volume; host packages are not
 used. Startup creates an empty host `node_modules` mount point if needed. Source
@@ -41,35 +41,38 @@ Keep the terminal running while using the webpage. Press **Ctrl+C** to stop it.
 After editing and saving a source file, Vite automatically updates the page.
 Vite is the small development tool that serves the app and builds its files.
 
-No Python server, Docker, API keys, or environment variables are needed for this
-scaffold. Its UI uses only local sample data. Messages disappear when you refresh.
+The website needs the Python API for logging in and loading events, so start the
+Docker project (or the backend) first; see "Use the connected development API".
 
 ## What it does
 
-- Opens a modal labeled **Explicitly fake login** before the website can be used.
-- The **Log In (fake for now, click to continue)** button opens the demo without
-  checking credentials. This is a visual placeholder, not account security.
-- Reload or **Log Out (fake)** returns to the modal; logout clears local demo state.
-- Displays six fictional Boston event cards, with expandable sample details.
-- Category/date controls filter only those samples, with Clear and an empty state.
-  The sample dates are November 1–3, 2026; they are not verified event listings.
-- Accepts a chat message with Send or Enter and adds a clearly labeled preset reply.
-  Blank messages are ignored; Clear chat resets the conversation.
+- Opens a login pop-up before the website can be used, with **Log in**
+  (returning users) and **Register** (new users) choices.
+- Registering creates an account through `POST /api/auth/register`, then returns
+  to the login form with the username filled in. Errors from the server (such as
+  a taken username) appear in the form.
+- Logging in calls `POST /api/auth/login`; the server sets an HttpOnly session
+  cookie. Reloading keeps you logged in (`GET /api/auth/me`).
+- **Log Out** ends the session on the server and immediately shows the pop-up again.
+- Loads six fictional Boston events from `GET /api/events`, soonest first, with
+  loading and "Try again" states if the API is unreachable.
+- Category/date controls filter those events, with Clear and an empty state.
+- The chat panel parses requests or filters the events using the Python demo endpoints.
 - Shows disabled Calendar/Friends menu placeholders for future work.
 
-Real registration, login sessions, event data, recommendation behavior, and AI
-integration still need to be implemented. The sample filters are local UI
-behavior; they do not complete the planned backend filter feature.
+A real event source, recommendations, and AI integration still need to be
+implemented. The sidebar filters run in the browser over the events the API returned.
 
 ## Read the code in this order
 
 1. `index.html`: the HTML page and the empty element where React starts.
 2. `src/main.jsx`: attaches the React app to that element and loads the CSS.
-3. `src/App.jsx`: the dashboard layout, fake-access flag, and local filter state.
-4. `src/components/FakeLogin.jsx`: the native modal and explicit placeholder copy.
-5. `src/sampleEvents.js` and `src/components/EventFeed.jsx`: sample data and cards.
+3. `src/App.jsx`: the dashboard layout, session check, event loading, and filter state.
+4. `src/api.js`: the `fetch` calls to the Python API.
+5. `src/components/AuthDialog.jsx` with `LoginForm.jsx`/`RegistrationForm.jsx`: the login pop-up.
+   `src/components/EventFeed.jsx`: the event cards.
 6. `src/components/FilterPanel.jsx`: the category/date controls.
-7. `src/components/ChatPanel.jsx`: local messages and preset replies.
+7. `src/components/ChatPanel.jsx`: the parser and filter chat demos.
 8. `src/styles.css`: spacing, colors, modal styling, and responsive layout.
 
 JSX is HTML-like syntax inside JavaScript. A component is a function that returns
@@ -93,10 +96,10 @@ npm run preview
 The first command creates a production build in `dist/`. The second serves that
 build locally at the URL it prints. Press **Ctrl+C** when finished.
 
-For a quick manual check, confirm the login modal blocks the page until the fake
-login button is clicked. Try a category and a sample date, clear the filters,
+For a quick manual check, confirm the login pop-up blocks the page. Register an
+account, log in with it, and try a wrong password. Try a category and a sample date, clear the filters,
 and try a date with no results. Send a chat message, clear the chat, then log out
-and back in. Reload to confirm the fake gate returns. Check a narrow screen too.
+and back in. Reload to confirm you stay logged in, then log out and reload. Check a narrow screen too.
 
 ## Connect the backend later
 

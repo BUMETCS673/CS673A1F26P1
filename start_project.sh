@@ -31,6 +31,14 @@ echo "You do not need to install npm packages yourself."
 echo "[1/3] Starting PostgreSQL and creating sample users if the database is empty..."
 docker compose --project-directory "$PROJECT_ROOT/User_Database" up -d --wait --wait-timeout 120
 
+# init.sql only runs for an empty volume. Migrations bring an existing database
+# up to date; each one uses IF NOT EXISTS, so applying them again is harmless.
+echo "      Applying database migrations (safe to repeat)..."
+for migration in "$PROJECT_ROOT"/User_Database/migrations/*.sql; do
+  docker compose --project-directory "$PROJECT_ROOT/User_Database" exec -T database \
+    psql -q -v ON_ERROR_STOP=1 -U movie_admin -d movie_users < "$migration"
+done
+
 echo "[2/3] Building and starting the FastAPI backend..."
 docker compose --project-directory "$PROJECT_ROOT/AI_Movie_Chatbot" up -d --build --force-recreate --wait --wait-timeout 120
 
@@ -45,17 +53,17 @@ docker compose --project-directory "$PROJECT_ROOT/Web_Application" up -d --build
 echo
 echo "The project is ready!"
 echo "Website: http://localhost:3000"
-echo "  This is the Boston events scaffold. Use the explicitly fake login to continue."
-echo "  Events, filters, and chat replies are local samples; real features come later."
+echo "  Click Register to create an account, then Log in with it."
+echo "  Accounts are saved in PostgreSQL; the sample events come from the Python API."
 echo "Stack diagnostic: http://localhost:3000/api/health/database"
 echo "  This goes through Vite and Python and checks PostgreSQL with SELECT 1."
 echo "  Right-click the address to open it, or copy and paste it into your browser."
 echo "Python API docs: http://localhost:8080/docs"
 echo "  Try the health endpoint at http://localhost:8080/api/health"
 echo "  The original status page is at http://localhost:8080/"
-echo "  Event recommendations are future work."
+echo "  Auth endpoints: /api/auth/register, /login, /me, /logout. Events: /api/events"
 echo "User database: localhost:5432 (PostgreSQL, not a webpage)"
-echo "  It stores two sample users. The Python connection helper is ready for feature work."
+echo "  It stores registered accounts and login sessions, plus two sample users without passwords."
 echo "  Open its SQL terminal from the repository folder with:"
 echo "  docker compose --project-directory User_Database exec database psql -U movie_admin -d movie_users"
 echo "  Then type: SELECT * FROM users;  Type \\q to leave."

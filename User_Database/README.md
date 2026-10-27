@@ -3,7 +3,9 @@
 A standalone PostgreSQL database with one `users` table and two fictional users.
 The Python API connects to it through the shared `cs673_event_planning` Docker
 network. React's development server can forward requests to that API. There is
-no login or authentication feature in this starter.
+The API's register/login endpoints store accounts here with hashed passwords, and
+login sessions in a `user_sessions` table. The two sample users have no password,
+so they cannot log in. `start_project.sh` applies `migrations/*.sql` on every start.
 
 To run all three project parts together, follow
 [HOW_TO_START_AND_STOP_PROJECT.md](../HOW_TO_START_AND_STOP_PROJECT.md).
@@ -200,4 +202,6 @@ docker compose --project-directory User_Database exec database psql -U movie_adm
 
 The two sample users should remain, with their original IDs. Their `display_name` and `password_hash` values remain NULL, and `activity_preferences` defaults to an empty array.
 
-This migration does not implement password hashing, registration, or login. Those features will be developed separately.
+Registration and login now use these columns (see `AI_Movie_Chatbot/app/routes/auth.py`).
+`002_user_sessions.sql` adds the `user_sessions` table. `start_project.sh` applies
+every migration automatically on each start; running them by hand is also safe.
