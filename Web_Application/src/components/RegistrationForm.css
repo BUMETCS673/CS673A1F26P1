@@ -1,36 +1,6 @@
-.registration-form {
-  box-sizing: border-box;
-  width: 100%;
-  max-width: 440px;
-  margin: 24px auto;
-  padding: 24px;
-  border: 1px solid #cbd5e1;
-  border-radius: 12px;
-  background: #fff;
-  color: #172033;
-  font: 16px/1.5 system-ui, sans-serif;
-}
-.registration-form h1 { margin: 0 0 8px; font-size: 1.6rem; }
-.registration-form > p { margin: 0 0 20px; }
-.registration-form > label { display: block; margin-top: 14px; font-weight: 600; }
-.registration-form > input {
-  box-sizing: border-box;
-  width: 100%;
-  min-width: 0;
-  min-height: 44px;
-  padding: 9px 12px;
-  border: 1px solid #64748b;
-  border-radius: 6px;
-  font: inherit;
-}
 .registration-form fieldset { min-width: 0; margin: 22px 0; padding: 12px; border: 1px solid #64748b; border-radius: 6px; }
 .registration-form legend { padding: 0 4px; font-weight: 600; }
 .registration-form__choices { display: flex; flex-wrap: wrap; gap: 4px 16px; }
 .registration-form__choice { display: flex; align-items: center; gap: 8px; min-height: 44px; cursor: pointer; }
 .registration-form__choice input { width: 18px; height: 18px; accent-color: #2154b8; }
 .registration-form .registration-form__error { margin: 8px 0 0; color: #b42318; }
-.registration-form button { width: 100%; min-height: 44px; border: 0; border-radius: 6px; background: #2154b8; color: #fff; font: inherit; font-weight: 600; cursor: pointer; }
-.registration-form :focus-visible { outline: 3px solid #2563eb; outline-offset: 3px; }
-@media (max-width: 400px) {
-  .registration-form { padding: 16px; margin: 12px auto; }
-}

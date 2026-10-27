@@ -1,4 +1,5 @@
 import React, { useId, useState } from 'react';
+import './AuthForm.css';
 import './RegistrationForm.css';
 
 const preferences = ['Music', 'Arts', 'Food', 'Outdoors', 'Social'];
@@ -36,7 +37,7 @@ export default function RegistrationForm({ onSubmit }) {
   }
 
   return (
-    <form className="registration-form" onSubmit={handleSubmit}>
+    <form className="auth-form registration-form" onSubmit={handleSubmit}>
       <h1>Registration form</h1>
       <p>All fields are required. Choose at least one activity preference.</p>
 
@@ -47,7 +48,7 @@ export default function RegistrationForm({ onSubmit }) {
       <input id={`${id}-display-name`} name="display_name" autoComplete="nickname" maxLength={100} required />
 
       <label htmlFor={`${id}-email`}>Email</label>
-      <input id={`${id}-email`} name="email" type="email" autoComplete="email" required />
+      <input id={`${id}-email`} name="email" type="email" autoComplete="email" maxLength={255} required />
 
       <label htmlFor={`${id}-password`}>Password</label>
       <input id={`${id}-password`} name="password" type="password" autoComplete="new-password" required />
