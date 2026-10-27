@@ -1,16 +1,24 @@
 import React, { useEffect, useRef, useState } from 'react';
 
-const welcomeMessage = {
-  sender: 'Assistant',
-  text: 'Test the Python filter with JSON conditions. For example: {"category":"Music","date":"2026-11-01"}. Use {"category":"Music"} for any date, {"date":"2026-11-01"} for any category, or {} for all samples. This demo does not parse natural-language requests.',
+const welcomeMessages = {
+  parse: {
+    sender: 'Assistant',
+    text: "Try 'music' or 'Music on 2026-11-01'. Supported categories: Music, Arts, Food, Outdoors, Social. This action shows category, date, and needs_clarification. To filter the sample events, choose Filter sample events under Chat action.",
+  },
+  filter: {
+    sender: 'Assistant',
+    text: 'Enter JSON conditions, for example {"category":"Music","date":"2026-11-01"}. Use {"category":"Music"} for any date, {"date":"2026-11-01"} for any category, or {} for all samples. To parse text instead, choose Parse request under Chat action.',
+  },
 };
 
 export default function ChatPanel({ events }) {
+  const [mode, setMode] = useState('parse');
   const [draft, setDraft] = useState('');
-  const [messages, setMessages] = useState([welcomeMessage]);
+  const [messages, setMessages] = useState([welcomeMessages.parse]);
   const [isSending, setIsSending] = useState(false);
   const pendingRequest = useRef(null);
   const conversation = useRef(null);
+  const isFilter = mode === 'filter';
 
   useEffect(() => () => pendingRequest.current?.abort(), []);
   useEffect(() => {
@@ -24,19 +32,21 @@ export default function ChatPanel({ events }) {
     const request = draft.trim();
     if (!request || pendingRequest.current) return;
     let filters;
-    try {
-      filters = JSON.parse(request);
-      if (!filters || Array.isArray(filters) || typeof filters !== 'object'
-          || Object.keys(filters).some((key) => !['category', 'date'].includes(key))
-          || Object.values(filters).some((value) => value !== null && typeof value !== 'string')) {
-        throw new Error('Invalid filter conditions');
+    if (isFilter) {
+      try {
+        filters = JSON.parse(request);
+        if (!filters || Array.isArray(filters) || typeof filters !== 'object'
+            || Object.keys(filters).some((key) => !['category', 'date'].includes(key))
+            || Object.values(filters).some((value) => value !== null && typeof value !== 'string')) {
+          throw new Error('Invalid filter conditions');
+        }
+      } catch {
+        setMessages((previous) => [...previous, { sender: 'You', text: request }, {
+          sender: 'Assistant', error: true,
+          text: 'Enter a JSON object with only category and/or date, for example {"category":"Music","date":"2026-11-01"}. Choose Parse request to interpret text instead.',
+        }]);
+        return;
       }
-    } catch {
-      setMessages((previous) => [...previous, { sender: 'You', text: request }, {
-        sender: 'Assistant', error: true,
-        text: 'Enter a JSON object with only category and/or date, for example {"category":"Music","date":"2026-11-01"}. This branch tests filtering, not natural-language parsing.',
-      }]);
-      return;
     }
     const controller = new AbortController();
     pendingRequest.current = controller;
@@ -45,26 +55,31 @@ export default function ChatPanel({ events }) {
     setDraft('');
     setIsSending(true);
     try {
-      // Send the full existing sample list, independent of the sidebar filters.
-      // This is deliberately a demo adapter, not an authoritative event catalog.
-      const response = await fetch('/api/demo/filter-events', {
+      // Parsing sends only text; filtering sends explicit conditions and samples.
+      const response = await fetch(isFilter ? '/api/demo/filter-events' : '/api/demo/parse-event-request', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...filters, events }),
+        body: JSON.stringify(isFilter ? { ...filters, events } : { message: request }),
         signal: controller.signal,
       });
-      if (response.status === 422) {
+      if (isFilter && response.status === 422) {
         throw new Error('Use category up to 50 characters and date up to 10 characters.');
       }
       if (!response.ok) throw new Error('Demo request failed');
       const result = await response.json();
       if (controller.signal.aborted) return;
-      setMessages((previous) => [...previous, {
+      setMessages((previous) => [...previous, isFilter ? {
         sender: 'Assistant', text: result.message,
         filters: { category: result.category, date: result.date }, events: result.events,
+      } : {
+        sender: 'Assistant',
+        text: result.needs_clarification
+          ? "Please clarify: use Music, Arts, Food, Outdoors, or Social, optionally followed by 'on YYYY-MM-DD' with a valid date. Relative dates and other phrases are not supported."
+          : 'Request recognized. Parsed conditions:',
+        interpretation: result,
       }]);
     } catch (error) {
-      // Clear chat/logout cancels silently; a timeout or service failure is shown.
+      // Clear chat, action changes, and logout cancel silently; show other failures.
       if (controller.signal.aborted && controller.signal.reason !== 'timeout') return;
       setMessages((previous) => [...previous, {
         sender: 'Assistant', error: true,
@@ -80,26 +95,44 @@ export default function ChatPanel({ events }) {
     }
   }
 
-  function clearChat() {
+  function resetChat(nextMode) {
     pendingRequest.current?.abort();
     pendingRequest.current = null;
     setIsSending(false);
-    setMessages([welcomeMessage]);
+    setMessages([welcomeMessages[nextMode]]);
     setDraft('');
+  }
+
+  function changeMode(event) {
+    const nextMode = event.target.value;
+    setMode(nextMode);
+    resetChat(nextMode);
   }
 
   return (
     <section className="panel chat-panel" aria-labelledby="chat-title">
       <div className="section-heading">
         <h2 id="chat-title">Plan with a chat</h2>
-        <span className="placeholder-badge">Filter demo</span>
+        <span className="placeholder-badge">{isFilter ? 'Filter demo' : 'Parser demo'}</span>
       </div>
-      <p className="muted-text">Explicit JSON filters · Python backend · sample data only</p>
+      <p className="muted-text">{isFilter
+        ? 'Explicit JSON filters · sample events only'
+        : 'Request parsing · choose Filter sample events to search the samples'}</p>
+      <label htmlFor="chat-action">Chat action</label>
+      <select id="chat-action" value={mode} onChange={changeMode}>
+        <option value="parse">Parse request</option>
+        <option value="filter">Filter sample events</option>
+      </select>
       <div className="chat-messages" role="log" aria-label="Event conversation" ref={conversation}>
         {messages.map((message, index) => (
           <div className={`chat-message ${message.sender === 'You' ? 'from-user' : ''}`} key={index}>
             <strong>{message.sender}</strong>
             <p role={message.error ? 'alert' : undefined}>{message.text}</p>
+            {message.interpretation && (
+              <pre className="parsed-request" aria-label="Parsed request">
+                {JSON.stringify(message.interpretation, null, 2)}
+              </pre>
+            )}
             {message.filters && (
               <p className="interpreted-request">
                 Filters: {message.filters.category ?? 'any category'}
@@ -126,23 +159,23 @@ export default function ChatPanel({ events }) {
             )}
           </div>
         ))}
-        {isSending && <p role="status">Searching sample events…</p>}
+        {isSending && <p role="status">{isFilter ? 'Searching sample events…' : 'Parsing request…'}</p>}
       </div>
       <form onSubmit={handleSubmit}>
-        <label htmlFor="chat-request">Filter conditions (JSON)</label>
+        <label htmlFor="chat-request">{isFilter ? 'Filter conditions (JSON)' : 'Request text'}</label>
         <input
           id="chat-request"
           type="text"
-          placeholder={'{"category":"Music","date":"2026-11-01"}'}
+          placeholder={isFilter ? '{"category":"Music","date":"2026-11-01"}' : 'Music on 2026-11-01'}
           maxLength={1000}
           value={draft}
           onChange={(event) => setDraft(event.target.value)}
         />
         <div className="buttons">
           <button className="primary-button" type="submit" disabled={!draft.trim() || isSending}>
-            {isSending ? 'Filtering…' : 'Filter sample events'}
+            {isSending ? (isFilter ? 'Filtering…' : 'Parsing…') : (isFilter ? 'Filter sample events' : 'Parse request')}
           </button>
-          <button className="text-button" type="button" onClick={clearChat}>Clear chat</button>
+          <button className="text-button" type="button" onClick={() => resetChat(mode)}>Clear chat</button>
         </div>
       </form>
     </section>

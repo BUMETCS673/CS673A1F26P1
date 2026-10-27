@@ -84,6 +84,7 @@ textarea { display: block; resize: vertical; }
 .chat-message strong { font-size: .78rem; color: #256354; }
 .chat-message p { margin-top: 4px; }
 .chat-message.from-user { background: #e6f2ee; margin-left: 20px; }
+.parsed-request { white-space: pre-wrap; overflow-wrap: anywhere; margin: 10px 0 0; padding: 10px; background: #f2f6f7; border-radius: 6px; }
 .interpreted-request { font-weight: bold; color: #256354; }
 .chat-event-results { list-style: none; margin: 12px 0 0; padding: 0; }
 .chat-event-results li { padding: 12px 0; border-top: 1px solid #b1c2c9; }
