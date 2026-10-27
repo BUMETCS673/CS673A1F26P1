@@ -1,4 +1,5 @@
 import React, { useId } from 'react';
+import './AuthForm.css';
 import './LoginForm.css';
 
 // onSubmit receives { username, password }. error is an optional message.
@@ -15,7 +16,7 @@ export default function LoginForm({ onSubmit, error }) {
   }
 
   return (
-    <form className="login-form" onSubmit={handleSubmit} aria-describedby={error ? `${id}-error` : undefined}>
+    <form className="auth-form login-form" onSubmit={handleSubmit} aria-describedby={error ? `${id}-error` : undefined}>
       <h1>Log in</h1>
       <p>Both fields are required.</p>
       <label htmlFor={`${id}-username`}>Username</label>
