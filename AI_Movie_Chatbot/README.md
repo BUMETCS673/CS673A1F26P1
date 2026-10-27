@@ -39,8 +39,16 @@ message when configuration or the database is unavailable. It reads no user
 records and returns no connection settings. Both endpoints also work through
 nginx on port 8080. The interactive docs can call them through nginx.
 
-After source changes, repeat the startup command to rebuild the image. Inspect
-startup errors with:
+The Docker development server reloads automatically after saving Python or JSON
+files under `app/`. Keep the project running; refresh your browser or repeat
+the API request to see the changed response. New files under `app/` are shared
+with the container too. Source is mounted read-only; edit it on your computer.
+Polling supports saves from Windows/WSL editors. Uvicorn's reload mode is enabled
+by Compose for development; the Dockerfile's standalone command is unchanged.
+
+After requirements, Docker, or environment changes, rerun `./start_project.sh`
+to rebuild/recreate the apps. Database changes still need migrations. Inspect
+reload/startup errors with:
 
 ```bash
 docker compose --project-directory AI_Movie_Chatbot logs app web
@@ -74,6 +82,23 @@ Press Ctrl+C to stop. Run module commands from `AI_Movie_Chatbot` so Python can
 find the `app` package.
 
 ## Where to add a feature
+
+### Independent FV-117 browser demo
+
+Start the stack with `bash start_project.sh` and open http://localhost:3000.
+After the fake demo login, enter JSON in the chat panel's **Filter conditions
+(JSON)** input and click **Filter sample events**:
+
+- `{"category":"Music"}` returns two samples.
+- `{"category":"Music","date":"2026-11-01"}` returns one.
+- `{"date":"2026-11-01"}` returns the two samples on that date.
+- `{}` returns all six; `{"category":"Music","date":"2026-11-02"}` returns none.
+
+`POST /api/demo/filter-events` takes optional `category` and `date`, plus the
+browser's full existing fictional `events` list, and calls `filter_events`.
+The list is client-supplied demo data, not an authoritative catalog. No login,
+database, external model, or FV-118 parser is introduced. Natural-language text
+is deliberately not accepted in this branch. This is not complete FV-99.
 
 - `app/main.py`: `create_app()` creates FastAPI and registers feature routers.
   The exported `app` is Uvicorn's entry point. Importing it does not run a server.
@@ -199,7 +224,7 @@ before taking the database Compose project down, because they use its network.
 The production image installs only `requirements.txt`.
 
 To update dependencies, use a fresh Python 3.12 virtual environment, install the
-chosen FastAPI/Uvicorn/psycopg[binary] versions, and run `python -m pip freeze` to regenerate the
+chosen FastAPI/Uvicorn/psycopg[binary]/watchfiles versions, and run `python -m pip freeze` to regenerate the
 runtime pins. Install the chosen httpx2 version afterward and update only the
 extra test pins in `requirements-dev.txt`. Run `pip check`, the tests, and the
 Docker checks before committing the updated versions.

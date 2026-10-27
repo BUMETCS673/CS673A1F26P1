@@ -3,7 +3,7 @@
 from fastapi import FastAPI
 from fastapi.responses import PlainTextResponse
 
-from app.routes import health
+from app.routes import filter_demo, health
 
 
 def create_app() -> FastAPI:
@@ -14,6 +14,7 @@ def create_app() -> FastAPI:
         version="0.1.0",
     )
     application.include_router(health.router, prefix="/api")
+    application.include_router(filter_demo.router, prefix="/api")
 
     @application.get("/", response_class=PlainTextResponse, include_in_schema=False)
     async def status() -> str:

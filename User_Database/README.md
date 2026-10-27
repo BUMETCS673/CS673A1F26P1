@@ -168,3 +168,36 @@ The shared password is only for this local development database. Use separate,
 private credentials before any future deployment. The connection account is an
 administrator used only for local development; a deployment needs a separate
 limited account. `/api/health/database` checks `SELECT 1` without reading users.
+## Account Fields Migration (FV-113)
+
+This migration adds three fields to the existing `users` table:
+
+- `display_name` — stores the user's display name.
+- `password_hash` — reserved for storing hashed passwords in future registration work.
+- `activity_preferences` — stores a list of activity preferences, with an empty array as the default.
+
+### Apply the migration
+
+First, start the project using Docker:
+
+```bash
+bash start_project.sh
+```
+
+Then, from the repository root, run:
+
+```bash
+docker compose --project-directory User_Database exec -T database psql -v ON_ERROR_STOP=1 -U movie_admin -d movie_users < User_Database/migrations/001_account_fields.sql
+```
+
+This updates an existing development database without deleting the original users. The migration can be run more than once because it uses `ADD COLUMN IF NOT EXISTS`.
+
+### Verify the migration
+
+```bash
+docker compose --project-directory User_Database exec database psql -U movie_admin -d movie_users -c "SELECT id, username, email, display_name, password_hash, activity_preferences FROM users ORDER BY id;"
+```
+
+The two sample users should remain, with their original IDs. Their `display_name` and `password_hash` values remain NULL, and `activity_preferences` defaults to an empty array.
+
+This migration does not implement password hashing, registration, or login. Those features will be developed separately.

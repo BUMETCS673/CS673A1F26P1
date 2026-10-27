@@ -39,8 +39,8 @@ function Dashboard({ onLogout }) {
           <h1>Find your next plan.</h1>
           <p>Browse events, narrow your choices, and plan with a chat.</p>
           <p className="prototype-note">
-            Scaffold only: fictional events, local sample filters, and preset chat replies.
-            Real accounts, event data, and AI still need to be connected.
+            Demo: fictional events and Python-powered filtering with explicit category/date conditions.
+            Real accounts, an authoritative event catalog, and conversational parsing are future work.
           </p>
         </div>
 
@@ -54,7 +54,7 @@ function Dashboard({ onLogout }) {
               onDateChange={setDate}
               onClear={clearFilters}
             />
-            <ChatPanel />
+            <ChatPanel events={sampleEvents} />
           </aside>
         </div>
       </main>

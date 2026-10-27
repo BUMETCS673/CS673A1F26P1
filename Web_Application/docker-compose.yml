@@ -1,9 +1,18 @@
 services:
   website:
     build: .
+    # Come back automatically after a reboot or Docker Desktop restart.
+    restart: unless-stopped
     environment:
       # This is read by Vite's server config, never injected into browser code.
       API_PROXY_TARGET: http://api:8000
+      # Polling also detects saves through Docker Desktop and Windows/WSL editors.
+      DEV_USE_POLLING: "true"
+    volumes:
+      # Watch the host project directly, including new files and editor renames.
+      - .:/app:ro
+      # Keep Linux dependencies/cache in Docker, independent of host node_modules.
+      - /app/node_modules
     ports:
       # Only make this development website available on this computer.
       # Use 3000 outside Docker so a separate local Vite session can use 5173.
