@@ -39,8 +39,8 @@ function Dashboard({ onLogout }) {
           <h1>Find your next plan.</h1>
           <p>Browse events, narrow your choices, and plan with a chat.</p>
           <p className="prototype-note">
-            Demo: fictional events and Python-powered filtering with explicit category/date conditions.
-            Real accounts, an authoritative event catalog, and conversational parsing are future work.
+            Demo: fictional events with request parsing and sample event filtering in chat.
+            Choose a chat action to try each feature. Real accounts and an authoritative event catalog are future work.
           </p>
         </div>
 
