@@ -1,3 +1,11 @@
+# AI-USAGE SUMMARY
+# Authors: Daniel Winnie
+# Tools: Claude Code (Claude Opus), prompted by Daniel Winnie
+# Overall AI Contribution: ~90%
+# AI-Assisted Areas: auth contract test cases with an in-memory store
+# Human Contributions: Daniel Winnie: requirements and prompts, design choices (FastAPI, Docker layout, beginner-friendly comments), reviewed every change before committing, decided what to keep
+# Notes/Verification: all tests pass; cases reviewed against the auth requirements
+
 """Auth API contracts with an in-memory account store; no database required.
 
 The SQL in app/users.py is exercised against PostgreSQL by live_auth.py.

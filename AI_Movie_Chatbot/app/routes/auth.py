@@ -1,3 +1,11 @@
+# AI-USAGE SUMMARY
+# Authors: Daniel Winnie
+# Tools: Claude Code (Claude Opus), prompted by Daniel Winnie
+# Overall AI Contribution: ~90%
+# AI-Assisted Areas: register/login/me/logout routes, validation models, session cookie
+# Human Contributions: Daniel Winnie: requirements and prompts, design choices (FastAPI, Docker layout, beginner-friendly comments), reviewed every change before committing, decided what to keep
+# Notes/Verification: tests/test_auth.py, tests/live_auth.py, manual register/login/logout in the browser
+
 """Registration, login, current user, and logout with server-side sessions.
 
 The browser receives an HttpOnly cookie that JavaScript cannot read. The
@@ -103,6 +111,16 @@ def _set_session_cookie(response: Response, token: str) -> None:
     )
 
 
+# AI-ASSISTED: YES
+# Tool: Claude Code (Claude Opus)
+# Prompt Summary: "Add real register and log in (backend API, users in the database), make log out reopen the pop-up, serve the sample events from the backend, fix event time ordering, and make sure it all works"
+# AI Contribution: initial implementation (~90%)
+# Modifications:
+#  - Validation rules matched to the registration form (FV-114) and the users table (FV-113)
+# Verification:
+#  - tests/test_auth.py (201, 409 duplicate, 422 invalid input, 503 database down)
+#  - manual registration in the browser
+# Confidence: High
 @router.post("/register", response_model=UserResponse, status_code=201,
              responses={409: {"description": "Username or email already registered"},
                         503: {"description": "Database unavailable"}})
@@ -118,6 +136,16 @@ def register(request: RegisterRequest) -> dict:
         raise _database_unavailable() from None
 
 
+# AI-ASSISTED: YES
+# Tool: Claude Code (Claude Opus)
+# Prompt Summary: "Add real register and log in (backend API, users in the database), make log out reopen the pop-up, serve the sample events from the backend, fix event time ordering, and make sure it all works"
+# AI Contribution: initial implementation (~90%)
+# Modifications:
+#  - Same error for unknown user and wrong password; dummy hash keeps timing similar
+# Verification:
+#  - tests/test_auth.py (200 + HttpOnly cookie, 401)
+#  - manual login, reload, logout in the browser
+# Confidence: High
 @router.post("/login", response_model=UserResponse,
              responses={401: {"description": "Incorrect username or password"},
                         503: {"description": "Database unavailable"}})

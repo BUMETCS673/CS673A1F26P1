@@ -1,4 +1,12 @@
 #!/usr/bin/env bash
+# AI-USAGE SUMMARY
+# Authors: Daniel Winnie
+# Tools: OpenAI Codex (CLI agent), prompted by Daniel Winnie; Claude Code (Claude Opus), prompted by Daniel Winnie (migrations on start)
+# Overall AI Contribution: ~90%
+# AI-Assisted Areas: one-command startup, health waits, migrations
+# Human Contributions: Daniel Winnie: requirements and prompts, design choices (FastAPI, Docker layout, beginner-friendly comments), reviewed every change before committing, decided what to keep
+# Notes/Verification: ran start_project.sh in WSL + Docker, checked localhost:3000, :8080/docs and /api/health/database
+
 # Start all three parts from any working directory. Bash stops on errors.
 set -euo pipefail
 

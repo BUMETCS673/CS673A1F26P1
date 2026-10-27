@@ -1,3 +1,11 @@
+# AI-USAGE SUMMARY
+# Authors: Daniel Winnie
+# Tools: OpenAI Codex (CLI agent), prompted by Daniel Winnie
+# Overall AI Contribution: ~90%
+# AI-Assisted Areas: live HTTP stack checks
+# Human Contributions: Daniel Winnie: requirements and prompts, design choices (FastAPI, Docker layout, beginner-friendly comments), reviewed every change before committing, decided what to keep
+# Notes/Verification: ran start_project.sh in WSL + Docker, checked localhost:3000, :8080/docs and /api/health/database
+
 """Live HTTP checks: python3 tests/check_stack.py [--expect-database-down]."""
 
 import argparse

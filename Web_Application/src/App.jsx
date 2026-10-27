@@ -1,3 +1,11 @@
+// AI-USAGE SUMMARY
+// Authors: Daniel Winnie, Ji Wu
+// Tools: OpenAI Codex (CLI agent), prompted by Daniel Winnie; Claude Code (Claude Opus), prompted by Daniel Winnie (auth + API events); Ji Wu's chat wiring: not yet reported by the author - author to confirm in the AIUsageLog
+// Overall AI Contribution: ~85% (Daniel's parts); Ji Wu's part to be confirmed
+// AI-Assisted Areas: dashboard layout, auth state, event loading and filtering
+// Human Contributions: Daniel Winnie: requirements and prompts, design choices (FastAPI, Docker layout, beginner-friendly comments), reviewed every change before committing, decided what to keep; Ji Wu: Chatbox demo integration
+// Notes/Verification: manual browser testing on localhost:3000 (desktop and narrow widths)
+
 import React, { useEffect, useState } from 'react';
 import AuthDialog from './components/AuthDialog.jsx';
 import EventFeed from './components/EventFeed.jsx';

@@ -1,3 +1,11 @@
+// AI-USAGE SUMMARY
+// Authors: Junshuo Huang, Daniel Winnie
+// Tools: ChatGPT (reported by Junshuo Huang, weekly report week 6); Claude Code (Claude Opus), prompted by Daniel Winnie for later edits
+// Overall AI Contribution: to be confirmed by Junshuo Huang; later edits ~90%
+// AI-Assisted Areas: login form and error display (FV-115); later edit: connected to the auth API
+// Human Contributions: Junshuo Huang: form fields, validation rules, preview pages, shared styles (FV-114/115)
+// Notes/Verification: checked in the preview pages and the Vite build (per weekly report); later edits checked by the auth unit tests and manual login/registration in the browser
+
 import React, { useId } from 'react';
 import './AuthForm.css';
 import './LoginForm.css';

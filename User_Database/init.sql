@@ -1,3 +1,11 @@
+-- AI-USAGE SUMMARY
+-- Authors: Daniel Winnie, Yuchen Xu (FV-113 account fields)
+-- Tools: OpenAI Codex (CLI agent), prompted by Daniel Winnie; Claude Code (Claude Opus), prompted by Daniel Winnie (user_sessions table); Yuchen Xu: not yet reported by the author - author to confirm in the AIUsageLog
+-- Overall AI Contribution: ~85% (Daniel's parts); Yuchen Xu's part to be confirmed
+-- AI-Assisted Areas: users table, sample rows, comments
+-- Human Contributions: Daniel Winnie: requirements and prompts, design choices (FastAPI, Docker layout, beginner-friendly comments), reviewed every change before committing, decided what to keep; Yuchen Xu: display_name / password_hash / activity_preferences columns
+-- Notes/Verification: database initialised from an empty volume via start_project.sh; /api/health/database ok
+
 -- This file runs automatically on the FIRST startup with an empty data volume.
 -- It creates one table: a collection of rows with the same named columns.
 CREATE TABLE users (

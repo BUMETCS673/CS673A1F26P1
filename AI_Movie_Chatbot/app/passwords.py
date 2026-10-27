@@ -1,3 +1,11 @@
+# AI-USAGE SUMMARY
+# Authors: Daniel Winnie
+# Tools: Claude Code (Claude Opus), prompted by Daniel Winnie
+# Overall AI Contribution: ~90%
+# AI-Assisted Areas: scrypt hashing, constant-time verification, dummy hash
+# Human Contributions: Daniel Winnie: requirements and prompts, design choices (FastAPI, Docker layout, beginner-friendly comments), reviewed every change before committing, decided what to keep
+# Notes/Verification: tests/test_auth.py, tests/live_auth.py; reviewed against the OWASP Password Storage Cheat Sheet
+
 """Password hashing with the standard library's scrypt; no extra dependency."""
 
 import base64
@@ -15,6 +23,16 @@ def _scrypt(password: str, salt: bytes, n: int, r: int, p: int) -> bytes:
                           maxmem=64 * 1024 * 1024, dklen=KEY_BYTES)
 
 
+# AI-ASSISTED: YES
+# Tool: Claude Code (Claude Opus)
+# Prompt Summary: "Add real register and log in (backend API, users in the database), make log out reopen the pop-up, serve the sample events from the backend, fix event time ordering, and make sure it all works"
+# AI Contribution: initial implementation (~90%)
+# Modifications:
+#  - Daniel chose the standard-library scrypt (no new dependency) and reviewed the parameters
+# Verification:
+#  - tests/test_auth.py (salted hash verifies; missing or malformed hash never matches)
+#  - manual login in the browser
+# Confidence: High
 def hash_password(password: str) -> str:
     """Return 'scrypt$n$r$p$salt$key'; each hash has its own random salt."""
     salt = secrets.token_bytes(SALT_BYTES)
