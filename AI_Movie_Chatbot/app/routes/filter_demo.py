@@ -1,9 +1,9 @@
 # AI-USAGE SUMMARY
 # Authors: Ji Wu
-# Tools: not yet reported by the author - author to confirm in the AIUsageLog
-# Overall AI Contribution: to be confirmed by Ji Wu
+# Tools: OpenAI Codex, prompted by Ji Wu
+# Overall AI Contribution: 80%
 # AI-Assisted Areas: POST /api/demo/filter-events route and models (FV-117)
-# Human Contributions: Ji Wu: implementation and tests (FV-117 / FV-118)
+# Human Contributions: Ji Wu: requirements, prompts, scope decisions, and review of results
 # Notes/Verification: behaviour covered by the unit tests in AI_Movie_Chatbot/tests; merged via PRs #11/#12
 
 """Independent HTTP demo for FV-117; no request-parser dependency."""
