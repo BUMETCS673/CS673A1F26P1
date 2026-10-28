@@ -20,7 +20,7 @@ below explain how to work with the database on its own.
 2. If using Windows with WSL, enable integration for your WSL distribution in
    Docker Desktop under **Settings > Resources > WSL Integration**.
 3. Clone this GitHub repository (or pull the branch containing this folder).
-   Open a terminal in the repository's root and run:
+   Open a terminal in the repository's `code` folder and run:
 
 ```bash
 cd User_Database
@@ -186,7 +186,7 @@ First, start the project using Docker:
 bash start_project.sh
 ```
 
-Then, from the repository root, run:
+Then, from the `code` folder, run:
 
 ```bash
 docker compose --project-directory User_Database exec -T database psql -v ON_ERROR_STOP=1 -U movie_admin -d movie_users < User_Database/migrations/001_account_fields.sql

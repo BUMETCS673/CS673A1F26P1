@@ -11,6 +11,13 @@ changed direction to event planning at the 10/23 team meeting. Some folder and
 database names, such as `AI_Movie_Chatbot/` and `movie_users`, keep the old
 name so existing setups keep working.
 
+| Folder | Iteration 1 deliverable |
+| --- | --- |
+| [`code/`](code/) | Runnable source code and tests |
+| [`doc/`](doc/) | Presentation, SPPP, risk management, SDD, STD, progress report, meeting minutes |
+| [`demo/`](demo/) | Iteration demo video |
+| `README.md` | This file |
+
 ## Status: Iteration 1
 
 | Works now | Planned next (Iteration 2+) |
@@ -29,6 +36,7 @@ Requires Docker Desktop (on Windows, use an Ubuntu/WSL terminal). From the
 repository root:
 
 ```bash
+cd code
 ./start_project.sh
 ```
 
@@ -41,8 +49,8 @@ When it prints **"The project is ready!"**, open:
 | http://localhost:3000/api/health/database | Checks the React → Python → PostgreSQL chain |
 
 Full setup, troubleshooting, and the destructive cleanup script
-(`stop_project.sh` deletes the local database) are in
-**[HOW_TO_START_AND_STOP_PROJECT.md](HOW_TO_START_AND_STOP_PROJECT.md)**.
+(`code/stop_project.sh` deletes the local database) are in
+**[code/HOW_TO_START_AND_STOP_PROJECT.md](code/HOW_TO_START_AND_STOP_PROJECT.md)**.
 
 ## Architecture
 
@@ -59,23 +67,23 @@ the database. The design is described in the SDD (see Documents).
 
 | Folder | Contents |
 | --- | --- |
-| [`Web_Application/`](Web_Application/README.md) | React frontend: `src/App.jsx`, components (event feed, filters, chat panel, login/registration forms), form preview pages |
-| [`AI_Movie_Chatbot/`](AI_Movie_Chatbot/README.md) | Python FastAPI backend: `app/routes/` (health, events, auth, demo parser/filter), `app/users.py` and `app/passwords.py` (accounts), `app/data/sample_events.json`, nginx config, and `tests/` |
-| [`User_Database/`](User_Database/README.md) | PostgreSQL service: `init.sql` and versioned `migrations/` |
-| `start_project.sh`, `stop_project.sh` | Start everything with one command; remove everything (including data) |
-| `iteration0/`, `doc/` | Submitted documents for each iteration |
-| `code/`, `demo/`, `misc/` | Course template folders |
+| [`code/Web_Application/`](code/Web_Application/README.md) | React frontend: `src/App.jsx`, components (event feed, filters, chat panel, login/registration forms), form preview pages |
+| [`code/AI_Movie_Chatbot/`](code/AI_Movie_Chatbot/README.md) | Python FastAPI backend: `app/routes/` (health, events, auth, demo parser/filter), `app/users.py` and `app/passwords.py` (accounts), `app/data/sample_events.json`, nginx config, and `tests/` |
+| [`code/User_Database/`](code/User_Database/README.md) | PostgreSQL service: `init.sql` and versioned `migrations/` |
+| `code/start_project.sh`, `code/stop_project.sh` | Start everything with one command; remove everything (including data) |
+| [`doc/`](doc/) | Iteration documents; Iteration 0's submission is in [`doc/iteration0/`](doc/iteration0/) |
+| `demo/`, `misc/` | Demo videos; other material |
 
 ## Tests
 
-From `AI_Movie_Chatbot/`, with Python 3.12 and `requirements-dev.txt` installed:
+From `code/AI_Movie_Chatbot/`, with Python 3.12 and `requirements-dev.txt` installed:
 
 ```bash
 python -m unittest discover -s tests -v                        # 65 unit tests, no database needed
 python -m unittest discover -s tests -p "live_*.py" -v          # live checks against the running PostgreSQL
 ```
 
-Static analysis: `bandit -r AI_Movie_Chatbot/app` reports no open findings.
+Static analysis: `bandit -r code/AI_Movie_Chatbot/app` reports no open findings.
 
 ## Development process
 
@@ -90,8 +98,8 @@ Static analysis: `bandit -r AI_Movie_Chatbot/app` reports no open findings.
 
 ## Documents
 
-Team documents are written in the team Google Drive and exported to `doc/` for
-each release:
+Team documents are written in the team Google Drive and exported to
+[`doc/`](doc/) for each release (see [`doc/Readme.md`](doc/Readme.md) for the file list):
 
 - SPPP: project proposal and plan, with the risk management sheet
 - SDD: software design document

@@ -12,7 +12,7 @@ To run all three project parts together with Docker, follow
 The commands below are an optional frontend-only workflow using local npm.
 
 The Docker workflow also reloads on save: run `./start_project.sh` once from the
-repository root, open http://localhost:3000, and keep editing in your normal
+`code` folder, open http://localhost:3000, and keep editing in your normal
 editor. Vite sees saved components, CSS, HTML, and sample data without rebuilding
 the image. Some changes reload the whole page; your login session is kept.
 After dependency or Docker/environment configuration changes, rerun the startup
@@ -20,7 +20,7 @@ script. The container uses its own dependency volume; host packages are not
 used. Startup creates an empty host `node_modules` mount point if needed. Source
 files are read-only inside Docker. To check a build there, run
 `docker compose --project-directory Web_Application exec website npm run build -- --outDir /tmp/frontend-build`
-from the repository root; local `npm run build` still uses local `dist` as usual.
+from the `code` folder; local `npm run build` still uses local `dist` as usual.
 
 ## Run it locally
 
@@ -28,7 +28,7 @@ Install Node.js and npm if they are not already installed. Vite 6 supports
 Node.js 18, 20, and 22+. For a new installation, use a supported LTS version
 such as Node.js 22 or 24.
 
-From the repository's root folder, run these commands one at a time:
+From the repository's `code` folder, run these commands one at a time:
 
 ```bash
 cd Web_Application
@@ -114,7 +114,7 @@ Keep third-party API keys on the Python server, never in React source files.
 
 ## Use the connected development API
 
-Run `bash start_project.sh` from the repository root, then open
+Run `bash start_project.sh` from the `code` folder, then open
 http://localhost:3000/api/health/database. Vite forwards `/api` requests to Python,
 which runs `SELECT 1` against PostgreSQL. Success is
 `{"status":"ok","database":"ok"}`; an unavailable database returns HTTP 503.

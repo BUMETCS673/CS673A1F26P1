@@ -7,7 +7,7 @@ new feature work targets event planning.
 
 ## Run with Docker
 
-From the repository root:
+From the repository's `code` folder:
 
 ```bash
 bash start_project.sh
@@ -185,7 +185,7 @@ no `.env` is needed. For another existing database, copy `.env.example` to `.env
 inside `AI_Movie_Chatbot`, replace every placeholder, and rebuild/recreate the
 backend. Compose loads this folder's `.env`; exported shell variables take
 precedence. Those overrides configure the API connection, not PostgreSQL's
-initialization or its existing accounts. Avoid a separate root `.env` so Compose
+initialization or its existing accounts. Avoid a separate `.env` in `code/` or the repository root so Compose
 does not pick up competing settings.
 
 | Variable | Purpose |
@@ -229,7 +229,7 @@ real database, checks what is stored, and deletes the account afterwards.
 These verify connection cleanup after success and failure, a real query timeout,
 and a bounded connection attempt to a deliberately unresponsive local server.
 Also check the real Docker/nginx path
-after changing startup or proxy configuration. From the repository root:
+after changing startup or proxy configuration. From the repository's `code` folder:
 
 ```bash
 bash start_project.sh
@@ -254,7 +254,7 @@ docker compose --project-directory User_Database start database
 ```
 
 For repeatable HTTP assertions with Python 3's standard library, run from the
-repository root after startup:
+`code` folder after startup:
 
 ```bash
 python3 AI_Movie_Chatbot/tests/check_stack.py
@@ -264,8 +264,8 @@ While the database is stopped, add `--expect-database-down`. For a local Vite
 server, add `--base-url http://localhost:5173`. These checks cover JSON success,
 safe database failure, liveness, and proxy forwarding of unknown API routes.
 
-Stopping/starting the database preserves its volume. The separate root
-`stop_project.sh` deliberately deletes local data. Shut down frontend and backend
+Stopping/starting the database preserves its volume. The separate
+`code/stop_project.sh` deliberately deletes local data. Shut down frontend and backend
 before taking the database Compose project down, because they use its network.
 
 ## Dependency versions
