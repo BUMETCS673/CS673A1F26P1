@@ -35,7 +35,7 @@ class ApiTests(unittest.TestCase):
         response = self.client.get("/")
         self.assertEqual(response.status_code, 200)
         self.assertTrue(response.headers["content-type"].startswith("text/plain"))
-        self.assertEqual(response.text, "AI Movie Recommendation Chatbot is running")
+        self.assertEqual(response.text, "Boston Events Planner API is running")
 
     def test_unknown_route_returns_json_404(self):
         for path in ("/does-not-exist", "/api/does-not-exist"):

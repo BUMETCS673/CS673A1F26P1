@@ -64,7 +64,7 @@ def create_user(username: str, email: str, display_name: str, password_hash: str
             try:
                 cursor.execute(
                     "INSERT INTO users (username, email, display_name, password_hash, "
-                    f"activity_preferences) VALUES (%s, %s, %s, %s, %s) RETURNING {USER_COLUMNS}",
+                    f"activity_preferences) VALUES (%s, %s, %s, %s, %s) RETURNING {USER_COLUMNS}",  # nosec B608 - constant column list; values are parameters
                     (username, email, display_name, password_hash, activity_preferences),
                 )
             except psycopg.errors.UniqueViolation as error:
@@ -79,7 +79,7 @@ def find_login(username: str) -> tuple[dict, str | None] | None:
     with get_connection() as connection:
         with connection.cursor() as cursor:
             cursor.execute(
-                f"SELECT {USER_COLUMNS}, password_hash FROM users "
+                f"SELECT {USER_COLUMNS}, password_hash FROM users "  # nosec B608 - constant column list; values are parameters
                 "WHERE lower(username) = lower(%s) ORDER BY id LIMIT 1",
                 (username,),
             )
@@ -118,7 +118,7 @@ def get_session_user(token: str) -> dict | None:
     with get_connection() as connection:
         with connection.cursor() as cursor:
             cursor.execute(
-                f"SELECT {USER_COLUMNS} FROM users WHERE id = ("
+                f"SELECT {USER_COLUMNS} FROM users WHERE id = ("  # nosec B608 - constant column list; values are parameters
                 "SELECT user_id FROM user_sessions WHERE token_hash = %s AND expires_at > now())",
                 (_token_hash(token),),
             )

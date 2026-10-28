@@ -30,7 +30,7 @@ def create_app() -> FastAPI:
     @application.get("/", response_class=PlainTextResponse, include_in_schema=False)
     async def status() -> str:
         # Keep the existing startup page useful while features are added.
-        return "AI Movie Recommendation Chatbot is running"
+        return "Boston Events Planner API is running"
 
     return application
 
