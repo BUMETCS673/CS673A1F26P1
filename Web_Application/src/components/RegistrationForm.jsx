@@ -1,7 +1,7 @@
 // AI-USAGE SUMMARY
 // Authors: Junshuo Huang, Daniel Winnie
 // Tools: ChatGPT (reported by Junshuo Huang, weekly report week 6); Claude Code (Claude Opus), prompted by Daniel Winnie for later edits
-// Overall AI Contribution: to be confirmed by Junshuo Huang; later edits ~90%
+// Overall AI Contribution: ~95% for Junshuo Huang contributions; later edits ~90%
 // AI-Assisted Areas: registration form and validation (FV-114); later edit: connected to the auth API
 // Human Contributions: Junshuo Huang: form fields, validation rules, preview pages, shared styles (FV-114/115)
 // Notes/Verification: checked in the preview pages and the Vite build (per weekly report); later edits checked by the auth unit tests and manual login/registration in the browser
