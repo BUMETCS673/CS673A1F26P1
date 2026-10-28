@@ -1,3 +1,13 @@
+/*
+ * AI-USAGE SUMMARY
+ * Authors: Junshuo Huang
+ * Tools: ChatGPT (reported by Junshuo Huang, weekly report week 6)
+ * Overall AI Contribution: to be confirmed by Junshuo Huang
+ * AI-Assisted Areas: shared form styles
+ * Human Contributions: Junshuo Huang: form fields, validation rules, preview pages, shared styles (FV-114/115)
+ * Notes/Verification: checked in the preview pages and the Vite build (per weekly report)
+ */
+
 .auth-form {
   box-sizing: border-box;
   width: 100%;

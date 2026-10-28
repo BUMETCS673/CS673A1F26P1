@@ -1,3 +1,11 @@
+# AI-USAGE SUMMARY
+# Authors: Daniel Winnie (route), Yung Cheng Chiu (sample data, FV-116)
+# Tools: Claude Code (Claude Opus), prompted by Daniel Winnie
+# Overall AI Contribution: ~90%
+# AI-Assisted Areas: GET /api/events route, cached loading, date/time ordering
+# Human Contributions: Daniel Winnie: requirements and prompts, design choices (FastAPI, Docker layout, beginner-friendly comments), reviewed every change before committing, decided what to keep; Yung Cheng Chiu: the six sample events in data/sample_events.json
+# Notes/Verification: tests/test_events.py; curl and Swagger /docs
+
 """FV-116: serve the six fictional Boston sample events from Python."""
 
 import json

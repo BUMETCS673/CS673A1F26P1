@@ -1,2 +1,12 @@
+/*
+ * AI-USAGE SUMMARY
+ * Authors: Junshuo Huang
+ * Tools: ChatGPT (reported by Junshuo Huang, weekly report week 6)
+ * Overall AI Contribution: to be confirmed by Junshuo Huang
+ * AI-Assisted Areas: login form styles
+ * Human Contributions: Junshuo Huang: form fields, validation rules, preview pages, shared styles (FV-114/115)
+ * Notes/Verification: checked in the preview pages and the Vite build (per weekly report)
+ */
+
 .login-form .login-form__error { margin: 8px 0 0; color: #b42318; }
 .login-form button { margin-top: 22px; }

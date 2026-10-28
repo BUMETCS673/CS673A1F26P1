@@ -1,3 +1,11 @@
+# AI-USAGE SUMMARY
+# Authors: Ji Wu
+# Tools: not yet reported by the author - author to confirm in the AIUsageLog
+# Overall AI Contribution: to be confirmed by Ji Wu
+# AI-Assisted Areas: POST /api/demo/parse-event-request route (FV-118)
+# Human Contributions: Ji Wu: implementation and tests (FV-117 / FV-118)
+# Notes/Verification: behaviour covered by the unit tests in AI_Movie_Chatbot/tests; merged via PRs #11/#12
+
 """Independent HTTP demo for FV-118; no catalog or filter dependency."""
 
 from fastapi import APIRouter

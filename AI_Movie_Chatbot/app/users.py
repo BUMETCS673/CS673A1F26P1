@@ -1,3 +1,11 @@
+# AI-USAGE SUMMARY
+# Authors: Daniel Winnie
+# Tools: Claude Code (Claude Opus), prompted by Daniel Winnie
+# Overall AI Contribution: ~90%
+# AI-Assisted Areas: account and session SQL (parameterized queries, token hashing)
+# Human Contributions: Daniel Winnie: requirements and prompts, design choices (FastAPI, Docker layout, beginner-friendly comments), reviewed every change before committing, decided what to keep
+# Notes/Verification: tests/live_auth.py against PostgreSQL; Bandit SAST (B608 reviewed: constant column list only)
+
 """Account and session storage. Routes call these helpers instead of writing SQL."""
 
 import hashlib
@@ -30,6 +38,16 @@ def _token_hash(token: str) -> str:
     return hashlib.sha256(token.encode("utf-8")).hexdigest()
 
 
+# AI-ASSISTED: YES
+# Tool: Claude Code (Claude Opus)
+# Prompt Summary: "Add real register and log in (backend API, users in the database), make log out reopen the pop-up, serve the sample events from the backend, fix event time ordering, and make sure it all works"
+# AI Contribution: initial implementation (~90%)
+# Modifications:
+#  - Reviewed the duplicate-account race handling and case-insensitive uniqueness
+# Verification:
+#  - tests/live_auth.py against PostgreSQL
+#  - Bandit SAST: only B608 on the constant column list (reviewed, not exploitable)
+# Confidence: High
 def create_user(username: str, email: str, display_name: str, password_hash: str,
                 activity_preferences: list[str]) -> dict:
     """Insert a user; names and emails are unique regardless of letter case."""
@@ -69,6 +87,16 @@ def find_login(username: str) -> tuple[dict, str | None] | None:
     return (_user(row[:5]), row[5]) if row else None
 
 
+# AI-ASSISTED: YES
+# Tool: Claude Code (Claude Opus)
+# Prompt Summary: "Add real register and log in (backend API, users in the database), make log out reopen the pop-up, serve the sample events from the backend, fix event time ordering, and make sure it all works"
+# AI Contribution: initial implementation (~90%)
+# Modifications:
+#  - Kept only a SHA-256 hash of each token in the database
+# Verification:
+#  - tests/live_auth.py (register/login/me/logout round trip, expired session rejected)
+#  - tests/test_auth.py (old token rejected after logout)
+# Confidence: High
 def create_session(user_id: int) -> str:
     """Store a new session and return the browser token (only its hash is saved)."""
     token = secrets.token_urlsafe(32)

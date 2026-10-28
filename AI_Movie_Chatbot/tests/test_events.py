@@ -1,3 +1,11 @@
+# AI-USAGE SUMMARY
+# Authors: Daniel Winnie
+# Tools: Claude Code (Claude Opus), prompted by Daniel Winnie
+# Overall AI Contribution: ~90%
+# AI-Assisted Areas: events endpoint and ordering test cases
+# Human Contributions: Daniel Winnie: requirements and prompts, design choices (FastAPI, Docker layout, beginner-friendly comments), reviewed every change before committing, decided what to keep
+# Notes/Verification: all tests pass
+
 """Run from AI_Movie_Chatbot: python -m unittest discover -s tests -v."""
 
 import unittest

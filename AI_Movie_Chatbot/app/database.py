@@ -1,3 +1,11 @@
+# AI-USAGE SUMMARY
+# Authors: Daniel Winnie
+# Tools: OpenAI Codex (CLI agent), prompted by Daniel Winnie
+# Overall AI Contribution: ~90%
+# AI-Assisted Areas: connection helper, timeouts, configuration errors (FV-112)
+# Human Contributions: Daniel Winnie: requirements and prompts, design choices (FastAPI, Docker layout, beginner-friendly comments), reviewed every change before committing, decided what to keep
+# Notes/Verification: unit tests in AI_Movie_Chatbot/tests (65 passing), manual checks in Swagger /docs; tests/live_database.py against PostgreSQL
+
 """One connection per operation; configuration and credentials stay on the server."""
 
 import os
@@ -41,6 +49,16 @@ def connection_options() -> dict:
     }
 
 
+# AI-ASSISTED: YES
+# Tool: OpenAI Codex
+# Prompt Summary: "Connect React, Python, and PostgreSQL for local development (FV-112)"
+# AI Contribution: initial implementation (~90%)
+# Modifications:
+#  - Daniel reviewed the timeouts and the generic 503 error so credentials never reach the browser
+# Verification:
+#  - tests/test_database.py
+#  - tests/live_database.py against the Docker database
+# Confidence: High
 @contextmanager
 def get_connection() -> Iterator[psycopg.Connection]:
     """Commit on success, roll back on error, and close in either case."""

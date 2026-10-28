@@ -1,3 +1,13 @@
+/*
+ * AI-USAGE SUMMARY
+ * Authors: Daniel Winnie, Ji Wu
+ * Tools: OpenAI Codex (CLI agent), prompted by Daniel Winnie; Claude Code (Claude Opus), prompted by Daniel Winnie; Ji Wu: not yet reported by the author - author to confirm in the AIUsageLog
+ * Overall AI Contribution: ~85% (Daniel's parts)
+ * AI-Assisted Areas: layout and colors
+ * Human Contributions: Daniel Winnie: requirements and prompts, design choices (FastAPI, Docker layout, beginner-friendly comments), reviewed every change before committing, decided what to keep; Ji Wu: chat demo styles
+ * Notes/Verification: manual browser testing on localhost:3000 (desktop and narrow widths)
+ */
+
 /* Basic layout and colors. No UI library is required to change this scaffold. */
 * { box-sizing: border-box; }
 html { scroll-behavior: smooth; }

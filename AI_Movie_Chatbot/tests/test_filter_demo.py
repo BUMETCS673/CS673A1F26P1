@@ -1,3 +1,11 @@
+# AI-USAGE SUMMARY
+# Authors: Ji Wu
+# Tools: not yet reported by the author - author to confirm in the AIUsageLog
+# Overall AI Contribution: to be confirmed by Ji Wu
+# AI-Assisted Areas: FV-117 HTTP demo test cases
+# Human Contributions: Ji Wu: implementation and tests (FV-117 / FV-118)
+# Notes/Verification: behaviour covered by the unit tests in AI_Movie_Chatbot/tests; merged via PRs #11/#12
+
 """FV-117 HTTP demo works independently of the request parser."""
 
 import unittest

@@ -1,3 +1,11 @@
+# AI-USAGE SUMMARY
+# Authors: Daniel Winnie
+# Tools: OpenAI Codex (CLI agent), prompted by Daniel Winnie
+# Overall AI Contribution: ~90%
+# AI-Assisted Areas: health and database health routes and response models (FV-111/112)
+# Human Contributions: Daniel Winnie: requirements and prompts, design choices (FastAPI, Docker layout, beginner-friendly comments), reviewed every change before committing, decided what to keep
+# Notes/Verification: unit tests in AI_Movie_Chatbot/tests (65 passing), manual checks in Swagger /docs
+
 """Liveness checks confirm that the API can serve requests."""
 
 from typing import Literal

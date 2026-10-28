@@ -1,3 +1,11 @@
+// AI-USAGE SUMMARY
+// Authors: Daniel Winnie
+// Tools: Claude Code (Claude Opus), prompted by Daniel Winnie
+// Overall AI Contribution: ~90%
+// AI-Assisted Areas: log in / register dialog
+// Human Contributions: Daniel Winnie: requirements and prompts, design choices (FastAPI, Docker layout, beginner-friendly comments), reviewed every change before committing, decided what to keep
+// Notes/Verification: manual browser testing on localhost:3000 (desktop and narrow widths); register, log in, reload, log out
+
 import React, { useEffect, useRef, useState } from 'react';
 import LoginForm from './LoginForm.jsx';
 import RegistrationForm from './RegistrationForm.jsx';

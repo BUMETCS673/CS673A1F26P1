@@ -1,3 +1,11 @@
+# AI-USAGE SUMMARY
+# Authors: Daniel Winnie
+# Tools: OpenAI Codex (CLI agent), prompted by Daniel Winnie
+# Overall AI Contribution: ~90%
+# AI-Assisted Areas: database failure-contract test cases
+# Human Contributions: Daniel Winnie: requirements and prompts, design choices (FastAPI, Docker layout, beginner-friendly comments), reviewed every change before committing, decided what to keep
+# Notes/Verification: test suite run locally and in a Python 3.12 container
+
 """Database configuration and HTTP failure contracts; no live database required."""
 
 import os
