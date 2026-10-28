@@ -1,9 +1,9 @@
 // AI-USAGE SUMMARY
 // Authors: Daniel Winnie (scaffold), Ji Wu (demo actions)
-// Tools: OpenAI Codex (CLI agent), prompted by Daniel Winnie; Ji Wu: not yet reported by the author - author to confirm in the AIUsageLog
-// Overall AI Contribution: Daniel's scaffold ~90%; Ji Wu's part to be confirmed
+// Tools: OpenAI Codex (CLI agent), prompted by Daniel Winnie; OpenAI Codex, prompted by Ji Wu (FV-117/118 demo actions)
+// Overall AI Contribution: Daniel's scaffold ~90%; Ji Wu's demo actions 80%
 // AI-Assisted Areas: chat panel scaffold; parse/filter demo actions
-// Human Contributions: Ji Wu: FV-117/118 Chatbox actions; Daniel Winnie: requirements and prompts, design choices (FastAPI, Docker layout, beginner-friendly comments), reviewed every change before committing, decided what to keep
+// Human Contributions: Ji Wu: requirements, prompts, scope decisions, and review of Chatbox demo results; Daniel Winnie: requirements and prompts, design choices (FastAPI, Docker layout, beginner-friendly comments), reviewed every change before committing, decided what to keep
 // Notes/Verification: manual browser testing on localhost:3000 (desktop and narrow widths); verified in the browser by Ji Wu (PR #11)
 
 import React, { useEffect, useRef, useState } from 'react';

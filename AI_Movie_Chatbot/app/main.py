@@ -1,9 +1,9 @@
 # AI-USAGE SUMMARY
 # Authors: Daniel Winnie, Ji Wu, Yuchen Xu (original Docker app)
-# Tools: OpenAI Codex (CLI agent), prompted by Daniel Winnie; Claude Code (Claude Opus), prompted by Daniel Winnie (router registration for events/auth); Ji Wu's demo-router lines: not yet reported by the author - author to confirm in the AIUsageLog
-# Overall AI Contribution: ~85% (Daniel's parts)
+# Tools: OpenAI Codex (CLI agent), prompted by Daniel Winnie; Claude Code (Claude Opus), prompted by Daniel Winnie (router registration for events/auth); OpenAI Codex, prompted by Ji Wu (FV-117/118 demo-router registration)
+# Overall AI Contribution: ~85% (Daniel's parts); 80% (Ji Wu's part)
 # AI-Assisted Areas: application factory and router registration
-# Human Contributions: Daniel Winnie: requirements and prompts, design choices (FastAPI, Docker layout, beginner-friendly comments), reviewed every change before committing, decided what to keep; Ji Wu: registered the FV-117/118 demo routers
+# Human Contributions: Daniel Winnie: requirements and prompts, design choices (FastAPI, Docker layout, beginner-friendly comments), reviewed every change before committing, decided what to keep; Ji Wu: requirements, prompts, scope decisions, and review of FV-117/118 demo integration results
 # Notes/Verification: unit tests in AI_Movie_Chatbot/tests (65 passing), manual checks in Swagger /docs
 
 """Assemble the API. Importing this module does not start a server."""
