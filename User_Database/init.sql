@@ -17,6 +17,9 @@ CREATE TABLE users (
     -- UNIQUE prevents two rows from using the exact same value.
     username VARCHAR(50) NOT NULL UNIQUE,
     email VARCHAR(255) NOT NULL UNIQUE,
+
+    -- FV-113: Added account fields for future registration.
+    -- AI usage: ChatGPT helped with SQL syntax and field definitions.
     display_name VARCHAR(100),
     password_hash TEXT,
     activity_preferences TEXT[] NOT NULL DEFAULT ARRAY[]::TEXT[]
