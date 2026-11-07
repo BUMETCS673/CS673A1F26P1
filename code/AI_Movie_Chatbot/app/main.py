@@ -11,7 +11,15 @@
 from fastapi import FastAPI
 from fastapi.responses import PlainTextResponse
 
-from app.routes import auth, events, filter_demo, health, parser_demo
+# One router per line, in alphabetical order, so teammates adding different
+# routers edit different lines (fewer merge conflicts).
+from app.routes import (
+    auth,
+    events,
+    filter_demo,
+    health,
+    parser_demo,
+)
 
 
 def create_app() -> FastAPI:

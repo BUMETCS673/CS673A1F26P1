@@ -35,8 +35,18 @@ function errorMessage(detail) {
   return 'Something went wrong. Please try again.';
 }
 
-export const getEvents = () => request('/api/events');
+// Add new calls under the matching section so different features edit different lines.
+
+// Accounts and sessions
 export const getCurrentUser = () => request('/api/auth/me');
 export const register = (account) => request('/api/auth/register', { method: 'POST', body: account });
 export const logIn = (credentials) => request('/api/auth/login', { method: 'POST', body: credentials });
 export const logOut = () => request('/api/auth/logout', { method: 'POST' });
+
+// Events
+export const getEvents = () => request('/api/events');
+
+// Friends
+
+// Chat
+
