@@ -104,6 +104,15 @@ to `/api` with `SameSite=Lax`; set `SESSION_COOKIE_SECURE=true` when served over
 HTTPS. A database outage returns a safe 503. There is no rate limiting or email
 verification yet.
 
+The events feed and both demo endpoints require the same session cookie as
+`/api/auth/me`. They return 401 for missing or invalid sessions, including
+after logout. Register, login, logout, and health checks stay accessible
+without a session.
+
+Register new signed-in routers under `protected` in `app/main.py`. If a
+handler also needs the user record, inject `Depends(require_user)` from
+`app/routes/auth.py`.
+
 ### Sample events
 
 `GET /api/events` serves `app/data/sample_events.json`, sorted by date and then
@@ -121,8 +130,8 @@ for clarification.
 
 `POST /api/demo/parse-event-request` accepts `{ "message": "music" }` and calls
 `parse_event_request`. This action sends no event list and does not call the
-FV-117 filter, database, real login, or a model. This unauthenticated endpoint only
-parses text; it does not recommend events or complete FV-99.
+FV-117 filter or a model. The endpoint only parses text; it does not
+recommend events or complete FV-99.
 
 The response includes `category`, `date` (YYYY-MM-DD), `time` (24-hour HH:MM),
 `time_operator` (after/before/at), `location`, `location_operator` (in/near),
@@ -146,8 +155,8 @@ Enter JSON in the chat panel's **Filter conditions
 
 `POST /api/demo/filter-events` takes optional `category` and `date`, plus the
 browser's full existing fictional `events` list, and calls `filter_events`.
-The list is client-supplied demo data, not an authoritative catalog. No login,
-database, external model, or FV-118 parser is called by this action.
+The list is client-supplied demo data, not an authoritative catalog. After
+session validation, filtering needs no database, external model, or parser.
 Natural-language text is not accepted in filter mode. This is not complete FV-99.
 
 Switching the chat action cancels any pending request and clears the conversation.

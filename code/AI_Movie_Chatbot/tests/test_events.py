@@ -13,6 +13,7 @@ import unittest
 from fastapi.testclient import TestClient
 
 from app.main import create_app
+from app.routes.auth import require_user
 from app.routes.events import start_time
 
 EXPECTED_FIELDS = {"id", "title", "category", "date", "time", "location", "description"}
@@ -20,7 +21,9 @@ EXPECTED_FIELDS = {"id", "title", "category", "date", "time", "location", "descr
 
 class EventsApiTests(unittest.TestCase):
     def setUp(self):
-        self.client = TestClient(create_app())
+        application = create_app()
+        application.dependency_overrides[require_user] = lambda: {"id": 1}
+        self.client = TestClient(application)
         self.addCleanup(self.client.close)
 
     def test_lists_six_sample_events(self):

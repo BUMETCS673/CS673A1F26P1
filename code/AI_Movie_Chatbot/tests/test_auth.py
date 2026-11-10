@@ -2,7 +2,7 @@
 # Authors: Daniel Winnie
 # Tools: Claude Code (Claude Opus), prompted by Daniel Winnie
 # Overall AI Contribution: ~90%
-# AI-Assisted Areas: auth contract test cases with an in-memory store
+# AI-Assisted Areas: auth contract tests with an in-memory store; OpenAI Codex for FV-120 route coverage
 # Human Contributions: Daniel Winnie: requirements and prompts, design choices (FastAPI, Docker layout, beginner-friendly comments), reviewed every change before committing, decided what to keep
 # Notes/Verification: all tests pass; cases reviewed against the auth requirements
 
@@ -25,6 +25,11 @@ NEW_USER = {
     "username": "river_fan", "display_name": "River Fan", "email": "River@Example.com",
     "password": "correct horse", "activity_preferences": ["Music", "Outdoors"],
 }
+PROTECTED_REQUESTS = (
+    ("GET", "/api/events", {}),
+    ("POST", "/api/demo/filter-events", {"json": {"events": []}}),
+    ("POST", "/api/demo/parse-event-request", {"json": {"message": "music"}}),
+)
 
 
 class FakeAccounts:
@@ -171,6 +176,26 @@ class AuthApiTests(unittest.TestCase):
 
     def test_logout_without_session_still_succeeds(self):
         self.assertEqual(self.client.post("/api/auth/logout").status_code, 204)
+
+    def assert_protected_routes(self, status, **request_options):
+        for method, path, options in PROTECTED_REQUESTS:
+            with self.subTest(path=path):
+                response = self.client.request(method, path, **options, **request_options)
+                self.assertEqual(response.status_code, status, response.text)
+
+    def test_protected_routes_reject_missing_or_invalid_sessions(self):
+        self.assert_protected_routes(401)
+        self.assert_protected_routes(401, headers={"Cookie": "session=unknown"})
+        self.assert_protected_routes(401, headers={"Cookie": "session=" + "x" * 201})
+
+    def test_protected_routes_require_a_live_session(self):
+        self.assertEqual(self.register().status_code, 201)
+        self.assertEqual(self.login().status_code, 200)
+        token = self.client.cookies.get("session")
+        self.assert_protected_routes(200)
+        self.assertEqual(self.client.post("/api/auth/logout").status_code, 204)
+        self.assert_protected_routes(401)
+        self.assert_protected_routes(401, headers={"Cookie": f"session={token}"})
 
     def test_database_failure_is_a_safe_503(self):
         failure = psycopg.OperationalError("password=secret host=private-host")
