@@ -14,6 +14,7 @@ from unittest.mock import patch
 
 from fastapi.testclient import TestClient
 
+from app.routes.auth import require_user
 from app.main import create_app
 from app.request_parser import parse_event_request
 
@@ -28,7 +29,9 @@ def interpretation(**fields):
 
 class ParserDemoTests(unittest.TestCase):
     def setUp(self):
-        self.client = TestClient(create_app())
+        application = create_app()
+        application.dependency_overrides[require_user] = lambda: {"id": 1}
+        self.client = TestClient(application)
         self.addCleanup(self.client.close)
 
     def test_category_only_returns_exact_parser_fields(self):
