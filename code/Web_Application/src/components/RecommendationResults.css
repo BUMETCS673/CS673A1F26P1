@@ -1,0 +1,47 @@
+/*
+ * AI-USAGE SUMMARY
+ * Authors: Daniel Winnie
+ * Tools: Claude Code (Claude Opus), prompted by Daniel Winnie
+ * Overall AI Contribution: ~90%
+ * AI-Assisted Areas: FV-125 recommendation result styles
+ * Human Contributions: Daniel Winnie: requirements and prompts, design choices, reviewed every change before committing, decided what to keep
+ * Notes/Verification: standalone preview at /src/previews/recommendations/ (desktop and narrow widths)
+ */
+
+/* Uses the same colors as styles.css; .category-badge and .secondary-button come from there
+   in the app (the preview page defines its own copies). */
+.recommendation-results { display: grid; gap: 10px; margin-top: 8px; }
+.recommendation-results h3 { font-size: 1rem; }
+.recommendation-message { padding: 14px; border: 2px solid #d8bf7f; border-radius: 10px; background: #fff8e4; }
+.recommendation-summary { font-weight: bold; }
+
+.recommendation-conditions { display: flex; flex-wrap: wrap; gap: 6px; margin: 0; padding: 0; list-style: none; }
+.recommendation-conditions li {
+  padding: 3px 9px;
+  border: 1px solid #9eb2bc;
+  border-radius: 999px;
+  background: white;
+  font-size: .8rem;
+}
+
+.recommendation-list { display: grid; gap: 10px; margin: 0; padding: 0; list-style: none; }
+.recommendation-card {
+  display: grid;
+  gap: 4px;
+  width: 100%;
+  padding: 12px 14px;
+  border: 2px solid #9eb2bc;
+  border-radius: 10px;
+  background: white;
+  color: #20353e;
+  text-align: left;
+}
+.recommendation-card:hover { border-color: #256354; background: #f5faf8; }
+.recommendation-card-top { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.recommendation-card-cta { color: #256354; font-size: .8rem; font-weight: bold; }
+.recommendation-card-title { font-size: 1.02rem; overflow-wrap: anywhere; }
+.recommendation-card-line { color: #576b75; font-size: .88rem; overflow-wrap: anywhere; }
+
+.recommendation-suggestions { display: grid; gap: 6px; }
+.recommendation-suggestions > div { display: flex; flex-wrap: wrap; gap: 6px; }
+.recommendation-suggestions button { padding: 5px 10px; font-size: .85rem; }
