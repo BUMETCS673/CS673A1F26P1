@@ -110,19 +110,27 @@ verification yet.
 time of day, so the file's order does not matter. The website loads its event
 queue, filter choices, and chat-filter catalog from this endpoint.
 
-### FV-118 request parsing in Chatbox
+### FV-118 / FV-124 request parsing in Chatbox
 
 Start with `bash start_project.sh` and open http://localhost:3000. After logging
-in, choose **Parse request** under **Chat action**. Enter `music` or
-`Music on 2026-11-01` in the chat panel's **Request
-text** input and click **Parse request**. The reply shows the exact Python
-result: `category`, `date`, and `needs_clarification`. Try `music tomorrow`,
-`music and food`, or `music on 2026-02-30` to see a clarification response.
+in, choose **Parse request** under **Chat action**. Try `music`,
+`Music on 2026-11-01`, or `music in Boston next Friday after 6 pm`. The
+parser also accepts single constraints such as `Saturday`, `after 6 pm`,
+or `near Fenway`. Invalid dates and requests like `music and food` ask
+for clarification.
 
 `POST /api/demo/parse-event-request` accepts `{ "message": "music" }` and calls
 `parse_event_request`. This action sends no event list and does not call the
 FV-117 filter, database, real login, or a model. This unauthenticated endpoint only
 parses text; it does not recommend events or complete FV-99.
+
+The response includes `category`, `date` (YYYY-MM-DD), `time` (24-hour HH:MM),
+`time_operator` (after/before/at), `location`, `location_operator` (in/near),
+`timezone` (America/New_York), and `needs_clarification`. A bare weekday
+or `this Friday` means the next occurrence including today; `next Friday`
+means Friday of the next Monday–Sunday week. The recommendation flow is
+responsible for matching events against the catalog and interpreting location
+operators.
 
 ### FV-117 event filtering in Chatbox
 
