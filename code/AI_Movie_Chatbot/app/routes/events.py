@@ -13,31 +13,73 @@ from datetime import datetime
 from functools import lru_cache
 from pathlib import Path
 
-from fastapi import APIRouter
+from fastapi import APIRouter, HTTPException, Query
+from pydantic import BaseModel, ConfigDict, Field
 
 from app.routes.filter_demo import DemoEvent
 
+from app.event_catalog import (
+    find_event,
+    paginate,
+    remove_ended,
+    sort_by_start,
+)
+
+
 router = APIRouter(tags=["events"])
+
+class CatalogEvent(BaseModel):
+    """Event returned by the event catalog API."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    id: str = Field(max_length=100)
+    title: str = Field(max_length=300)
+    category: str = Field(max_length=50)
+    start: str
+    end: str
+    location: str | None = Field(default=None, max_length=300)
+    description: str = Field(max_length=2000)
+
+
+class EventPage(BaseModel):
+    """One page of events returned by the catalog API."""
+
+    events: list[CatalogEvent]
+    next_offset: int | None
 
 SAMPLE_EVENTS_PATH = Path(__file__).resolve().parents[1] / "data" / "sample_events.json"
 
 
-def start_time(event: dict) -> datetime:
-    """Parse the sample's date and 12-hour Boston time, e.g. 2026-11-01 6:00 PM."""
-    return datetime.strptime(f"{event['date']} {event['time']}", "%Y-%m-%d %I:%M %p")
-
-
 @lru_cache(maxsize=1)
 def load_sample_events() -> tuple[dict, ...]:
-    """Read the bundled sample file once, soonest event first.
-
-    Sorting here means the order no longer depends on how the file is written.
-    """
+    """Load fictional Boston events from the sample JSON file."""
     with SAMPLE_EVENTS_PATH.open(encoding="utf-8") as sample_file:
-        return tuple(sorted(json.load(sample_file)["events"], key=start_time))
+        return tuple(json.load(sample_file)["events"])
 
+@router.get("/events", response_model=EventPage)
+def list_events(
+    limit: int = Query(default=10, ge=1, le=50),
+    offset: int = Query(default=0, ge=0),
+):
+    """Return upcoming events in chronological, paginated order."""
 
-@router.get("/events", response_model=list[DemoEvent])
-def list_events() -> list[dict]:
-    """Return the sample events in start-time order; a real source replaces this later."""
-    return list(load_sample_events())
+    now = datetime.now().astimezone()
+
+    events = list(load_sample_events())
+    upcoming = remove_ended(events, now)
+    sorted_events = sort_by_start(upcoming)
+
+    return paginate(sorted_events, limit=limit, offset=offset)
+
+@router.get("/events/{event_id}", response_model=CatalogEvent)
+def get_event(event_id: str):
+    """Return one event by ID."""
+
+    events = list(load_sample_events())
+    event = find_event(events, event_id)
+
+    if event is None:
+        raise HTTPException(status_code=404, detail="Event not found")
+
+    return event

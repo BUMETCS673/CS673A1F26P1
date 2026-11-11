@@ -35,7 +35,12 @@ function errorMessage(detail) {
   return 'Something went wrong. Please try again.';
 }
 
-export const getEvents = () => request('/api/events');
+export const getEvents = (limit = 5, offset = 0) =>
+  request(`/api/events?limit=${limit}&offset=${offset}`);
+
+export const getEventById = (id) =>
+  request(`/api/events/${encodeURIComponent(id)}`);
+
 export const getCurrentUser = () => request('/api/auth/me');
 export const register = (account) => request('/api/auth/register', { method: 'POST', body: account });
 export const logIn = (credentials) => request('/api/auth/login', { method: 'POST', body: credentials });

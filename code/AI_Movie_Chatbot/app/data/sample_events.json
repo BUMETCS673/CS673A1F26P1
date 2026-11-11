@@ -1,58 +1,131 @@
 {
+  "_note": "Fictional test fixtures for FV-122/FV-123 (tests/test_event_catalog.py), not live listings. The tests use the fixed reference time 2026-11-15T12:00:00-05:00. Events are listed out of order on purpose; keep the start/end values unchanged or update the tests' expected IDs.",
   "events": [
     {
-      "id": "sample-1",
-      "title": "Acoustic evening in Back Bay",
+      "id": "fixture-10",
+      "title": "Fixture: December concert",
       "category": "Music",
-      "date": "2026-11-01",
-      "time": "6:00 PM",
-      "location": "Back Bay, Boston",
-      "description": "A fictional small music gathering used to demonstrate an event card."
-    },
-    {
-      "id": "sample-2",
-      "title": "Waterfront art walk",
-      "category": "Arts",
-      "date": "2026-11-01",
-      "time": "2:00 PM",
-      "location": "Seaport, Boston",
-      "description": "A fictional afternoon art walk. Replace these details with real event data."
-    },
-    {
-      "id": "sample-3",
-      "title": "Neighborhood food meetup",
-      "category": "Food",
-      "date": "2026-11-02",
-      "time": "12:00 PM",
-      "location": "North End, Boston",
-      "description": "A fictional food meetup for the showcase; this is not a booking or real listing."
-    },
-    {
-      "id": "sample-4",
-      "title": "Charles River morning walk",
-      "category": "Outdoors",
-      "date": "2026-11-02",
-      "time": "10:00 AM",
-      "location": "Esplanade, Boston",
-      "description": "A fictional group walk demonstrating a different event category."
-    },
-    {
-      "id": "sample-5",
-      "title": "Student games night",
-      "category": "Social",
-      "date": "2026-11-03",
-      "time": "7:00 PM",
-      "location": "Fenway, Boston",
-      "description": "A fictional student meetup. Account, attendance, and booking features are future work."
-    },
-    {
-      "id": "sample-6",
-      "title": "Downtown jazz afternoon",
-      "category": "Music",
-      "date": "2026-11-03",
-      "time": "3:00 PM",
+      "start": "2026-12-05T20:00:00-05:00",
+      "end": "2026-12-05T22:30:00-05:00",
       "location": "Downtown, Boston",
-      "description": "Another fictional music event so the category filter has multiple examples."
+      "description": "Upcoming event in the following month."
+    },
+    {
+      "id": "fixture-06",
+      "title": "Fixture: Monday open mic",
+      "category": "Music",
+      "start": "2026-11-16T19:00:00-05:00",
+      "end": "2026-11-16T21:00:00-05:00",
+      "location": "Allston, Boston",
+      "description": "Same start time as fixture-05 and listed before it, so ties must be ordered by id."
+    },
+    {
+      "id": "fixture-01",
+      "title": "Fixture: yesterday's gallery night",
+      "category": "Arts",
+      "start": "2026-11-14T18:00:00-05:00",
+      "end": "2026-11-14T20:00:00-05:00",
+      "location": "South End, Boston",
+      "description": "Ended the day before the reference time; must be hidden."
+    },
+    {
+      "id": "fixture-13",
+      "title": "Fixture: spring harbor walk",
+      "category": "Outdoors",
+      "start": "2027-03-20T14:00:00-04:00",
+      "end": "2027-03-20T16:00:00-04:00",
+      "location": "Seaport, Boston",
+      "description": "After daylight saving time starts (UTC-04:00); latest event in the file."
+    },
+    {
+      "id": "fixture-03",
+      "title": "Fixture: Sunday brunch meetup",
+      "category": "Food",
+      "start": "2026-11-15T11:00:00-05:00",
+      "end": "2026-11-15T13:00:00-05:00",
+      "location": "North End, Boston",
+      "description": "In progress at the reference time (started, not ended); must stay visible."
+    },
+    {
+      "id": "fixture-08",
+      "title": "Fixture: Saturday river run",
+      "category": "Outdoors",
+      "start": "2026-11-21T10:00:00-05:00",
+      "end": "2026-11-21T12:00:00-05:00",
+      "location": "Esplanade, Boston",
+      "description": "Upcoming event the following weekend."
+    },
+    {
+      "id": "fixture-05",
+      "title": "Fixture: Monday board games",
+      "category": "Social",
+      "start": "2026-11-16T19:00:00-05:00",
+      "end": "2026-11-16T22:00:00-05:00",
+      "location": "Fenway, Boston",
+      "description": "Same start time as fixture-06; must come first because its id sorts first."
+    },
+    {
+      "id": "fixture-12",
+      "title": "Fixture: January museum tour",
+      "category": "Arts",
+      "start": "2027-01-10T14:00:00-05:00",
+      "end": "2027-01-10T16:00:00-05:00",
+      "location": "Fenway, Boston",
+      "description": "Upcoming event in the next year."
+    },
+    {
+      "id": "fixture-02",
+      "title": "Fixture: morning park cleanup",
+      "category": "Outdoors",
+      "start": "2026-11-15T10:00:00-05:00",
+      "end": "2026-11-15T12:00:00-05:00",
+      "location": "Jamaica Plain, Boston",
+      "description": "Ends exactly at the reference time; counts as ended and must be hidden."
+    },
+    {
+      "id": "fixture-14",
+      "title": "Fixture: winter food fair",
+      "category": "Food",
+      "start": "2027-03-13T19:00:00-05:00",
+      "end": "2027-03-13T21:00:00-05:00",
+      "location": "Back Bay, Boston",
+      "description": "Last weekend before daylight saving time (UTC-05:00); comes before fixture-13."
+    },
+    {
+      "id": "fixture-07",
+      "title": "Fixture: Wednesday sketch club",
+      "category": "Arts",
+      "start": "2026-11-18T18:30:00-05:00",
+      "end": "2026-11-18T20:00:00-05:00",
+      "location": "Cambridge Street, Boston",
+      "description": "Upcoming midweek event."
+    },
+    {
+      "id": "fixture-04",
+      "title": "Fixture: lunchtime art talk",
+      "category": "Arts",
+      "start": "2026-11-15T12:01:00-05:00",
+      "end": "2026-11-15T13:30:00-05:00",
+      "location": "Back Bay, Boston",
+      "description": "Starts one minute after the reference time."
+    },
+    {
+      "id": "fixture-11",
+      "title": "Fixture: New Year's Eve party",
+      "category": "Social",
+      "start": "2026-12-31T21:00:00-05:00",
+      "end": "2027-01-01T00:30:00-05:00",
+      "location": "Seaport, Boston",
+      "description": "Ends after midnight, in the next calendar year."
+    },
+    {
+      "id": "fixture-09",
+      "title": "Fixture: pre-Thanksgiving potluck",
+      "category": "Food",
+      "start": "2026-11-25T17:00:00-05:00",
+      "end": "2026-11-25T19:00:00-05:00",
+      "location": null,
+      "description": "Upcoming event later in November. Location is unknown (null) on purpose."
     }
   ]
 }
