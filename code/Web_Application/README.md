@@ -86,6 +86,31 @@ React DOM displays it in the browser, and Vite provides development/build tools.
 `node_modules/` contains downloaded packages and `dist/` contains build output;
 both are ignored by Git because npm can recreate them.
 
+## Recommendation results preview (FV-125)
+
+`src/components/RecommendationResults.jsx` shows the chat's answer to one request:
+clickable event cards, a "Could you rephrase that?" clarification, or a "No matching
+events" message. Times are always shown in Boston local time. Clicking a card calls
+`onEventSelect(eventId)` with only the shared event ID. The expected response shape
+(FV-124 parser fields plus catalog-style events) is documented at the top of
+`src/recommendations.js`.
+
+To try it without the backend, run `npm run dev` and open
+http://localhost:5173/src/previews/recommendations/ (or
+http://localhost:3000/src/previews/recommendations/ in Docker). Replies come from
+`src/previews/recommendations/mockResponses.js`.
+
+## Run the tests
+
+```bash
+npm test
+```
+
+This runs the Vitest unit and component tests (`*.test.js`/`*.test.jsx` in `src/`).
+Vitest 5 needs Node.js 22.12 or newer (the Docker image already has it). On an
+older Node, run the tests inside Docker instead:
+`docker compose --project-directory Web_Application exec website npm test` from the `code` folder.
+
 ## Check the build
 
 ```bash
