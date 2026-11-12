@@ -11,7 +11,7 @@
 from fastapi import APIRouter, Depends, FastAPI
 from fastapi.responses import PlainTextResponse
 
-from app.routes import auth, events, filter_demo, health, parser_demo
+from app.routes import auth, events, filter_demo, follows, health, parser_demo
 
 
 def create_app() -> FastAPI:
@@ -31,6 +31,7 @@ def create_app() -> FastAPI:
     protected.include_router(events.router)
     protected.include_router(filter_demo.router)
     protected.include_router(parser_demo.router)
+    protected.include_router(follows.router)
     application.include_router(protected, prefix="/api")
 
     @application.get("/", response_class=PlainTextResponse, include_in_schema=False)
