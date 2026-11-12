@@ -2,16 +2,16 @@
 # Authors: Daniel Winnie, Ji Wu, Yuchen Xu (original Docker app)
 # Tools: OpenAI Codex (CLI agent), prompted by Daniel Winnie; Claude Code (Claude Opus), prompted by Daniel Winnie (router registration for events/auth); OpenAI Codex, prompted by Ji Wu (FV-117/118 demo-router registration)
 # Overall AI Contribution: ~85% (Daniel's parts); 80% (Ji Wu's part)
-# AI-Assisted Areas: application factory and router registration
+# AI-Assisted Areas: application factory and router registration; OpenAI Codex for FV-120 session enforcement
 # Human Contributions: Daniel Winnie: requirements and prompts, design choices (FastAPI, Docker layout, beginner-friendly comments), reviewed every change before committing, decided what to keep; Ji Wu: requirements, prompts, scope decisions, and review of FV-117/118 demo integration results
 # Notes/Verification: unit tests in AI_Movie_Chatbot/tests (65 passing), manual checks in Swagger /docs
 
 """Assemble the API. Importing this module does not start a server."""
 
-from fastapi import FastAPI
+from fastapi import APIRouter, Depends, FastAPI
 from fastapi.responses import PlainTextResponse
 
-from app.routes import auth, events, filter_demo, health, parser_demo
+from app.routes import auth, events, filter_demo, follows, health, parser_demo
 
 
 def create_app() -> FastAPI:
@@ -22,10 +22,17 @@ def create_app() -> FastAPI:
         version="0.1.0",
     )
     application.include_router(health.router, prefix="/api")
-    application.include_router(filter_demo.router, prefix="/api")
-    application.include_router(parser_demo.router, prefix="/api")
-    application.include_router(events.router, prefix="/api")
     application.include_router(auth.router, prefix="/api")
+
+    protected = APIRouter(
+        dependencies=[Depends(auth.require_user)],
+        responses={401: {"description": "Not logged in"}},
+    )
+    protected.include_router(events.router)
+    protected.include_router(filter_demo.router)
+    protected.include_router(parser_demo.router)
+    protected.include_router(follows.router)
+    application.include_router(protected, prefix="/api")
 
     @application.get("/", response_class=PlainTextResponse, include_in_schema=False)
     async def status() -> str:

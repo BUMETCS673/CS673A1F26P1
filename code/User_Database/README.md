@@ -205,3 +205,17 @@ The two sample users should remain, with their original IDs. Their `display_name
 Registration and login now use these columns (see `AI_Movie_Chatbot/app/routes/auth.py`).
 `002_user_sessions.sql` adds the `user_sessions` table. `start_project.sh` applies
 every migration automatically on each start; running them by hand is also safe.
+
+### AI Usage Summary — FV-113
+
+**Author:** Yuchen Xu
+
+**Tools:** ChatGPT (OpenAI)
+
+**Overall AI Contribution:** Moderate
+
+**AI-Assisted Areas:** PostgreSQL syntax, account-field migration (FV-113), SQL testing commands, Git/GitHub workflow, and README documentation.
+
+**Human Contributions:** Yuchen Xu edited the SQL files, executed and tested the migration, verified database records, and committed the changes to GitHub.
+
+**Notes/Verification:** The migration was run twice on an existing database. Both sample users and their original IDs were preserved, and the new account fields were verified in PostgreSQL.

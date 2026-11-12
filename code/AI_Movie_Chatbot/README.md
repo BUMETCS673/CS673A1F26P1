@@ -104,25 +104,64 @@ to `/api` with `SameSite=Lax`; set `SESSION_COOKIE_SECURE=true` when served over
 HTTPS. A database outage returns a safe 503. There is no rate limiting or email
 verification yet.
 
+The events feed and both demo endpoints require the same session cookie as
+`/api/auth/me`. They return 401 for missing or invalid sessions, including
+after logout. Register, login, logout, and health checks stay accessible
+without a session.
+
+Register new signed-in routers under `protected` in `app/main.py`. If a
+handler also needs the user record, inject `Depends(require_user)` from
+`app/routes/auth.py`.
+
+### Following and followers (FV-92)
+
+When A follows B, B appears in A's Following list, and A appears in B's
+Followers list. Each account manages its own outgoing follows. All five
+endpoints use the login session cookie and return 401 without a valid session.
+
+| Endpoint | Result |
+| --- | --- |
+| `GET /api/users/search?username=alex` | 200 with exact username matches, ignoring case and excluding the signed-in account. No matches returns `[]`. |
+| `GET /api/following` | 200 with the accounts you follow. |
+| `GET /api/followers` | 200 with the accounts that follow you. |
+| `PUT /api/following/{user_id}` | 204 when following, including a repeat request. 400 for self-follow, 404 for an unknown user. |
+| `DELETE /api/following/{user_id}` | 204 after ensuring you do not follow that account. A repeat request also returns 204. |
+
+Each result in a search or list has `id`, `username`, and `display_name`
+(which can be null for older accounts). Use the target's `id` in the URL
+for PUT and DELETE. Both requests take an empty body.
+
+`code/start_project.sh` applies `003_user_follows.sql` when starting the stack.
+With PostgreSQL running and the `DB_*` variables set, run
+`python -m unittest discover -s tests -p live_follows.py -v` from this folder.
+
 ### Sample events
 
 `GET /api/events` serves `app/data/sample_events.json`, sorted by date and then
 time of day, so the file's order does not matter. The website loads its event
 queue, filter choices, and chat-filter catalog from this endpoint.
 
-### FV-118 request parsing in Chatbox
+### FV-118 / FV-124 request parsing in Chatbox
 
 Start with `bash start_project.sh` and open http://localhost:3000. After logging
-in, choose **Parse request** under **Chat action**. Enter `music` or
-`Music on 2026-11-01` in the chat panel's **Request
-text** input and click **Parse request**. The reply shows the exact Python
-result: `category`, `date`, and `needs_clarification`. Try `music tomorrow`,
-`music and food`, or `music on 2026-02-30` to see a clarification response.
+in, choose **Parse request** under **Chat action**. Try `music`,
+`Music on 2026-11-01`, or `music in Boston next Friday after 6 pm`. The
+parser also accepts single constraints such as `Saturday`, `after 6 pm`,
+or `near Fenway`. Invalid dates and requests like `music and food` ask
+for clarification.
 
 `POST /api/demo/parse-event-request` accepts `{ "message": "music" }` and calls
 `parse_event_request`. This action sends no event list and does not call the
-FV-117 filter, database, real login, or a model. This unauthenticated endpoint only
-parses text; it does not recommend events or complete FV-99.
+FV-117 filter or a model. The endpoint only parses text; it does not
+recommend events or complete FV-99.
+
+The response includes `category`, `date` (YYYY-MM-DD), `time` (24-hour HH:MM),
+`time_operator` (after/before/at), `location`, `location_operator` (in/near),
+`timezone` (America/New_York), and `needs_clarification`. A bare weekday
+or `this Friday` means the next occurrence including today; `next Friday`
+means Friday of the next Monday–Sunday week. The recommendation flow is
+responsible for matching events against the catalog and interpreting location
+operators.
 
 ### FV-117 event filtering in Chatbox
 
@@ -138,8 +177,8 @@ Enter JSON in the chat panel's **Filter conditions
 
 `POST /api/demo/filter-events` takes optional `category` and `date`, plus the
 browser's full existing fictional `events` list, and calls `filter_events`.
-The list is client-supplied demo data, not an authoritative catalog. No login,
-database, external model, or FV-118 parser is called by this action.
+The list is client-supplied demo data, not an authoritative catalog. After
+session validation, filtering needs no database, external model, or parser.
 Natural-language text is not accepted in filter mode. This is not complete FV-99.
 
 Switching the chat action cancels any pending request and clears the conversation.
