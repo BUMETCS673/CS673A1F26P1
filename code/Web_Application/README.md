@@ -107,6 +107,9 @@ npm test
 ```
 
 This runs the Vitest unit and component tests (`*.test.js`/`*.test.jsx` in `src/`).
+Vitest 5 needs Node.js 22.12 or newer (the Docker image already has it). On an
+older Node, run the tests inside Docker instead:
+`docker compose --project-directory Web_Application exec website npm test` from the `code` folder.
 
 ## Check the build
 

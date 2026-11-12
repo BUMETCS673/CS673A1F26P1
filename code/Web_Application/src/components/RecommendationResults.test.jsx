@@ -21,9 +21,9 @@ const noMatches = MOCK_REPLIES['outdoors in allston at 7am'];
 describe('RecommendationResults: event cards', () => {
   it('renders one card per event in the order received', () => {
     render(<RecommendationResults response={friday} onEventSelect={() => {}} />);
-    const cards = screen.getAllByRole('button', { name: /View event details/ });
-    expect(cards.map((card) => card.getAttribute('aria-label'))).toEqual(
-      friday.events.map((event) => `${event.title}. View event details`),
+    const cards = screen.getAllByRole('button');
+    expect(cards.map((card) => card.querySelector('.recommendation-card-title').textContent)).toEqual(
+      friday.events.map((event) => event.title),
     );
     expect((screen.getByRole('status')).textContent).toContain('3 events match');
   });
@@ -57,6 +57,15 @@ describe('RecommendationResults: event cards', () => {
     expect(onEventSelect).toHaveBeenCalledWith('mock-103');
   });
 
+  it('names each card by its visible title, time, and place for screen readers', () => {
+    render(<RecommendationResults response={friday} onEventSelect={() => {}} />);
+    const card = screen.getByRole('button', { name: /Late jazz set/ });
+    expect(card.hasAttribute('aria-label')).toBe(false);
+    const name = card.textContent.replace('Details →', '');
+    expect(name).toContain('Fri, Nov 13 · 7:30 PM – 10:00 PM');
+    expect(name).toContain('Central Square, Cambridge');
+  });
+
   it('does not crash when no click callback is given', () => {
     render(<RecommendationResults response={friday} />);
     fireEvent.click(screen.getByRole('button', { name: /Late jazz set/ }));
@@ -77,7 +86,7 @@ describe('RecommendationResults: clarification', () => {
   it('asks the user to rephrase and lists no events', () => {
     render(<RecommendationResults response={CLARIFICATION} onEventSelect={() => {}} />);
     expect(screen.getByRole('heading', { name: 'Could you rephrase that?' })).toBeTruthy();
-    expect(screen.queryByRole('button', { name: /View event details/ })).toBeNull();
+    expect(document.querySelector('.recommendation-card')).toBeNull();
     expect(screen.queryByRole('list', { name: 'Understood conditions' })).toBeNull();
   });
 
@@ -106,7 +115,7 @@ describe('RecommendationResults: no matches', () => {
     const conditions = screen.getByRole('list', { name: 'Understood conditions' });
     expect(within(conditions).getAllByRole('listitem').map((item) => item.textContent))
       .toEqual(['Outdoors', 'at 7:00 AM', 'in Allston']);
-    expect(screen.queryByRole('button', { name: /View event details/ })).toBeNull();
+    expect(document.querySelector('.recommendation-card')).toBeNull();
     expect(screen.getAllByRole('button')).toHaveLength(EXAMPLE_REQUESTS.length);
   });
 });

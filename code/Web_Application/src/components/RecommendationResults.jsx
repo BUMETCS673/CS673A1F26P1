@@ -43,7 +43,8 @@ function Suggestions({ onSuggestion }) {
 }
 
 // Each card is one button so the whole card is clickable and keyboard reachable.
-// It reports only the shared event ID; the details view looks up the rest.
+// Its accessible name is its visible text, so screen readers hear the title, time,
+// and place. It reports only the shared event ID; the details view looks up the rest.
 function RecommendationCard({ event, onEventSelect }) {
   return (
     <li>
@@ -51,7 +52,6 @@ function RecommendationCard({ event, onEventSelect }) {
         type="button"
         className="recommendation-card"
         onClick={() => onEventSelect?.(event.id)}
-        aria-label={`${event.title}. View event details`}
       >
         <span className="recommendation-card-top">
           {event.category && <span className="category-badge">{event.category}</span>}
