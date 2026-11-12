@@ -1,11 +1,12 @@
 {
+  "_note": "Fictional demo events shown in the app, not real listings or bookings. Times are Boston local time with a UTC offset. Tests use tests/fixtures/catalog_events.json instead, so this file can change freely.",
   "events": [
     {
       "id": "sample-1",
       "title": "Acoustic evening in Back Bay",
       "category": "Music",
-      "date": "2026-11-01",
-      "time": "6:00 PM",
+      "start": "2026-11-21T18:00:00-05:00",
+      "end": "2026-11-21T20:00:00-05:00",
       "location": "Back Bay, Boston",
       "description": "A fictional small music gathering used to demonstrate an event card."
     },
@@ -13,8 +14,8 @@
       "id": "sample-2",
       "title": "Waterfront art walk",
       "category": "Arts",
-      "date": "2026-11-01",
-      "time": "2:00 PM",
+      "start": "2026-11-21T14:00:00-05:00",
+      "end": "2026-11-21T16:00:00-05:00",
       "location": "Seaport, Boston",
       "description": "A fictional afternoon art walk. Replace these details with real event data."
     },
@@ -22,8 +23,8 @@
       "id": "sample-3",
       "title": "Neighborhood food meetup",
       "category": "Food",
-      "date": "2026-11-02",
-      "time": "12:00 PM",
+      "start": "2026-11-22T12:00:00-05:00",
+      "end": "2026-11-22T14:00:00-05:00",
       "location": "North End, Boston",
       "description": "A fictional food meetup for the showcase; this is not a booking or real listing."
     },
@@ -31,8 +32,8 @@
       "id": "sample-4",
       "title": "Charles River morning walk",
       "category": "Outdoors",
-      "date": "2026-11-02",
-      "time": "10:00 AM",
+      "start": "2026-11-22T10:00:00-05:00",
+      "end": "2026-11-22T11:30:00-05:00",
       "location": "Esplanade, Boston",
       "description": "A fictional group walk demonstrating a different event category."
     },
@@ -40,8 +41,8 @@
       "id": "sample-5",
       "title": "Student games night",
       "category": "Social",
-      "date": "2026-11-03",
-      "time": "7:00 PM",
+      "start": "2026-12-05T19:00:00-05:00",
+      "end": "2026-12-05T22:00:00-05:00",
       "location": "Fenway, Boston",
       "description": "A fictional student meetup. Account, attendance, and booking features are future work."
     },
@@ -49,8 +50,8 @@
       "id": "sample-6",
       "title": "Downtown jazz afternoon",
       "category": "Music",
-      "date": "2026-11-03",
-      "time": "3:00 PM",
+      "start": "2026-12-05T15:00:00-05:00",
+      "end": "2026-12-05T17:00:00-05:00",
       "location": "Downtown, Boston",
       "description": "Another fictional music event so the category filter has multiple examples."
     }
