@@ -113,6 +113,28 @@ Register new signed-in routers under `protected` in `app/main.py`. If a
 handler also needs the user record, inject `Depends(require_user)` from
 `app/routes/auth.py`.
 
+### Following and followers (FV-92)
+
+When A follows B, B appears in A's Following list, and A appears in B's
+Followers list. Each account manages its own outgoing follows. All five
+endpoints use the login session cookie and return 401 without a valid session.
+
+| Endpoint | Result |
+| --- | --- |
+| `GET /api/users/search?username=alex` | 200 with exact username matches, ignoring case and excluding the signed-in account. No matches returns `[]`. |
+| `GET /api/following` | 200 with the accounts you follow. |
+| `GET /api/followers` | 200 with the accounts that follow you. |
+| `PUT /api/following/{user_id}` | 204 when following, including a repeat request. 400 for self-follow, 404 for an unknown user. |
+| `DELETE /api/following/{user_id}` | 204 after ensuring you do not follow that account. A repeat request also returns 204. |
+
+Each result in a search or list has `id`, `username`, and `display_name`
+(which can be null for older accounts). Use the target's `id` in the URL
+for PUT and DELETE. Both requests take an empty body.
+
+`code/start_project.sh` applies `003_user_follows.sql` when starting the stack.
+With PostgreSQL running and the `DB_*` variables set, run
+`python -m unittest discover -s tests -p live_follows.py -v` from this folder.
+
 ### Sample events
 
 `GET /api/events` serves `app/data/sample_events.json`, sorted by date and then
