@@ -14,11 +14,14 @@ from copy import deepcopy
 from fastapi.testclient import TestClient
 
 from app.main import create_app
+from app.routes.auth import require_user
 
 
 class FilterDemoTests(unittest.TestCase):
     def setUp(self):
-        self.client = TestClient(create_app())
+        application = create_app()
+        application.dependency_overrides[require_user] = lambda: {"id": 1}
+        self.client = TestClient(application)
         self.addCleanup(self.client.close)
         self.events = [
             {"id": "a", "title": "Concert", "category": "Music", "date": "2026-11-01",

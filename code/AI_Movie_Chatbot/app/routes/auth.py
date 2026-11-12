@@ -2,7 +2,7 @@
 # Authors: Daniel Winnie
 # Tools: Claude Code (Claude Opus), prompted by Daniel Winnie
 # Overall AI Contribution: ~90%
-# AI-Assisted Areas: register/login/me/logout routes, validation models, session cookie
+# AI-Assisted Areas: register/login/me/logout routes, validation models, session cookie, shared require_user check; Codex for FV-120 invalid-session handling
 # Human Contributions: Daniel Winnie: requirements and prompts, design choices (FastAPI, Docker layout, beginner-friendly comments), reviewed every change before committing, decided what to keep
 # Notes/Verification: tests/test_auth.py, tests/live_auth.py, manual register/login/logout in the browser
 
@@ -17,7 +17,7 @@ import re
 from typing import Literal
 
 import psycopg
-from fastapi import APIRouter, Cookie, HTTPException, Response
+from fastapi import APIRouter, Cookie, Depends, HTTPException, Response
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 from app import users
@@ -163,17 +163,36 @@ def login(request: LoginRequest, response: Response) -> dict:
     return user
 
 
-@router.get("/me", response_model=UserResponse,
-            responses={401: {"description": "Not logged in"},
-                       503: {"description": "Database unavailable"}})
-def current_user(session: str | None = Cookie(default=None, max_length=200)) -> dict:
-    """Return the user for this browser's session, so a reload stays logged in."""
+def require_user(session: str | None = Cookie(default=None)) -> dict:
+    """Shared session check: return the logged-in user, or stop with 401.
+
+    Any route that needs a logged-in user can ask FastAPI for it:
+
+        from fastapi import Depends
+        from app.routes.auth import require_user
+
+        @router.get("/example")
+        def example(user: dict = Depends(require_user)) -> dict:
+            ...  # user["id"] is the logged-in account
+
+    The user dict has the same fields as UserResponse.
+    """
+    if not session or len(session) > 200:
+        raise HTTPException(status_code=401, detail="Not logged in.")
     try:
-        user = users.get_session_user(session) if session else None
+        user = users.get_session_user(session)
     except (psycopg.Error, DatabaseConfigurationError):
         raise _database_unavailable() from None
     if user is None:
         raise HTTPException(status_code=401, detail="Not logged in.")
+    return user
+
+
+@router.get("/me", response_model=UserResponse,
+            responses={401: {"description": "Not logged in"},
+                       503: {"description": "Database unavailable"}})
+def current_user(user: dict = Depends(require_user)) -> dict:
+    """Return the user for this browser's session, so a reload stays logged in."""
     return user
 
 

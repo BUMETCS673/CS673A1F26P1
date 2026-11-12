@@ -2,7 +2,7 @@
 // Authors: Daniel Winnie (scaffold), Ji Wu (demo actions)
 // Tools: OpenAI Codex (CLI agent), prompted by Daniel Winnie; OpenAI Codex, prompted by Ji Wu (FV-117/118 demo actions)
 // Overall AI Contribution: Daniel's scaffold ~90%; Ji Wu's demo actions 80%
-// AI-Assisted Areas: chat panel scaffold; parse/filter demo actions
+// AI-Assisted Areas: chat panel scaffold; parse/filter demo actions; FV-124 parser examples
 // Human Contributions: Ji Wu: requirements, prompts, scope decisions, and review of Chatbox demo results; Daniel Winnie: requirements and prompts, design choices (FastAPI, Docker layout, beginner-friendly comments), reviewed every change before committing, decided what to keep
 // Notes/Verification: manual browser testing on localhost:3000 (desktop and narrow widths); verified in the browser by Ji Wu (PR #11)
 
@@ -11,7 +11,7 @@ import React, { useEffect, useRef, useState } from 'react';
 const welcomeMessages = {
   parse: {
     sender: 'Assistant',
-    text: "Try 'music' or 'Music on 2026-11-01'. Supported categories: Music, Arts, Food, Outdoors, Social. This action shows category, date, and needs_clarification. To filter the sample events, choose Filter sample events under Chat action.",
+    text: "Try 'music', 'Saturday', or 'music in Boston next Friday after 6 pm'. Supported categories: Music, Arts, Food, Outdoors, Social. This action shows how your request was interpreted. To filter the sample events, choose Filter sample events under Chat action.",
   },
   filter: {
     sender: 'Assistant',
@@ -82,7 +82,7 @@ export default function ChatPanel({ events }) {
       } : {
         sender: 'Assistant',
         text: result.needs_clarification
-          ? "Please clarify: use Music, Arts, Food, Outdoors, or Social, optionally followed by 'on YYYY-MM-DD' with a valid date. Relative dates and other phrases are not supported."
+          ? "Please clarify. Try one category, a date or weekday, a time such as 'after 6 pm', or a location such as 'in Boston'."
           : 'Request recognized. Parsed conditions:',
         interpretation: result,
       }]);

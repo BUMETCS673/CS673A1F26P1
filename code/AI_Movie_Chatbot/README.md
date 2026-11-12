@@ -7,7 +7,7 @@ new feature work targets event planning.
 
 ## Run with Docker
 
-From the repository root:
+From the repository's `code` folder:
 
 ```bash
 bash start_project.sh
@@ -104,25 +104,42 @@ to `/api` with `SameSite=Lax`; set `SESSION_COOKIE_SECURE=true` when served over
 HTTPS. A database outage returns a safe 503. There is no rate limiting or email
 verification yet.
 
+The events feed and both demo endpoints require the same session cookie as
+`/api/auth/me`. They return 401 for missing or invalid sessions, including
+after logout. Register, login, logout, and health checks stay accessible
+without a session.
+
+Register new signed-in routers under `protected` in `app/main.py`. If a
+handler also needs the user record, inject `Depends(require_user)` from
+`app/routes/auth.py`.
+
 ### Sample events
 
 `GET /api/events` serves `app/data/sample_events.json`, sorted by date and then
 time of day, so the file's order does not matter. The website loads its event
 queue, filter choices, and chat-filter catalog from this endpoint.
 
-### FV-118 request parsing in Chatbox
+### FV-118 / FV-124 request parsing in Chatbox
 
 Start with `bash start_project.sh` and open http://localhost:3000. After logging
-in, choose **Parse request** under **Chat action**. Enter `music` or
-`Music on 2026-11-01` in the chat panel's **Request
-text** input and click **Parse request**. The reply shows the exact Python
-result: `category`, `date`, and `needs_clarification`. Try `music tomorrow`,
-`music and food`, or `music on 2026-02-30` to see a clarification response.
+in, choose **Parse request** under **Chat action**. Try `music`,
+`Music on 2026-11-01`, or `music in Boston next Friday after 6 pm`. The
+parser also accepts single constraints such as `Saturday`, `after 6 pm`,
+or `near Fenway`. Invalid dates and requests like `music and food` ask
+for clarification.
 
 `POST /api/demo/parse-event-request` accepts `{ "message": "music" }` and calls
 `parse_event_request`. This action sends no event list and does not call the
-FV-117 filter, database, real login, or a model. This unauthenticated endpoint only
-parses text; it does not recommend events or complete FV-99.
+FV-117 filter or a model. The endpoint only parses text; it does not
+recommend events or complete FV-99.
+
+The response includes `category`, `date` (YYYY-MM-DD), `time` (24-hour HH:MM),
+`time_operator` (after/before/at), `location`, `location_operator` (in/near),
+`timezone` (America/New_York), and `needs_clarification`. A bare weekday
+or `this Friday` means the next occurrence including today; `next Friday`
+means Friday of the next Monday–Sunday week. The recommendation flow is
+responsible for matching events against the catalog and interpreting location
+operators.
 
 ### FV-117 event filtering in Chatbox
 
@@ -138,8 +155,8 @@ Enter JSON in the chat panel's **Filter conditions
 
 `POST /api/demo/filter-events` takes optional `category` and `date`, plus the
 browser's full existing fictional `events` list, and calls `filter_events`.
-The list is client-supplied demo data, not an authoritative catalog. No login,
-database, external model, or FV-118 parser is called by this action.
+The list is client-supplied demo data, not an authoritative catalog. After
+session validation, filtering needs no database, external model, or parser.
 Natural-language text is not accepted in filter mode. This is not complete FV-99.
 
 Switching the chat action cancels any pending request and clears the conversation.
@@ -185,7 +202,7 @@ no `.env` is needed. For another existing database, copy `.env.example` to `.env
 inside `AI_Movie_Chatbot`, replace every placeholder, and rebuild/recreate the
 backend. Compose loads this folder's `.env`; exported shell variables take
 precedence. Those overrides configure the API connection, not PostgreSQL's
-initialization or its existing accounts. Avoid a separate root `.env` so Compose
+initialization or its existing accounts. Avoid a separate `.env` in `code/` or the repository root so Compose
 does not pick up competing settings.
 
 | Variable | Purpose |
@@ -229,7 +246,7 @@ real database, checks what is stored, and deletes the account afterwards.
 These verify connection cleanup after success and failure, a real query timeout,
 and a bounded connection attempt to a deliberately unresponsive local server.
 Also check the real Docker/nginx path
-after changing startup or proxy configuration. From the repository root:
+after changing startup or proxy configuration. From the repository's `code` folder:
 
 ```bash
 bash start_project.sh
@@ -254,7 +271,7 @@ docker compose --project-directory User_Database start database
 ```
 
 For repeatable HTTP assertions with Python 3's standard library, run from the
-repository root after startup:
+`code` folder after startup:
 
 ```bash
 python3 AI_Movie_Chatbot/tests/check_stack.py
@@ -264,8 +281,8 @@ While the database is stopped, add `--expect-database-down`. For a local Vite
 server, add `--base-url http://localhost:5173`. These checks cover JSON success,
 safe database failure, liveness, and proxy forwarding of unknown API routes.
 
-Stopping/starting the database preserves its volume. The separate root
-`stop_project.sh` deliberately deletes local data. Shut down frontend and backend
+Stopping/starting the database preserves its volume. The separate
+`code/stop_project.sh` deliberately deletes local data. Shut down frontend and backend
 before taking the database Compose project down, because they use its network.
 
 ## Dependency versions

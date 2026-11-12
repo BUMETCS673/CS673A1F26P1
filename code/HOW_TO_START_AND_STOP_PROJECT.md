@@ -4,8 +4,8 @@
 
 **Remove everything: `bash stop_project.sh`**
 
-Run these commands in a terminal opened in the repository's root folder (the
-folder containing this file). You do not need to start each app separately.
+Run these commands in a terminal opened in the repository's `code` folder (the
+folder containing this file): after cloning, run `cd code` first. You do not need to start each app separately.
 
 ## Set up your computer once
 
@@ -18,7 +18,7 @@ folder containing this file). You do not need to start each app separately.
    Docker Desktop's **Settings > Resources > WSL Integration**. On macOS or
    Linux, use your normal Bash-capable terminal.
 3. Clone this repository's `main` branch with Git, or download and extract its ZIP from
-   GitHub. Open the project folder in your editor and open its terminal.
+   GitHub. Open the project folder in your editor, open its terminal, and run `cd code`.
 
 **You do not need to install Node.js, npm, Python, PostgreSQL, or nginx locally
 for these scripts.** Docker supplies them, including running `npm ci` for you.
@@ -55,7 +55,7 @@ Python to PostgreSQL. Expect `{"status":"ok","database":"ok"}`; this checks
 endpoints; they do not save messages. Backend
 development and test instructions are in [AI_Movie_Chatbot/README.md](AI_Movie_Chatbot/README.md).
 
-To view the database, open a second terminal in the repository root and run:
+To view the database, open a second terminal in the `code` folder and run:
 
 ```bash
 docker compose --project-directory User_Database exec database psql -U movie_admin -d movie_users

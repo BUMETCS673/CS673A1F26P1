@@ -72,7 +72,7 @@ echo "  The original status page is at http://localhost:8080/"
 echo "  Auth endpoints: /api/auth/register, /login, /me, /logout. Events: /api/events"
 echo "User database: localhost:5432 (PostgreSQL, not a webpage)"
 echo "  It stores registered accounts and login sessions, plus two sample users without passwords."
-echo "  Open its SQL terminal from the repository folder with:"
+echo "  Open its SQL terminal from the code folder with:"
 echo "  docker compose --project-directory User_Database exec database psql -U movie_admin -d movie_users"
 echo "  Then type: SELECT * FROM users;  Type \\q to leave."
 echo
