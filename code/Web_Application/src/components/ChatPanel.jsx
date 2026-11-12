@@ -4,9 +4,30 @@
 // Overall AI Contribution: Daniel's scaffold ~90%; Ji Wu's demo actions 80%
 // AI-Assisted Areas: chat panel scaffold; parse/filter demo actions; FV-124 parser examples
 // Human Contributions: Ji Wu: requirements, prompts, scope decisions, and review of Chatbox demo results; Daniel Winnie: requirements and prompts, design choices (FastAPI, Docker layout, beginner-friendly comments), reviewed every change before committing, decided what to keep
+// Merge fix (Daniel Winnie, Claude Code): filter demo accepts catalog start/end events
 // Notes/Verification: manual browser testing on localhost:3000 (desktop and narrow widths); verified in the browser by Ji Wu (PR #11)
 
 import React, { useEffect, useRef, useState } from 'react';
+
+// The filter demo (FV-117) expects date/time fields; the catalog (FV-122/123) sends
+// start/end times. Convert each event to the demo's Boston date and clock time.
+const bostonParts = new Intl.DateTimeFormat('en-US', {
+  timeZone: 'America/New_York', year: 'numeric', month: '2-digit', day: '2-digit',
+  hour: 'numeric', minute: '2-digit',
+});
+export function toFilterDemoEvent(event) {
+  const parts = Object.fromEntries(bostonParts.formatToParts(new Date(event.start))
+    .map(({ type, value }) => [type, value]));
+  return {
+    id: event.id,
+    title: event.title,
+    category: event.category,
+    date: `${parts.year}-${parts.month}-${parts.day}`,
+    time: `${parts.hour}:${parts.minute} ${parts.dayPeriod}`,
+    location: event.location || 'Location unavailable',
+    description: event.description,
+  };
+}
 
 const welcomeMessages = {
   parse: {
@@ -15,7 +36,7 @@ const welcomeMessages = {
   },
   filter: {
     sender: 'Assistant',
-    text: 'Enter JSON conditions, for example {"category":"Music","date":"2026-11-01"}. Use {"category":"Music"} for any date, {"date":"2026-11-01"} for any category, or {} for all samples. To parse text instead, choose Parse request under Chat action.',
+    text: 'Enter JSON conditions, for example {"category":"Music","date":"2026-11-21"}. Use {"category":"Music"} for any date, {"date":"2026-11-21"} for any category, or {} for all samples. To parse text instead, choose Parse request under Chat action.',
   },
 };
 
@@ -51,7 +72,7 @@ export default function ChatPanel({ events }) {
       } catch {
         setMessages((previous) => [...previous, { sender: 'You', text: request }, {
           sender: 'Assistant', error: true,
-          text: 'Enter a JSON object with only category and/or date, for example {"category":"Music","date":"2026-11-01"}. Choose Parse request to interpret text instead.',
+          text: 'Enter a JSON object with only category and/or date, for example {"category":"Music","date":"2026-11-21"}. Choose Parse request to interpret text instead.',
         }]);
         return;
       }
@@ -67,7 +88,7 @@ export default function ChatPanel({ events }) {
       const response = await fetch(isFilter ? '/api/demo/filter-events' : '/api/demo/parse-event-request', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(isFilter ? { ...filters, events } : { message: request }),
+        body: JSON.stringify(isFilter ? { ...filters, events: events.map(toFilterDemoEvent) } : { message: request }),
         signal: controller.signal,
       });
       if (isFilter && response.status === 422) {
@@ -174,7 +195,7 @@ export default function ChatPanel({ events }) {
         <input
           id="chat-request"
           type="text"
-          placeholder={isFilter ? '{"category":"Music","date":"2026-11-01"}' : 'Music on 2026-11-01'}
+          placeholder={isFilter ? '{"category":"Music","date":"2026-11-21"}' : 'Music on 2026-11-21'}
           maxLength={1000}
           value={draft}
           onChange={(event) => setDraft(event.target.value)}

@@ -137,9 +137,16 @@ With PostgreSQL running and the `DB_*` variables set, run
 
 ### Sample events
 
-`GET /api/events` serves `app/data/sample_events.json`, sorted by date and then
-time of day, so the file's order does not matter. The website loads its event
-queue, filter choices, and chat-filter catalog from this endpoint.
+`GET /api/events?limit=10&offset=0` returns one page of upcoming events from
+`app/data/sample_events.json` (fictional demo data): events that have ended are
+hidden, the rest are sorted by start time (ties by ID), and `next_offset` is the
+offset of the next page or `null` on the last one. `GET /api/events/{event_id}`
+returns one event, or 404. Each event has `id`, `title`, `category`, `start`,
+`end` (ISO 8601 with a UTC offset, Boston local time), `location` (may be null),
+and `description`. Both routes require login.
+
+The tests use `tests/fixtures/catalog_events.json` and a fixed reference time
+instead of the demo file, so editing the demo events never breaks them.
 
 ### FV-118 / FV-124 request parsing in Chatbox
 
@@ -171,9 +178,9 @@ Enter JSON in the chat panel's **Filter conditions
 (JSON)** input and click **Filter sample events**:
 
 - `{"category":"Music"}` returns two samples.
-- `{"category":"Music","date":"2026-11-01"}` returns one.
-- `{"date":"2026-11-01"}` returns the two samples on that date.
-- `{}` returns all six; `{"category":"Music","date":"2026-11-02"}` returns none.
+- `{"category":"Music","date":"2026-11-21"}` returns one.
+- `{"date":"2026-11-21"}` returns the two samples on that date.
+- `{}` returns every event loaded in the list so far; `{"category":"Music","date":"2026-11-22"}` returns none.
 
 `POST /api/demo/filter-events` takes optional `category` and `date`, plus the
 browser's full existing fictional `events` list, and calls `filter_events`.

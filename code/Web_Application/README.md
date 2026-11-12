@@ -54,7 +54,7 @@ Docker project (or the backend) first; see "Use the connected development API".
 - Logging in calls `POST /api/auth/login`; the server sets an HttpOnly session
   cookie. Reloading keeps you logged in (`GET /api/auth/me`).
 - **Log Out** ends the session on the server and immediately shows the pop-up again.
-- Loads six fictional Boston events from `GET /api/events`, soonest first, with
+- Loads upcoming fictional Boston events from `GET /api/events` five at a time (Load More), soonest first, with
   loading and "Try again" states if the API is unreachable.
 - Category/date controls filter those events, with Clear and an empty state.
 - The chat panel parses requests or filters the events using the Python demo endpoints.

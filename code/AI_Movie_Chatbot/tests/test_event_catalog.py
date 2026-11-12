@@ -1,3 +1,10 @@
+# AI-USAGE SUMMARY
+# Authors: Yung Cheng Chiu
+# Tools: to be confirmed by the author (commit tagged [AI])
+# Overall AI Contribution: to be confirmed by Yung Cheng Chiu
+# AI-Assisted Areas: FV-122/FV-123 catalog helper test cases and fixtures
+# Human Contributions: Yung Cheng Chiu: catalog rules, fixtures, and review of results
+# Notes/Verification: all tests pass; reference time 2026-11-15T12:00:00-05:00
 
 import json
 import unittest
