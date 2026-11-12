@@ -8,16 +8,38 @@
 
 import React from 'react';
 
+function getBostonDate(value) {
+  if (!value) return '';
+
+  const parts = new Intl.DateTimeFormat('en-US', {
+    timeZone: 'America/New_York',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  }).formatToParts(new Date(value));
+
+  const getPart = (type) =>
+    parts.find((part) => part.type === type).value;
+
+  return `${getPart('year')}-${getPart('month')}-${getPart('day')}`;
+}
+
 function formatDate(value) {
-  return new Date(`${value}T12:00:00`).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+  if (!value) return 'unavailable';
+
+  return new Date(`${value}T12:00:00`).toLocaleDateString('en-US', {
+    month: 'long',
+    day: 'numeric',
+    year: 'numeric',
+  });
 }
 
 export default function FilterPanel({ events, category, date, onCategoryChange, onDateChange, onClear }) {
   // Derive choices from the same catalog shown in the event queue.
   const categories = [...new Set(events.map((event) => event.category))].sort();
   // Events arrive sorted, so the first and last give the date range.
-  const firstDate = events[0]?.date;
-  const lastDate = events[events.length - 1]?.date;
+  const firstDate = getBostonDate(events[0]?.start);
+  const lastDate = getBostonDate(events[events.length - 1]?.start);
 
   return (
     <section className="panel filter-panel" aria-labelledby="filters-title">

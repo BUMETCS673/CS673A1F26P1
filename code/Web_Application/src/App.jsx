@@ -17,27 +17,108 @@ function Dashboard({ user, onLogout }) {
   const [category, setCategory] = useState('');
   const [date, setDate] = useState('');
   // The Python API serves the fictional catalog, sorted by date and time.
-  const [catalog, setCatalog] = useState({ status: 'loading', events: [] });
+  const [catalog, setCatalog] = useState({
+  status: 'loading',
+  events: [],
+  nextOffset: null,
+  });
   const [attempt, setAttempt] = useState(0);
 
   useEffect(() => {
-    let current = true;
-    setCatalog({ status: 'loading', events: [] });
-    getEvents()
-      .then((events) => current && setCatalog({ status: 'ready', events }))
-      .catch(() => current && setCatalog({ status: 'error', events: [] }));
-    return () => { current = false; };
+  let current = true;
+
+  setCatalog({
+    status: 'loading',
+    events: [],
+    nextOffset: null,
+  });
+
+  getEvents(5, 0)
+    .then((data) => {
+      if (current) {
+        setCatalog({
+          status: 'ready',
+          events: data.events,
+          nextOffset: data.next_offset,
+        });
+      }
+    })
+    .catch(() => {
+      if (current) {
+        setCatalog({
+          status: 'error',
+          events: [],
+          nextOffset: null,
+        });
+      }
+    });
+
+  return () => {
+    current = false;
+  };
   }, [attempt]);
 
-  const visibleEvents = catalog.events.filter((event) => (
-    (category === '' || event.category === category)
-    && (date === '' || event.date === date)
-  ));
+  const visibleEvents = catalog.events.filter((event) => {
+  const parts = new Intl.DateTimeFormat('en-US', {
+    timeZone: 'America/New_York',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  }).formatToParts(new Date(event.start));
+
+  const getPart = (type) =>
+    parts.find((part) => part.type === type).value;
+
+  const eventDate = `${getPart('year')}-${getPart('month')}-${getPart('day')}`;
+
+  return (
+    (category === '' || event.category === category) &&
+    (date === '' || eventDate === date)
+  );
+});
 
   function clearFilters() {
     setCategory('');
     setDate('');
   }
+
+  async function loadMore() {
+  if (catalog.nextOffset === null || catalog.status !== 'ready') {
+    return;
+  }
+
+  const nextOffset = catalog.nextOffset;
+
+  setCatalog((previous) => ({
+    ...previous,
+    status: 'loading-more',
+  }));
+
+  try {
+    const data = await getEvents(5, nextOffset);
+
+    setCatalog((previous) => {
+      const existingIds = new Set(
+        previous.events.map((event) => event.id)
+      );
+
+      const newEvents = data.events.filter(
+        (event) => !existingIds.has(event.id)
+      );
+
+      return {
+        status: 'ready',
+        events: [...previous.events, ...newEvents],
+        nextOffset: data.next_offset,
+      };
+    });
+  } catch {
+    setCatalog((previous) => ({
+      ...previous,
+      status: 'load-more-error',
+    }));
+  }
+}
 
   return (
     <div className="app-shell">
@@ -71,6 +152,8 @@ function Dashboard({ user, onLogout }) {
             events={visibleEvents}
             onClearFilters={clearFilters}
             onRetry={() => setAttempt((count) => count + 1)}
+            hasMore={catalog.nextOffset !== null}
+            onLoadMore={loadMore}
           />
           <aside className="dashboard-sidebar" aria-label="Filters and event chat">
             <FilterPanel

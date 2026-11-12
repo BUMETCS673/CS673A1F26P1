@@ -1,0 +1,111 @@
+/*
+ * AI-USAGE SUMMARY
+ * Author: Junshuo Huang
+ * Tool: ChatGPT (Codex)
+ * AI-Assisted Areas: standalone FV-92 preview layout and styles
+ * Human Contributions: Junshuo Huang defined the standalone Docker preview and follow-back workflow.
+ */
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: #f2f6f7;
+  color: #20353e;
+  font: 16px/1.5 system-ui, sans-serif;
+}
+
+.friends-preview {
+  max-width: 920px;
+  margin: 0 auto;
+  padding: 32px 20px;
+}
+
+h1, h2, p { margin: 0; }
+h1 { font-size: 2rem; }
+h2 { font-size: 1.15rem; margin-bottom: 8px; }
+
+.eyebrow {
+  color: #256354;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.muted { color: #51646d; font-size: 0.9rem; }
+
+.panel, .preview-account {
+  padding: 16px;
+  border: 1px solid #9eb2bc;
+  border-radius: 12px;
+  background: #fff;
+}
+
+.preview-account {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 12px;
+  margin: 20px 0 12px;
+}
+
+label { font-size: 0.9rem; font-weight: 600; }
+button, input, select { min-height: 42px; border-radius: 8px; font: inherit; }
+
+input, select {
+  min-width: 0;
+  max-width: 100%;
+  border: 1px solid #8da6b1;
+  background: #fff;
+  color: inherit;
+  padding: 7px 10px;
+}
+
+button {
+  padding: 7px 12px;
+  border: 1px solid #256354;
+  background: #256354;
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+button.secondary { background: #fff; color: #20353e; border-color: #8da6b1; }
+:focus-visible { outline: 3px solid #ad6900; outline-offset: 2px; }
+
+.search-controls {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.search-message:not(:empty) { margin-top: 10px; }
+
+.lists {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.count { color: #51646d; font-size: 0.9rem; }
+.account-list { list-style: none; margin: 0; padding: 0; }
+
+.account-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid #d4dfe3;
+}
+
+.relationship { color: #256354; font-size: 0.85rem; font-weight: 600; }
+
+@media (max-width: 600px) {
+  .lists { grid-template-columns: minmax(0, 1fr); }
+}

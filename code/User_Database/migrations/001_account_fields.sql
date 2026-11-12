@@ -1,11 +1,10 @@
 -- AI-USAGE SUMMARY
 -- Authors: Yuchen Xu
--- Tools: not yet reported by the author - author to confirm in the AIUsageLog
--- Overall AI Contribution: to be confirmed by Yuchen Xu
--- AI-Assisted Areas: account-field migration (FV-113)
--- Human Contributions: Yuchen Xu: migration design and testing
--- Notes/Verification: migration run twice on an existing database, sample users kept (per SDD 10.6)
-
+-- Tools: ChatGPT (OpenAI)
+-- Overall AI Contribution: Moderate
+-- AI-Assisted Areas: PostgreSQL syntax, account-field migration (FV-113), SQL testing commands, Git/GitHub workflow, and README documentation
+-- Human Contributions: Yuchen Xu: edited SQL files, executed and tested the migration, verified database records, and committed changes to GitHub
+-- Notes/Verification: migration run twice on an existing database; both sample users and their original IDs preserved; new account fields verified in PostgreSQL
 
 ALTER TABLE users
     ADD COLUMN IF NOT EXISTS display_name VARCHAR(100),

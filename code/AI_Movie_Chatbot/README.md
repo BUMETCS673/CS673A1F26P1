@@ -113,11 +113,40 @@ Register new signed-in routers under `protected` in `app/main.py`. If a
 handler also needs the user record, inject `Depends(require_user)` from
 `app/routes/auth.py`.
 
+### Following and followers (FV-92)
+
+When A follows B, B appears in A's Following list, and A appears in B's
+Followers list. Each account manages its own outgoing follows. All five
+endpoints use the login session cookie and return 401 without a valid session.
+
+| Endpoint | Result |
+| --- | --- |
+| `GET /api/users/search?username=alex` | 200 with exact username matches, ignoring case and excluding the signed-in account. No matches returns `[]`. |
+| `GET /api/following` | 200 with the accounts you follow. |
+| `GET /api/followers` | 200 with the accounts that follow you. |
+| `PUT /api/following/{user_id}` | 204 when following, including a repeat request. 400 for self-follow, 404 for an unknown user. |
+| `DELETE /api/following/{user_id}` | 204 after ensuring you do not follow that account. A repeat request also returns 204. |
+
+Each result in a search or list has `id`, `username`, and `display_name`
+(which can be null for older accounts). Use the target's `id` in the URL
+for PUT and DELETE. Both requests take an empty body.
+
+`code/start_project.sh` applies `003_user_follows.sql` when starting the stack.
+With PostgreSQL running and the `DB_*` variables set, run
+`python -m unittest discover -s tests -p live_follows.py -v` from this folder.
+
 ### Sample events
 
-`GET /api/events` serves `app/data/sample_events.json`, sorted by date and then
-time of day, so the file's order does not matter. The website loads its event
-queue, filter choices, and chat-filter catalog from this endpoint.
+`GET /api/events?limit=10&offset=0` returns one page of upcoming events from
+`app/data/sample_events.json` (fictional demo data): events that have ended are
+hidden, the rest are sorted by start time (ties by ID), and `next_offset` is the
+offset of the next page or `null` on the last one. `GET /api/events/{event_id}`
+returns one event, or 404. Each event has `id`, `title`, `category`, `start`,
+`end` (ISO 8601 with a UTC offset, Boston local time), `location` (may be null),
+and `description`. Both routes require login.
+
+The tests use `tests/fixtures/catalog_events.json` and a fixed reference time
+instead of the demo file, so editing the demo events never breaks them.
 
 ### FV-118 / FV-124 request parsing in Chatbox
 
@@ -149,9 +178,9 @@ Enter JSON in the chat panel's **Filter conditions
 (JSON)** input and click **Filter sample events**:
 
 - `{"category":"Music"}` returns two samples.
-- `{"category":"Music","date":"2026-11-01"}` returns one.
-- `{"date":"2026-11-01"}` returns the two samples on that date.
-- `{}` returns all six; `{"category":"Music","date":"2026-11-02"}` returns none.
+- `{"category":"Music","date":"2026-11-21"}` returns one.
+- `{"date":"2026-11-21"}` returns the two samples on that date.
+- `{}` returns every event loaded in the list so far; `{"category":"Music","date":"2026-11-22"}` returns none.
 
 `POST /api/demo/filter-events` takes optional `category` and `date`, plus the
 browser's full existing fictional `events` list, and calls `filter_events`.
