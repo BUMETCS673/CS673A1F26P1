@@ -2,7 +2,7 @@
 // Authors: Daniel Winnie
 // Tools: Claude Code (Claude Opus), prompted by Daniel Winnie
 // Overall AI Contribution: ~90%
-// AI-Assisted Areas: fetch wrappers for the Python API (including sendChat, FV-125)
+// AI-Assisted Areas: fetch wrappers for the Python API (including sendChat, FV-125, and chat history, FV-121)
 // Human Contributions: Daniel Winnie: requirements and prompts, design choices (FastAPI, Docker layout, beginner-friendly comments), reviewed every change before committing, decided what to keep
 // Notes/Verification: manual browser testing on localhost:3000 (desktop and narrow widths)
 
@@ -45,6 +45,10 @@ export const getEventById = (id) =>
 // chat cancel a request when it is cleared or the user logs out.
 export const sendChat = (message, signal) =>
   request('/api/chat', { method: 'POST', body: { message }, signal });
+
+// FV-121: the signed-in user's last 50 exchanges, and "Clear history".
+export const getChatHistory = () => request('/api/chat/history');
+export const clearChatHistory = () => request('/api/chat/history', { method: 'DELETE' });
 
 export const getCurrentUser = () => request('/api/auth/me');
 export const register = (account) => request('/api/auth/register', { method: 'POST', body: account });

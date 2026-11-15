@@ -148,10 +148,31 @@ and `description`. Both routes require login.
 The tests use `tests/fixtures/catalog_events.json` and a fixed reference time
 instead of the demo file, so editing the demo events never breaks them.
 
-### FV-118 / FV-124 request parsing in Chatbox
+### Chat recommendations (FV-125) and chat history (FV-121)
 
-Start with `bash start_project.sh` and open http://localhost:3000. After logging
-in, choose **Parse request** under **Chat action**. Try `music`,
+The chat panel sends free text to `POST /api/chat` (`{ "message": "music this friday after 6pm" }`).
+`app/chat.py` runs the FV-124 parser, then keeps the upcoming catalog events that
+match **every** constraint: category, Boston calendar date (an event crossing
+midnight counts on both days), start time (`after`/`before`/`at`), and place
+(the location contains the requested text, ignoring case). It returns
+`{ interpretation, events }` with at most 10 events in start order.
+`needs_clarification: true` means the text was not understood; an empty `events`
+list otherwise is an honest "no matches".
+
+Each exchange is saved in `chat_messages` (migration `004_chat_messages.sql`) for
+the signed-in user, as the parser output plus the matched event IDs. If saving
+fails, the request returns 503 and the reply is not shown.
+`GET /api/chat/history` returns that user's last 50 exchanges, oldest first, with
+cards rebuilt from the current catalog: events that ended or were removed are
+left out and counted in `unavailable_count`. `DELETE /api/chat/history` clears
+only that user's history. Both use the session; there is no user ID to change.
+SQL lives in `app/chat_history.py`; tests in `tests/test_chat.py`,
+`tests/test_chat_history.py`, and `tests/live_chat_history.py` (two accounts).
+
+### FV-118 / FV-124 request parsing (API only)
+
+The chat UI now uses `POST /api/chat` above; this endpoint stays available in
+`/docs` for checking the parser on its own. Try `music`,
 `Music on 2026-11-01`, or `music in Boston next Friday after 6 pm`. The
 parser also accepts single constraints such as `Saturday`, `after 6 pm`,
 or `near Fenway`. Invalid dates and requests like `music and food` ask
@@ -170,12 +191,10 @@ means Friday of the next Monday–Sunday week. The recommendation flow is
 responsible for matching events against the catalog and interpreting location
 operators.
 
-### FV-117 event filtering in Chatbox
+### FV-117 event filtering (API only)
 
-Start the stack with `bash start_project.sh` and open http://localhost:3000.
-After logging in, choose **Filter sample events** under **Chat action**.
-Enter JSON in the chat panel's **Filter conditions
-(JSON)** input and click **Filter sample events**:
+The chat UI no longer has a filter mode (the recommendation flow replaces it);
+the endpoint stays available in `/docs` with examples like:
 
 - `{"category":"Music"}` returns two samples.
 - `{"category":"Music","date":"2026-11-21"}` returns one.
@@ -188,10 +207,6 @@ The list is client-supplied demo data, not an authoritative catalog. After
 session validation, filtering needs no database, external model, or parser.
 Natural-language text is not accepted in filter mode. This is not complete FV-99.
 
-Switching the chat action cancels any pending request and clears the conversation.
-Both endpoints remain separate and both are available on main; no separate demo
-branch is needed. The sidebar filters do not change the full sample list sent to
-the Chatbox filter.
 
 - `app/main.py`: `create_app()` creates FastAPI and registers feature routers.
   The exported `app` is Uvicorn's entry point. Importing it does not run a server.
