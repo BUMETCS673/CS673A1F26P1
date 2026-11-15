@@ -1,5 +1,5 @@
 {
-  "_note": "Fictional demo events shown in the app, not real listings or bookings. Times are Boston local time with a UTC offset. Tests use tests/fixtures/catalog_events.json instead, so this file can change freely.",
+  "_note": "Fictional demo events shown in the app, not real listings or bookings. Names of venues and events are invented. Times are Boston local time with a UTC offset. Tests use tests/fixtures/catalog_events.json instead, so this file can change freely. FV-126: 38 events through the last day of the semester, 2026-12-18.",
   "events": [
     {
       "id": "sample-1",
@@ -54,6 +54,294 @@
       "end": "2026-12-05T17:00:00-05:00",
       "location": "Downtown, Boston",
       "description": "Another fictional music event so the category filter has multiple examples."
+    },
+    {
+      "id": "sample-7",
+      "title": "Beacon Hill lantern walk",
+      "category": "Outdoors",
+      "start": "2026-11-17T17:00:00-05:00",
+      "end": "2026-11-17T18:30:00-05:00",
+      "location": "Beacon Hill, Boston",
+      "description": "A fictional guided evening stroll past the gas lamps and brick sidewalks of Beacon Hill. Dress warmly."
+    },
+    {
+      "id": "sample-8",
+      "title": "Trivia Tuesday for grad students",
+      "category": "Social",
+      "start": "2026-11-17T19:00:00-05:00",
+      "end": "2026-11-17T21:00:00-05:00",
+      "location": "Allston, Boston",
+      "description": "A fictional pub-style trivia night for graduate students; teams of up to five, no registration needed."
+    },
+    {
+      "id": "sample-9",
+      "title": "Chinatown dumpling crawl",
+      "category": "Food",
+      "start": "2026-11-18T18:00:00-05:00",
+      "end": "2026-11-18T20:30:00-05:00",
+      "location": "Chinatown, Boston",
+      "description": "A fictional walking tour that stops at four neighborhood dumpling spots. Bring an appetite and small bills."
+    },
+    {
+      "id": "sample-10",
+      "title": "Open studio night at the Pier",
+      "category": "Arts",
+      "start": "2026-11-19T18:00:00-05:00",
+      "end": "2026-11-19T21:00:00-05:00",
+      "location": "Fort Point, Boston",
+      "description": "A fictional open-studio evening where local painters and printmakers show works in progress."
+    },
+    {
+      "id": "sample-11",
+      "title": "Indie showcase: three Boston bands",
+      "category": "Music",
+      "start": "2026-11-20T20:00:00-05:00",
+      "end": "2026-11-20T23:00:00-05:00",
+      "location": "Allston, Boston",
+      "description": "A fictional three-band bill of local indie acts in a small club setting. Doors at 7:30 PM."
+    },
+    {
+      "id": "sample-12",
+      "title": "Franklin Park morning trail run",
+      "category": "Outdoors",
+      "start": "2026-11-21T09:00:00-05:00",
+      "end": "2026-11-21T10:30:00-05:00",
+      "location": "Jamaica Plain, Boston",
+      "description": "A fictional casual 5K group run on the wooded trails of Franklin Park; all paces welcome."
+    },
+    {
+      "id": "sample-13",
+      "title": "Sunday brunch and board games",
+      "category": "Social",
+      "start": "2026-11-22T11:00:00-05:00",
+      "end": "2026-11-22T14:00:00-05:00",
+      "location": "Charlestown, Boston",
+      "description": "A fictional long brunch with a shelf of board games. Come alone or with friends."
+    },
+    {
+      "id": "sample-14",
+      "title": "Pre-Thanksgiving potluck for students far from home",
+      "category": "Food",
+      "start": "2026-11-24T18:00:00-05:00",
+      "end": "2026-11-24T20:30:00-05:00",
+      "location": "Dorchester, Boston",
+      "description": "A fictional community potluck for students staying in Boston over the holiday. Bring a dish or just yourself."
+    },
+    {
+      "id": "sample-15",
+      "title": "Thanksgiving morning turkey trot",
+      "category": "Outdoors",
+      "start": "2026-11-26T08:00:00-05:00",
+      "end": "2026-11-26T09:30:00-05:00",
+      "location": "South Boston, Boston",
+      "description": "A fictional fun run along the South Boston waterfront before the holiday meal."
+    },
+    {
+      "id": "sample-16",
+      "title": "Black Friday craft fair",
+      "category": "Arts",
+      "start": "2026-11-27T11:00:00-05:00",
+      "end": "2026-11-27T16:00:00-05:00",
+      "location": "Roslindale, Boston",
+      "description": "A fictional indoor fair with handmade jewelry, ceramics, and prints from local makers."
+    },
+    {
+      "id": "sample-17",
+      "title": "Holiday lights at the harbor",
+      "category": "Outdoors",
+      "start": "2026-11-28T17:00:00-05:00",
+      "end": "2026-11-28T19:00:00-05:00",
+      "location": "Seaport, Boston",
+      "description": "A fictional group outing to watch the harbor lights switch on for the season."
+    },
+    {
+      "id": "sample-18",
+      "title": "Acoustic open mic",
+      "category": "Music",
+      "start": "2026-11-29T19:00:00-05:00",
+      "end": "2026-11-29T21:30:00-05:00",
+      "location": "Jamaica Plain, Boston",
+      "description": "A fictional Sunday open mic; sign up on arrival for a ten-minute slot."
+    },
+    {
+      "id": "sample-19",
+      "title": "First Monday figure drawing",
+      "category": "Arts",
+      "start": "2026-11-30T18:30:00-05:00",
+      "end": "2026-11-30T20:30:00-05:00",
+      "location": "South End, Boston",
+      "description": "A fictional drop-in drawing session with a live model; paper and charcoal provided."
+    },
+    {
+      "id": "sample-20",
+      "title": "Pasta-making class in the North End",
+      "category": "Food",
+      "start": "2026-12-01T18:00:00-05:00",
+      "end": "2026-12-01T20:30:00-05:00",
+      "location": "North End, Boston",
+      "description": "A fictional hands-on class covering fresh dough and two sauces. Aprons provided; class size limited."
+    },
+    {
+      "id": "sample-21",
+      "title": "Coffee and conversation for international students",
+      "category": "Social",
+      "start": "2026-12-02T16:00:00-05:00",
+      "end": "2026-12-02T17:30:00-05:00",
+      "location": "Fenway, Boston",
+      "description": "A fictional weekly meetup to practice conversation and meet people from other programs."
+    },
+    {
+      "id": "sample-22",
+      "title": "Chamber music at lunchtime",
+      "category": "Music",
+      "start": "2026-12-03T12:30:00-05:00",
+      "end": "2026-12-03T13:30:00-05:00",
+      "location": "Downtown, Boston",
+      "description": "A fictional free midday recital by a student string quartet."
+    },
+    {
+      "id": "sample-23",
+      "title": "Street photography walk",
+      "category": "Arts",
+      "start": "2026-12-04T15:00:00-05:00",
+      "end": "2026-12-04T17:00:00-05:00",
+      "location": "Chinatown, Boston",
+      "description": "A fictional small-group photo walk focused on light and street scenes. Any camera, including a phone, is fine."
+    },
+    {
+      "id": "sample-24",
+      "title": "Taco crawl in East Boston",
+      "category": "Food",
+      "start": "2026-12-04T18:30:00-05:00",
+      "end": "2026-12-04T21:00:00-05:00",
+      "location": "East Boston, Boston",
+      "description": "A fictional taco crawl through three neighborhood taquerias; pay as you go."
+    },
+    {
+      "id": "sample-25",
+      "title": "Arnold Arboretum winter tree walk",
+      "category": "Outdoors",
+      "start": "2026-12-06T10:00:00-05:00",
+      "end": "2026-12-06T12:00:00-05:00",
+      "location": "Jamaica Plain, Boston",
+      "description": "A fictional guided walk on identifying trees by bark and buds once the leaves are down."
+    },
+    {
+      "id": "sample-26",
+      "title": "Study break: puppies and cocoa",
+      "category": "Social",
+      "start": "2026-12-07T15:00:00-05:00",
+      "end": "2026-12-07T17:00:00-05:00",
+      "location": "Fenway, Boston",
+      "description": "A fictional finals-week stress break with hot chocolate and visiting therapy dogs."
+    },
+    {
+      "id": "sample-27",
+      "title": "Soul and R&B night",
+      "category": "Music",
+      "start": "2026-12-08T20:00:00-05:00",
+      "end": "2026-12-08T23:00:00-05:00",
+      "location": "Roxbury, Boston",
+      "description": "A fictional evening of local soul and R&B singers with a house band."
+    },
+    {
+      "id": "sample-28",
+      "title": "Ramen night for grad students",
+      "category": "Food",
+      "start": "2026-12-09T18:00:00-05:00",
+      "end": "2026-12-09T20:00:00-05:00",
+      "location": "Allston, Boston",
+      "description": "A fictional group dinner at a neighborhood ramen counter; everyone orders their own bowl."
+    },
+    {
+      "id": "sample-29",
+      "title": "Gallery talk: printmaking in Boston",
+      "category": "Arts",
+      "start": "2026-12-10T18:00:00-05:00",
+      "end": "2026-12-10T19:30:00-05:00",
+      "location": "Fort Point, Boston",
+      "description": "A fictional curator-led talk about the city's printmaking studios, followed by a short reception."
+    },
+    {
+      "id": "sample-30",
+      "title": "Friday night skate at the Frog Pond",
+      "category": "Outdoors",
+      "start": "2026-12-11T19:00:00-05:00",
+      "end": "2026-12-11T21:00:00-05:00",
+      "location": "Beacon Hill, Boston",
+      "description": "A fictional group skate on the Boston Common rink. Rentals available on site."
+    },
+    {
+      "id": "sample-31",
+      "title": "Holiday cookie swap",
+      "category": "Food",
+      "start": "2026-12-12T14:00:00-05:00",
+      "end": "2026-12-12T16:00:00-05:00",
+      "location": "Brighton, Boston",
+      "description": "A fictional cookie exchange: bring two dozen of one kind, leave with an assortment."
+    },
+    {
+      "id": "sample-32",
+      "title": "Winter choral concert",
+      "category": "Music",
+      "start": "2026-12-12T19:30:00-05:00",
+      "end": "2026-12-12T21:00:00-05:00",
+      "location": "Back Bay, Boston",
+      "description": "A fictional seasonal concert by a community choir in a candlelit hall."
+    },
+    {
+      "id": "sample-33",
+      "title": "Sunday afternoon pottery open house",
+      "category": "Arts",
+      "start": "2026-12-13T13:00:00-05:00",
+      "end": "2026-12-13T16:00:00-05:00",
+      "location": "Charlestown, Boston",
+      "description": "A fictional open house at a shared ceramics studio; try the wheel for fifteen minutes at a time."
+    },
+    {
+      "id": "sample-34",
+      "title": "Quiet co-working and study session",
+      "category": "Social",
+      "start": "2026-12-14T10:00:00-05:00",
+      "end": "2026-12-14T16:00:00-05:00",
+      "location": "South End, Boston",
+      "description": "A fictional all-day quiet study room with coffee and snacks for finals week."
+    },
+    {
+      "id": "sample-35",
+      "title": "Lunchtime walk along the Harborwalk",
+      "category": "Outdoors",
+      "start": "2026-12-15T12:00:00-05:00",
+      "end": "2026-12-15T13:00:00-05:00",
+      "location": "Seaport, Boston",
+      "description": "A fictional short midday walk to clear your head between exams."
+    },
+    {
+      "id": "sample-36",
+      "title": "Last open mic of the semester",
+      "category": "Music",
+      "start": "2026-12-16T19:00:00-05:00",
+      "end": "2026-12-16T21:30:00-05:00",
+      "location": "Jamaica Plain, Boston",
+      "description": "A fictional end-of-semester open mic with a longer sign-up list than usual."
+    },
+    {
+      "id": "sample-37",
+      "title": "Dumplings and board games",
+      "category": "Food",
+      "start": "2026-12-17T18:00:00-05:00",
+      "end": "2026-12-17T20:30:00-05:00",
+      "location": "Chinatown, Boston",
+      "description": "A fictional post-exam dinner followed by games; split the table."
+    },
+    {
+      "id": "sample-38",
+      "title": "End-of-semester send-off",
+      "category": "Social",
+      "start": "2026-12-18T18:00:00-05:00",
+      "end": "2026-12-18T21:00:00-05:00",
+      "location": "Fenway, Boston",
+      "description": "A fictional farewell gathering on the last day of the semester before everyone heads home."
     }
   ]
 }

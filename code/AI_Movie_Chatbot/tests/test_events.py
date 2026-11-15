@@ -113,6 +113,19 @@ class DemoDataTests(unittest.TestCase):
                 self.assertLess(start, end)
                 self.assertNotIn("fixture", event["title"].lower())
 
+    def test_demo_catalog_covers_the_semester(self):
+        # FV-126: 30-40 fictional events, every category, through the last day of
+        # the semester (2026-12-18). Checked against fixed dates, not today's date.
+        events_route.load_sample_events.cache_clear()
+        events = events_route.load_sample_events()
+        self.assertTrue(30 <= len(events) <= 40, len(events))
+        self.assertEqual({event["category"] for event in events},
+                         {"Music", "Arts", "Food", "Outdoors", "Social"})
+        boston = ZoneInfo("America/New_York")
+        last_start = max(datetime.fromisoformat(event["start"]) for event in events)
+        self.assertEqual(last_start.astimezone(boston).date().isoformat(), "2026-12-18")
+        self.assertGreaterEqual(len({event["location"] for event in events}), 10)
+
 
 if __name__ == "__main__":
     unittest.main()
