@@ -1,9 +1,9 @@
 # AI-USAGE SUMMARY
 # Authors: Yung Cheng Chiu
-# Tools: to be confirmed by the author (commit tagged [AI])
-# Overall AI Contribution: to be confirmed by Yung Cheng Chiu
+# Tools: Claude (Anthropic), prompted by Yung Cheng Chiu
+# Overall AI Contribution: ~90%
 # AI-Assisted Areas: FV-122/FV-123 catalog helpers (hide ended, sort, find, paginate)
-# Human Contributions: Yung Cheng Chiu: catalog rules, fixtures, and review of results
+# Human Contributions: Yung Cheng Chiu: requirements from Jira FV-122/FV-123, prompts, rule decisions (end <= now, limit/offset paging), running the tests, and review of results
 # Notes/Verification: tests/test_event_catalog.py with a fixed reference time
 
 """Pure catalog helpers: hide ended events, sort by start, find by ID, and paginate."""
