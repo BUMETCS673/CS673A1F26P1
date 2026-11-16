@@ -6,6 +6,10 @@
 // Human Contributions: Daniel Winnie: requirements and prompts, design choices (FastAPI, Docker layout, beginner-friendly comments), reviewed every change before committing, decided what to keep
 // Notes/Verification: manual browser testing on localhost:3000 (desktop and narrow widths)
 
+// Follow API wrappers (Junshuo Huang, FV-92): OpenAI Codex drafted the code from the existing API contract.
+// Overall AI Contribution (FV-92): 100% of the initial code draft.
+// Notes/Verification (FV-92): frontend tests with mocked API responses.
+
 // Small wrappers around the Python API. Relative URLs go through Vite's /api proxy,
 // and the browser sends the HttpOnly session cookie automatically.
 
@@ -34,6 +38,14 @@ function errorMessage(detail) {
   if (Array.isArray(detail) && detail[0]?.msg) return detail[0].msg.replace(/^Value error, /, '');
   return 'Something went wrong. Please try again.';
 }
+
+export const searchUsers = (username) =>
+  request(`/api/users/search?${new URLSearchParams({ username })}`);
+
+export const getFollowing = () => request('/api/following');
+export const getFollowers = () => request('/api/followers');
+export const followUser = (id) => request(`/api/following/${id}`, { method: 'PUT' });
+export const unfollowUser = (id) => request(`/api/following/${id}`, { method: 'DELETE' });
 
 export const getEvents = (limit = 5, offset = 0) =>
   request(`/api/events?limit=${limit}&offset=${offset}`);
