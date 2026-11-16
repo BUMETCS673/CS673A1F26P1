@@ -2,7 +2,7 @@
 
 Hey everyone! Here's where things stand and what I'd suggest each of us does to finish Iteration 2. The goal hasn't changed: **two users sign in, find an event through chat, save it to My Plans, follow each other, see "Alex is going" on that event, keep chat history after signing out and back in, and change preferences in Profile, all on a phone-sized screen too.**
 
-**Merged today (Nov 15):** Ryan's demo catalog (#34), preference order (#35), and AI-usage headers (#33), plus the Dependabot update (#32). **Coming next from Daniel:** automatic PR checks, the real chat endpoint (`POST /api/chat`, with cards that open the details view), and chat history (migration **004**). Once the checks merge, every PR runs the Python tests, the database tests, the frontend tests, and the build automatically.
+**Merged on Nov 15:** Ryan's demo catalog (#34), preference order (#35), and AI-usage headers (#33), plus the Dependabot update (#32). **Coming next from Daniel:** automatic PR checks, the real chat endpoint (`POST /api/chat`, with cards that open the details view), and chat history (migration **004**). Once the checks merge, every PR runs the Python tests, the database tests, the frontend tests, and the build automatically.
 
 | Team member | Where things stand | Next (independent coding) | Then (integration) |
 | --- | --- | --- | --- |
