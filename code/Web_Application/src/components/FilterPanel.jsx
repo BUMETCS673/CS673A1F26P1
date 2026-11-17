@@ -1,10 +1,10 @@
 // AI-USAGE SUMMARY
-// Authors: Daniel Winnie
-// Tools: OpenAI Codex (CLI agent), prompted by Daniel Winnie; Claude Code (Claude Opus), prompted by Daniel Winnie (date options from API data)
-// Overall AI Contribution: ~90%
-// AI-Assisted Areas: category/date filter controls
-// Human Contributions: Daniel Winnie: requirements and prompts, design choices (FastAPI, Docker layout, beginner-friendly comments), reviewed every change before committing, decided what to keep
-// Notes/Verification: manual browser testing on localhost:3000 (desktop and narrow widths)
+// Authors: Daniel Winnie, Jibek Kelgenbaeva
+// Tools: OpenAI Codex (CLI agent), prompted by Daniel Winnie; Claude Code (Claude Opus), prompted by Daniel Winnie (date options from API data); ChatGPT (OpenAI), prompted by Jibek Kelgenbaeva (FV-122/FV-123)
+// Overall AI Contribution: ~90% (Daniel's parts); 90% (Jibek's FV-122/FV-123 parts)
+// AI-Assisted Areas: category and date filter controls, Boston-local date conversion, event date-range display, and filtering integration
+// Human Contributions: Daniel Winnie: requirements, prompts, design decisions, and code review; Jibek Kelgenbaeva: FV-122/FV-123 requirements, integration, testing, and verification
+// Notes/Verification: manual browser testing and FV-122/FV-123 event filtering verification
 
 import React from 'react';
 

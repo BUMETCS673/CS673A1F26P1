@@ -1,7 +1,7 @@
 # AI-USAGE SUMMARY
 # Authors: Daniel Winnie (original tests, merge fixes), Jibek Kelgenbaeva (paginated list and details tests, FV-122/123)
-# Tools: Claude Code (Claude Opus), prompted by Daniel Winnie; Jibek Kelgenbaeva's tools: to be confirmed by the author
-# Overall AI Contribution: ~90% (Daniel's parts); Jibek's part to be confirmed by the author
+# Tools: Claude Code (Claude Opus), prompted by Daniel Winnie; ChatGPT (OpenAI GPT-6), prompted by Jibek Kelgenbaeva
+# Overall AI Contribution: ~90% (Daniel's parts); 90% (Jibek's FV-122/FV-123 parts)
 # AI-Assisted Areas: events API test cases with a fixed reference time
 # Human Contributions: Jibek Kelgenbaeva: list/details/404/422 test cases; Daniel Winnie: login override, fixed clock, fixture catalog, demo-data checks
 # Notes/Verification: all tests pass; independent of today's date

@@ -6,6 +6,7 @@
 // Human Contributions: Daniel Winnie: requirements and prompts, design choices (FastAPI, Docker layout, beginner-friendly comments), reviewed every change before committing, decided what to keep; Ji Wu: requirements, prompts, scope decisions, and review of Chatbox demo integration results
 // Notes/Verification: manual browser testing on localhost:3000 (desktop and narrow widths)
 // Navigation extraction (Junshuo Huang): OpenAI Codex drafted the move.
+// FV-122/FV-123 (Jibek Kelgenbaeva): ChatGPT (OpenAI), 90% of paginated event loading, Load More, and Boston-local date filtering; Jibek: requirements, integration, testing, and verification
 
 import React, { useEffect, useState } from 'react';
 import EventFeed from '../components/EventFeed.jsx';

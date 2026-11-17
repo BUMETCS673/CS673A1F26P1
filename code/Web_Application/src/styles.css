@@ -1,11 +1,11 @@
 /*
  * AI-USAGE SUMMARY
- * Authors: Daniel Winnie, Ji Wu
- * Tools: OpenAI Codex (CLI agent), prompted by Daniel Winnie; Claude Code (Claude Opus), prompted by Daniel Winnie; OpenAI Codex, prompted by Ji Wu (chat demo styles)
- * Overall AI Contribution: ~85% (Daniel's parts); 80% (Ji Wu's part)
- * AI-Assisted Areas: layout and colors; chat demo styles (Ji Wu)
- * Human Contributions: Daniel Winnie: requirements and prompts, design choices (FastAPI, Docker layout, beginner-friendly comments), reviewed every change before committing, decided what to keep; Ji Wu: requirements, prompts, scope decisions, and review of chat demo styling results
- * Notes/Verification: manual browser testing on localhost:3000 (desktop and narrow widths)
+ * Authors: Daniel Winnie, Ji Wu, Jibek Kelgenbaeva, Junshuo Huang
+ * Tools: OpenAI Codex (CLI agent), prompted by Daniel Winnie; Claude Code (Claude Opus), prompted by Daniel Winnie; OpenAI Codex, prompted by Ji Wu (chat demo styles); ChatGPT (OpenAI GPT-6), prompted by Jibek Kelgenbaeva (FV-110 responsive CSS)
+ * Overall AI Contribution: ~85% (Daniel's parts); 80% (Ji Wu's part); 90% (Jibek's FV-110 CSS additions)
+ * AI-Assisted Areas: layout and colors; chat demo styles (Ji Wu); responsive phone/tablet layouts, touch targets, event cards, and chat layout (Jibek)
+ * Human Contributions: Daniel Winnie: requirements and prompts, design choices (FastAPI, Docker layout, beginner-friendly comments), reviewed every change before committing, decided what to keep; Ji Wu: requirements, prompts, scope decisions, and review of chat demo styling results; Jibek Kelgenbaeva: FV-110 requirements, integration, browser testing, and verification
+ * Notes/Verification: FV-110 manual testing passed in Chrome, Firefox, and Safari desktop at 360, 390, 768, and 1280px; physical iPhone Safari testing passed; npm run build passed. Edge desktop and Android Chrome not tested.
  * Navigation (Junshuo Huang): OpenAI Codex drafted the navigation button styles from the team requirements.
  * Overall AI Contribution (navigation): 100% of the initial code draft.
  * Notes/Verification (navigation): Vite build and navigation smoke test.
@@ -134,6 +134,119 @@ textarea { display: block; resize: vertical; }
   .event-date { flex-basis: 48px; }
   .login-dialog { padding: 24px; }
 }
+
+/* FV-110: Responsive layout and touch accessibility */
+
+.top-bar > * {
+  min-width: 0;
+}
+
+.brand {
+  overflow-wrap: anywhere;
+}
+
+.event-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.chat-panel,
+.chat-panel > form,
+.chat-messages {
+  min-width: 0;
+}
+
+.chat-message,
+.chat-event-results li {
+  overflow-wrap: anywhere;
+}
+
+button,
+select,
+input {
+  min-height: 44px;
+}
+
+@media (max-width: 900px) {
+  .top-bar {
+    gap: 12px;
+  }
+
+  .dashboard-sidebar {
+    width: 100%;
+  }
+
+  .chat-panel {
+    min-height: 400px;
+  }
+
+  .chat-messages {
+    min-height: 240px;
+    max-height: 420px;
+  }
+}
+
+@media (max-width: 480px) {
+  .top-bar {
+    padding: 12px 16px;
+    gap: 12px;
+  }
+
+  .top-bar nav {
+    gap: 6px;
+  }
+
+  .top-bar nav button,
+  .nav-current {
+    padding: 10px;
+  }
+
+  .account-menu {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .dashboard {
+    padding: 20px 12px 32px;
+  }
+
+  .event-card {
+    gap: 10px;
+  }
+
+  .event-date {
+    flex: 0 0 48px;
+    padding: 6px 4px;
+  }
+
+  .event-date strong {
+    font-size: 1.3rem;
+  }
+
+  .event-content h3 {
+    font-size: 1rem;
+  }
+
+  .chat-messages {
+    max-height: 320px;
+    min-height: 200px;
+  }
+
+  .chat-panel .buttons {
+    align-items: stretch;
+  }
+
+  .chat-panel .buttons button {
+    flex: 1 1 100%;
+  }
+
+  .login-dialog {
+    width: calc(100% - 16px);
+    max-height: calc(100dvh - 16px);
+    padding: 16px;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
 }

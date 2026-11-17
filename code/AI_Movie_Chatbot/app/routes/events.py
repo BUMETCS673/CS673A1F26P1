@@ -1,7 +1,7 @@
 # AI-USAGE SUMMARY
 # Authors: Daniel Winnie (original route), Yung Cheng Chiu (sample data FV-116, catalog helpers FV-122/123), Jibek Kelgenbaeva (paginated list and details routes, FV-122/123)
-# Tools: Claude Code (Claude Opus), prompted by Daniel Winnie (original route, merge fixes); Jibek Kelgenbaeva's tools: to be confirmed by the author
-# Overall AI Contribution: ~90% (Daniel's parts); Jibek's part to be confirmed by the author
+# Tools: Claude Code (Claude Opus), prompted by Daniel Winnie (original route, merge fixes); ChatGPT (OpenAI GPT-6), prompted by Jibek Kelgenbaeva (FV-122/FV-123 implementation)
+# Overall AI Contribution: ~90% (Daniel's parts); 90% (Jibek's FV-122/FV-123 parts)
 # AI-Assisted Areas: GET /api/events and GET /api/events/{event_id}; injectable clock for tests
 # Human Contributions: Jibek Kelgenbaeva: paginated catalog and details API; Yung Cheng Chiu: sample events and catalog helpers; Daniel Winnie: original route, merge review fixes
 # Notes/Verification: tests/test_events.py (fixed reference time, fixture catalog)

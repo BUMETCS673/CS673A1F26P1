@@ -1,10 +1,10 @@
 // AI-USAGE SUMMARY
-// Authors: Daniel Winnie, Ji Wu
-// Tools: OpenAI Codex (CLI agent), prompted by Daniel Winnie; Claude Code (Claude Opus), prompted by Daniel Winnie (auth + API events); OpenAI Codex, prompted by Ji Wu (Chatbox demo integration)
-// Overall AI Contribution: ~85% (Daniel's parts); 80% (Ji Wu's part)
-// AI-Assisted Areas: dashboard layout, auth state, event loading and filtering; Chatbox demo integration (Ji Wu)
-// Human Contributions: Daniel Winnie: requirements and prompts, design choices (FastAPI, Docker layout, beginner-friendly comments), reviewed every change before committing, decided what to keep; Ji Wu: requirements, prompts, scope decisions, and review of Chatbox demo integration results
-// Notes/Verification: manual browser testing on localhost:3000 (desktop and narrow widths)
+// Authors: Daniel Winnie, Ji Wu, Jibek Kelgenbaeva, Junshuo Huang
+// Tools: OpenAI Codex (CLI agent), prompted by Daniel Winnie; Claude Code (Claude Opus), prompted by Daniel Winnie (auth + API events); OpenAI Codex, prompted by Ji Wu (Chatbox demo integration); ChatGPT (OpenAI), prompted by Jibek Kelgenbaeva (FV-122/FV-123)
+// Overall AI Contribution: ~85% (Daniel's parts); 80% (Ji Wu's part); 90% (Jibek's FV-122/FV-123 parts)
+// AI-Assisted Areas: app shell, auth state, navigation; the event list, filters, Load More, and chat moved to views/EventsView.jsx
+// Human Contributions: Daniel Winnie: requirements and prompts, design choices (FastAPI, Docker layout, beginner-friendly comments), reviewed every change before committing, decided what to keep; Ji Wu: requirements, prompts, scope decisions, and review of Chatbox demo integration results; Jibek Kelgenbaeva: FV-122/FV-123 requirements, integration, testing, and verification
+// Notes/Verification: manual browser testing on localhost:3000 (desktop and narrow widths); FV-122/FV-123 API tests and event catalog verification
 // Navigation (Junshuo Huang): OpenAI Codex drafted the navigation code from the team requirements.
 // Overall AI Contribution (navigation): 100% of the initial code draft.
 // Notes/Verification (navigation): Vite build and navigation smoke test.

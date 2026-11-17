@@ -1,10 +1,10 @@
 // AI-USAGE SUMMARY
-// Authors: Daniel Winnie
-// Tools: Claude Code (Claude Opus), prompted by Daniel Winnie
-// Overall AI Contribution: ~90%
-// AI-Assisted Areas: fetch wrappers for the Python API (including sendChat, FV-125, and chat history, FV-121)
-// Human Contributions: Daniel Winnie: requirements and prompts, design choices (FastAPI, Docker layout, beginner-friendly comments), reviewed every change before committing, decided what to keep
-// Notes/Verification: manual browser testing on localhost:3000 (desktop and narrow widths)
+// Authors: Daniel Winnie, Jibek Kelgenbaeva
+// Tools: Claude Code (Claude Opus), prompted by Daniel Winnie; ChatGPT (OpenAI), prompted by Jibek Kelgenbaeva (FV-122/FV-123)
+// Overall AI Contribution: ~90% (Daniel's parts); 90% (Jibek's FV-122/FV-123 parts)
+// AI-Assisted Areas: fetch wrappers for the Python API (including sendChat, FV-125, and chat history, FV-121); paginated event requests and event-details API requests (Jibek)
+// Human Contributions: Daniel Winnie: requirements and prompts, design choices (FastAPI, Docker layout, beginner-friendly comments), reviewed every change before committing, decided what to keep; Jibek Kelgenbaeva: FV-122/FV-123 API integration requirements, testing, and verification
+// Notes/Verification: manual browser testing on localhost:3000 (desktop and narrow widths); FV-122/FV-123 API integration verification
 
 // Follow API wrappers (Junshuo Huang, FV-92): OpenAI Codex drafted the code from the existing API contract.
 // Overall AI Contribution (FV-92): 100% of the initial code draft.
