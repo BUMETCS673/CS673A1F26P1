@@ -165,8 +165,13 @@ The chat panel sends free text to `POST /api/chat` (`{ "message": "music this fr
 `app/chat.py` runs the FV-124 parser, then keeps the upcoming catalog events that
 match **every** constraint: category, Boston calendar date (an event crossing
 midnight counts on both days), start time (`after`/`before`/`at`), and place
-(the location contains the requested text, ignoring case). It returns
-`{ interpretation, events }` with at most 10 events in start order.
+(`app/place_matching.py`: the location contains the requested place as whole
+words, ignoring case, punctuation, and a leading "the"; a landmark such as
+"Fenway Park" also matches its neighborhood). It returns
+`{ interpretation, events }` with at most 10 events in start order. When the
+request names no category, events in the user's activity preferences come first
+(FV-127, applied before the 10-event cut; a Profile change applies to the next
+message).
 `needs_clarification: true` means the text was not understood; an empty `events`
 list otherwise is an honest "no matches".
 
