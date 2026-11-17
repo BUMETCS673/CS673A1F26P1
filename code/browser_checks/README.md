@@ -9,7 +9,7 @@ demo or after a big change.
 **Setup (once):**
 
 ```bash
-python -m pip install playwright httpx
+python -m pip install playwright httpx2
 python -m playwright install chromium
 ```
 
@@ -26,3 +26,21 @@ python -m playwright install chromium
 
 Each prints `ALL BROWSER CHECKS PASSED` (or the timings) and exits non-zero on a
 problem, including console errors and 5xx responses. Screenshots go to `shots/`.
+
+The speed check measures **HTTP response completion**, including session checks
+and history writes, through the frontend proxy. It does not measure browser
+rendering and cannot by itself establish FV-109's submission-to-usable-card target.
+The current app uses a local fictional catalog and no model or external provider.
+
+`python speed_check.py 10 --rounds 20 --max-chat-ms 3000` runs a single-session
+baseline followed by 10 independent signed-in sessions. It prints median/p95/max
+and every failed or over-limit request. Any non-200 response, transport error,
+worker failure, incomplete workload, individual chat request above the threshold,
+or cleanup failure exits with code 1. Setup failures also close clients and attempt
+to remove every generated test account. The cleanup uses the project's local
+Docker PostgreSQL instance, so run it only against the local disposable test stack.
+
+Failure controls run in the normal Python unit-test job as
+`tests/test_speed_check.py`; they simulate HTTP failures and are **not live latency
+measurements**. Browser-render timings and the network/hardware configuration
+still need to be recorded separately for the complete FV-109 acceptance criteria.

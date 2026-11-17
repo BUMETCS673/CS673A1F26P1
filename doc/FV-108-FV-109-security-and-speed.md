@@ -1,5 +1,14 @@
 # FV-108 Security Pass and FV-109 Chat Speed Check
 
+**FV-109 measurement scope clarification (Ji Wu / OpenAI Codex, November 17):**
+The timings below were recorded by Daniel Winnie and measure HTTP response
+completion through Vite, not browser submission to fully rendered usable cards.
+They support the Iteration 2 API check; browser rendering, documented network
+conditions, and per-session isolation under that browser workload remain separate
+acceptance evidence. There is no model/provider in this iteration. The follow-up
+on `codex/FV-109-reliable-speed-check` hardens the benchmark's failure detection;
+its simulated failure tests do not constitute a new live speed measurement.
+
 **Date:** November 17, 2026 · **Tested by:** Daniel Winnie (taking over FV-108/FV-109 from the Iteration 2 plan), with Claude Code · **Build:** `main` after PRs #42–#45 (My Plans, friends going, Profile, chat wiring)
 
 **Environment:** the project started with `./start_project.sh` (Docker: PostgreSQL 17, FastAPI on :8080, Vite on :3000) on WSL2, 16 CPU cores. Browser checks ran in headless Chromium through Playwright, against the real API and database, with throwaway test accounts deleted afterwards. The scripts are in `code/browser_checks/` so anyone can rerun them.
