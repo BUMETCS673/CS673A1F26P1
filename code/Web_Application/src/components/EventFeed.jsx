@@ -1,10 +1,10 @@
 // AI-USAGE SUMMARY
-// Authors: Daniel Winnie
-// Tools: OpenAI Codex (CLI agent), prompted by Daniel Winnie; Claude Code (Claude Opus), prompted by Daniel Winnie (loading/error states)
-// Overall AI Contribution: ~90%
-// AI-Assisted Areas: event cards and feed states
-// Human Contributions: Daniel Winnie: requirements and prompts, design choices (FastAPI, Docker layout, beginner-friendly comments), reviewed every change before committing, decided what to keep
-// Notes/Verification: manual browser testing on localhost:3000 (desktop and narrow widths)
+// Authors: Daniel Winnie, Jibek Kelgenbaeva
+// Tools: OpenAI Codex (CLI agent), prompted by Daniel Winnie; Claude Code (Claude Opus), prompted by Daniel Winnie (loading/error states); ChatGPT (OpenAI GPT-6), prompted by Jibek Kelgenbaeva (FV-122/FV-123)
+// Overall AI Contribution: ~90% (Daniel's parts); 90% (Jibek's FV-122/FV-123 parts)
+// AI-Assisted Areas: event cards, feed states, Boston-local date/time formatting, event details view, Load More pagination, and empty/error handling
+// Human Contributions: Daniel Winnie: requirements, design choices, original implementation, and review; Jibek Kelgenbaeva: FV-122/FV-123 requirements, integration, testing, and verification
+// Notes/Verification: FV-122/FV-123 backend tests and manual browser verification; desktop and narrow-width checks from earlier implementation
 
 import React, { useState } from 'react';
 import { getEventById } from '../api.js';

@@ -1,10 +1,11 @@
-// AI-USAGE SUMMARY
-// Authors: Daniel Winnie
-// Tools: Claude Code (Claude Opus), prompted by Daniel Winnie
-// Overall AI Contribution: ~90%
-// AI-Assisted Areas: fetch wrappers for the Python API
-// Human Contributions: Daniel Winnie: requirements and prompts, design choices (FastAPI, Docker layout, beginner-friendly comments), reviewed every change before committing, decided what to keep
-// Notes/Verification: manual browser testing on localhost:3000 (desktop and narrow widths)
+
+ // AI-USAGE SUMMARY
+ // Authors: Daniel Winnie, Jibek Kelgenbaeva
+ // Tools: Claude Code (Claude Opus), prompted by Daniel Winnie; ChatGPT (OpenAI), prompted by Jibek Kelgenbaeva (FV-122/FV-123)
+ // Overall AI Contribution: ~90% (Daniel's parts); 90% (Jibek's FV-122/FV-123 parts)
+ // AI-Assisted Areas: fetch wrappers for the Python API, paginated event requests, and event-details API requests
+ // Human Contributions: Daniel Winnie: requirements, prompts, FastAPI integration design, and review; Jibek Kelgenbaeva: FV-122/FV-123 API integration requirements, testing, and verification
+ // Notes/Verification: manual browser testing and FV-122/FV-123 API integration verification
 
 // Small wrappers around the Python API. Relative URLs go through Vite's /api proxy,
 // and the browser sends the HttpOnly session cookie automatically.
