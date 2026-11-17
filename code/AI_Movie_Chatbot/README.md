@@ -169,6 +169,24 @@ only that user's history. Both use the session; there is no user ID to change.
 SQL lives in `app/chat_history.py`; tests in `tests/test_chat.py`,
 `tests/test_chat_history.py`, and `tests/live_chat_history.py` (two accounts).
 
+### My Plans (FV-95)
+
+Each signed-in user can save upcoming catalog events to My Plans. Only the event
+ID is stored (`user_plans`, migration `005_user_plans.sql`, one row per user and
+event), so plans always show current catalog details. All three endpoints use
+the session cookie and return 401 without one; there is no user ID to change.
+
+| Endpoint | Result |
+| --- | --- |
+| `GET /api/plans` | 200 with `{ plans: [{ event, saved_at, ended }], unavailable_count }`, in start-time order. Ended plans stay listed with `ended: true` (the My Plans page shows them under Past); saved events no longer in the catalog are left out and counted in `unavailable_count`. |
+| `PUT /api/plans/{event_id}` | 204 when saved, including a repeat request (no duplicate; the first `saved_at` is kept). 404 for an unknown event, 409 for an event that has already ended. |
+| `DELETE /api/plans/{event_id}` | 204 after ensuring the event is not in your plans, including ended, removed, or never-saved events. |
+
+SQL lives in `app/plans.py`; tests in `tests/test_plans.py` and
+`tests/live_plans.py` (two accounts). In the website, the Save button
+(`src/components/SaveButton.jsx`) appears on event cards and in the details
+view, and every copy shares one state (`src/plans.jsx`).
+
 ### FV-118 / FV-124 request parsing (API only)
 
 The chat UI now uses `POST /api/chat` above; this endpoint stays available in

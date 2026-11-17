@@ -2,7 +2,7 @@
 // Authors: Daniel Winnie, Ji Wu
 // Tools: OpenAI Codex (CLI agent), prompted by Daniel Winnie; Claude Code (Claude Opus), prompted by Daniel Winnie (auth + API events); OpenAI Codex, prompted by Ji Wu (Chatbox demo integration)
 // Overall AI Contribution: ~85% (Daniel's parts); 80% (Ji Wu's part)
-// AI-Assisted Areas: dashboard layout, auth state, event loading and filtering; Chatbox demo integration (Ji Wu); chat cards open event details (FV-125)
+// AI-Assisted Areas: dashboard layout, auth state, event loading and filtering; Chatbox demo integration (Ji Wu); chat cards open event details (FV-125); details requests come from App.jsx so My Plans can open them too (FV-95)
 // Human Contributions: Daniel Winnie: requirements and prompts, design choices (FastAPI, Docker layout, beginner-friendly comments), reviewed every change before committing, decided what to keep; Ji Wu: requirements, prompts, scope decisions, and review of Chatbox demo integration results
 // Notes/Verification: manual browser testing on localhost:3000 (desktop and narrow widths)
 // Navigation extraction (Junshuo Huang): OpenAI Codex drafted the move.
@@ -14,7 +14,7 @@ import FilterPanel from '../components/FilterPanel.jsx';
 import ChatPanel from '../components/ChatPanel.jsx';
 import { getEvents } from '../api.js';
 
-export default function EventsView() {
+export default function EventsView({ detailsRequest, onEventSelect }) {
   const [category, setCategory] = useState('');
   const [date, setDate] = useState('');
   // The Python API serves the fictional catalog, sorted by date and time.
@@ -24,9 +24,6 @@ export default function EventsView() {
     nextOffset: null,
   });
   const [attempt, setAttempt] = useState(0);
-  // A chat card asks the event feed to open its details view. A new object each
-  // time, so clicking the same card twice opens it again.
-  const [detailsRequest, setDetailsRequest] = useState(null);
 
   useEffect(() => {
     let current = true;
@@ -155,7 +152,7 @@ export default function EventsView() {
             onDateChange={setDate}
             onClear={clearFilters}
           />
-          <ChatPanel onEventSelect={(id) => setDetailsRequest({ id })} />
+          <ChatPanel onEventSelect={onEventSelect} />
         </aside>
       </div>
     </main>
