@@ -1,12 +1,12 @@
 // AI-USAGE SUMMARY
 // Authors: Daniel Winnie
-// Tools: OpenAI Codex (CLI agent), prompted by Daniel Winnie; Claude Code (Claude Opus), prompted by Daniel Winnie (loading/error states)
+// Tools: OpenAI Codex (CLI agent), prompted by Daniel Winnie; Claude Code (Claude Opus), prompted by Daniel Winnie (loading/error states, opening details from chat cards)
 // Overall AI Contribution: ~90%
 // AI-Assisted Areas: event cards and feed states
 // Human Contributions: Daniel Winnie: requirements and prompts, design choices (FastAPI, Docker layout, beginner-friendly comments), reviewed every change before committing, decided what to keep
 // Notes/Verification: manual browser testing on localhost:3000 (desktop and narrow widths)
 
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { getEventById } from '../api.js';
 
 const BOSTON_TIMEZONE = 'America/New_York';
@@ -40,23 +40,40 @@ export default function EventFeed({
   onRetry,
   hasMore,
   onLoadMore,
+  detailsRequest,
 }) {
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [detailsLoading, setDetailsLoading] = useState(false);
   const [detailsError, setDetailsError] = useState('');
+  const detailsPanel = useRef(null);
+  const latestRequest = useRef(0);
+
+  // FV-125: a chat result card opens the same details view by event ID.
+  useEffect(() => {
+    if (!detailsRequest) return;
+    openDetails(detailsRequest.id).then(() => {
+      detailsPanel.current?.scrollIntoView?.({ behavior: 'smooth', block: 'nearest' });
+    });
+  }, [detailsRequest]);
 
   async function openDetails(eventId) {
+    // Only the most recent click may fill the panel, if two answers arrive out of order.
+    const requestNumber = ++latestRequest.current;
     setSelectedEvent(null);
     setDetailsError('');
     setDetailsLoading(true);
 
     try {
       const event = await getEventById(eventId);
-      setSelectedEvent(event);
-    } catch {
-      setDetailsError("Couldn't load event details.");
+      if (requestNumber === latestRequest.current) setSelectedEvent(event);
+    } catch (error) {
+      if (requestNumber === latestRequest.current) {
+        setDetailsError(error.status === 404
+          ? 'This event is no longer available.'
+          : "Couldn't load event details.");
+      }
     } finally {
-      setDetailsLoading(false);
+      if (requestNumber === latestRequest.current) setDetailsLoading(false);
     }
   }
 
@@ -181,7 +198,7 @@ export default function EventFeed({
       )}
 
       {(selectedEvent || detailsLoading || detailsError) && (
-        <div className="panel" aria-live="polite">
+        <div className="panel" aria-live="polite" ref={detailsPanel}>
           <button
             className="secondary-button"
             type="button"
