@@ -1,32 +1,31 @@
-# Iteration 2 – Suggestions for Round 2
+# Iteration 2 – Round 2 Status
 
-Hey everyone! Here's where things stand and what I'd suggest each of us does to finish Iteration 2. The goal hasn't changed: **two users sign in, find an event through chat, save it to My Plans, follow each other, see "Alex is going" on that event, keep chat history after signing out and back in, and change preferences in Profile, all on a phone-sized screen too.**
+Hey everyone! The code for Iteration 2 is finished and merged. The full demo works end to end: **two users sign in, find an event through chat, save it to My Plans, follow each other, see "Alex is going" on that event, keep chat history after signing out and back in, and change preferences in Profile, on a phone-sized screen too.**
 
-**Merged on Nov 15:** Ryan's demo catalog (#34), preference order (#35), and AI-usage headers (#33), plus the Dependabot update (#32). **Open for review from Daniel:** automatic PR checks (#39), the real chat endpoint (#37: `POST /api/chat`, with cards that open the details view), and chat history (#38, migration **004**). Once #39 merges, every PR runs the Python tests, the database tests, the frontend tests, and the build automatically.
+Every merge passed the automatic PR checks (Python tests, database tests, frontend tests, and build). The whole demo was also clicked through in a real browser with real accounts (`code/browser_checks/`).
 
-| Team member | Where things stand | Next (independent coding) | Then (integration) |
-| --- | --- | --- | --- |
-| **Junshuo Huang** | The follow preview is merged (#27), but it still uses mock accounts, and the menu still shows "Friends (later)". Nothing pushed for navigation yet. | **App navigation first, as soon as possible.** Everyone else's screens need somewhere to go: Events, My Plans, Friends, and Profile, each in its own file. Placeholder views are fine. Then **connect the Friends view to Yuchen's API** (`/api/users/search`, `/api/following`, `/api/followers`) and check that a follow survives a reload. | **Profile and preferences (FV-103)** through `PATCH /api/auth/me`, reusing the registration checks. Verify with two accounts that one can't change the other's profile. |
-| **Yuchen Xu** | The follows API is merged (#29, #24). My Plans hasn't started, and Ryan, Jibek, and Daniel all depend on it. | **My Plans storage and API (FV-95), as soon as possible.** Use migration **005** (004 is chat history). Add `GET /api/plans`, `PUT /api/plans/{event_id}` (404 for an unknown event), and `DELETE /api/plans/{event_id}`. Add a `live_plans.py` with two accounts, modeled on `live_follows.py`; the PR checks (#39) run it automatically. | The My Plans view (grouped by day in Boston time, with a "Past" section) and **a small Save button component**. Post its props in Discord so Jibek and Daniel can add it to the details view and chat cards. **Also:** confirm your part of the AI-usage header in `User_Database/init.sql`, which still says "not yet reported". |
-| **Ryan (Yung Cheng Chiu)** | Catalog, demo catalog, and preference order are all merged. Nice work! | **Small follow-up to the demo catalog (FV-126).** The ticket also asks for one event that crosses midnight, one multi-day event, and one with an empty location (shown as "Location unavailable"). Cambridge is also missing. Add them to `sample_events.json` and extend the `DemoDataTests` check. | **Friends going (new ticket)** once Yuchen's plans API is in: "2 friends are going" on event details and a friend's upcoming plans on the Friends page, mutual follows only. Coordinate placement with Jibek (details view) and Junshuo (Friends view). Daniel will plug your preference-order helper into the chat. |
-| **Ji Wu** | FV-120 and FV-124 are merged. Place matching, FV-108, and FV-109 haven't started. | **Place matching (new ticket), now a smaller job.** Daniel's chat PR (#37) has a temporary `matches_place()` in `app/chat.py` using our agreed rule ("near X" matches a location containing X, ignoring case). Move it into a shared helper next to the catalog helpers, add your fixed-time tests, and handle any cases it misses. The chat already gives an honest "no matches" for an unknown place. | **Security pass (FV-108) and chat speed check (FV-109)** once Daniel's chat and history PRs (#37, #38) are merged. Test XSS in display names, search, chat requests, and saved history; check that no secrets are in the frontend build; and time `POST /api/chat` with about 10 sessions at once. Send the results to Jibek for the STD. |
-| **Jibek Kelgenbaeva** | Event browsing and details are merged (#30). The device and browser check (FV-110) hasn't started. | **Device and browser test plan (FV-110).** Phone (360–390 px), tablet (768 px), and desktop (1280 px+) in Chrome, Firefox, and Safari, plus one real phone, and mark what was emulated. Start now on the current screens and rerun at the end. **Heads-up:** Daniel's chat PR (#37) makes a small change to `EventFeed.jsx` so a chat card can open your details view; please review that part of #37. **Also:** confirm your tools and AI percentage in the headers of `app/routes/events.py` and `tests/test_events.py`, which still say "to be confirmed by the author". | Add Yuchen's Save button and Ryan's "friends going" line to the details view when they're ready. Then run the full check on the finished screens, record it in the STD, and coordinate the final two-account demo run. |
+| Team member | Merged in Iteration 2 | Still to do |
+| --- | --- | --- |
+| **Junshuo Huang** | Follow preview (#27); app navigation and the Friends view on the follow API (#40) | STD and presentation (see below) |
+| **Yuchen Xu** | Follows storage and API (#29, #24) | STD and presentation; confirm your part of the AI-usage header in `User_Database/init.sql` (it still says "not yet reported") |
+| **Ryan (Yung Cheng Chiu)** | Event catalog helpers; demo catalog (#34); preference order (#35), now used by the chat; AI-usage headers (#33) | STD and presentation |
+| **Ji Wu** | Parser for time, weekday, and place (#25); login required on events and chat (#26) | STD and presentation |
+| **Jibek Kelgenbaeva** | Event browsing and details (#30); responsive layout and browser testing (#41) | One **real-phone** run of the final screens (Save, My Plans, Profile, Friends' plans), added to `doc/FV-110-browser-testing.md`; STD and coordinating the demo run |
+| **Daniel Winnie** | Recommendation results, chat integration, chat history, PR checks (#31, #37–#39); finished the remaining Part 2 items: My Plans (#42), friends going (#43), Profile (#44), place matching and chat wiring (#45), security and speed checks | Merge help and demo support |
 
-**Critical path:** Junshuo's navigation and Yuchen's My Plans API unblock almost everything else, so please prioritize those two. If either is stuck, post in Discord early and someone can pair with you.
+**For the STD:** the security pass (FV-108) and chat speed check (FV-109) results are in `doc/FV-108-FV-109-security-and-speed.md`, along with the browser checks that cover each demo step. Browser and device results are in `doc/FV-110-browser-testing.md`.
 
-**Defaults** (unchanged from Part 2)
+**Defaults that shipped**
 
 - Friends' plans are visible to **mutual follows only**.
 - Chat shows the **last 50 messages** on sign-in, with a "Clear history" button.
-- "near X" matches any event whose location **contains X**, ignoring case.
-- Database migrations use the **next unused number** when you merge: 003 is follows, 004 is chat history, and 005 should be My Plans.
+- "near X" matches an event whose location contains X as whole words, ignoring case, punctuation, and a leading "the"; a landmark such as "Fenway Park" also finds its neighborhood.
+- Without a category, the chat lists your preferred categories first.
+- Migrations: 003 follows, 004 chat history, 005 My Plans.
 
-**Working on it**
+**Housekeeping**
 
-- Start each branch from the latest `main`, keep one feature per branch, and open a PR to `main`. Once the PR checks (#39) are in, a red X means a test or the build failed. Click **Details** to see which step failed.
-- New migrations must be safe to run twice (`IF NOT EXISTS`), because the checks apply `init.sql` and then every migration.
-- Update the SDD for any table or API you add, give your test results to Jibek for the STD, and use `[AI] FV-xxx:` commit messages with AI-usage headers on new files.
-- Please check that your Jira tickets are assigned to you and moved out of Icebox (FV-95, FV-103, FV-108, FV-109, FV-110).
-- If you're blocked, drop a short note in Discord. A quick note is enough.
+- Please move your Jira tickets to Done and check the assignees (FV-95, FV-103, FV-108, FV-109, FV-110, FV-126, FV-127).
+- To try the demo yourself: `./start_project.sh`, register two accounts in two browser windows, and follow the story above.
 
 [Jira Backlog](https://f26a1team1.atlassian.net/jira/software/projects/FV/boards/3/backlog)
