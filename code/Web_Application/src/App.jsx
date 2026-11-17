@@ -64,7 +64,7 @@ function Dashboard({ user, onLogout }) {
         {activePage === 'My Plans' && (
           <MyPlansView onEventSelect={showEventDetails} onBrowse={() => setActivePage('Events')} />
         )}
-        {activePage === 'Friends' && <FriendsView />}
+        {activePage === 'Friends' && <FriendsView onEventSelect={showEventDetails} />}
         {activePage === 'Profile' && <ProfileView />}
       </div>
     </PlansProvider>

@@ -74,6 +74,7 @@ a { color: inherit; }
 .event-badges { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-bottom: 8px; }
 .event-content h3 { margin-bottom: 6px; }
 .event-content > p { color: #576b75; font-size: .9rem; }
+.friends-going { margin: 10px 0 4px; padding: 8px 12px; border-radius: 8px; background: #e6f2ee; color: #184a3e; font-weight: bold; }
 .event-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 10px; }
 details { margin-top: 10px; font-size: .88rem; }
 summary { color: #256354; font-weight: bold; }

@@ -59,6 +59,8 @@ export function createBackend({ events = EVENTS, now = () => NOW } = {}) {
     users: [
       { id: 1, username: 'alex', display_name: 'Alex', email: 'alex@example.com', activity_preferences: ['Music'], password: 'alex password' },
       { id: 2, username: 'sam', display_name: 'Sam', email: 'sam@example.com', activity_preferences: ['Food'], password: 'sam password' },
+      { id: 3, username: 'pat', display_name: null, email: 'pat@example.com', activity_preferences: ['Arts'], password: 'pat password' },
+      { id: 4, username: 'bea', display_name: 'Bea', email: 'bea@example.com', activity_preferences: ['Social'], password: 'bea password' },
     ],
     signedIn: null,            // user id of the session cookie, or null
     events: events.map((event) => ({ ...event })),  // copies, so tests can edit them
@@ -102,7 +104,7 @@ export function createBackend({ events = EVENTS, now = () => NOW } = {}) {
       const next = offset + limit;
       return json({ events: upcoming.slice(offset, next), next_offset: next < upcoming.length ? next : null });
     }
-    let match = /^\/api\/events\/(.+)$/.exec(path);
+    let match = /^\/api\/events\/([^/]+)$/.exec(path);
     if (method === 'GET' && match) {
       const event = backend.events.find((item) => item.id === decodeURIComponent(match[1]));
       return event ? json(event) : json({ detail: 'Event not found' }, 404);
@@ -136,12 +138,42 @@ export function createBackend({ events = EVENTS, now = () => NOW } = {}) {
       }
     }
 
+    const mutual = (a, b) => backend.follows.has(`${a}:${b}`) && backend.follows.has(`${b}:${a}`);
+    match = /^\/api\/events\/(.+)\/friends-going$/.exec(path);
+    if (method === 'GET' && match) {
+      const id = decodeURIComponent(match[1]);
+      if (!backend.events.some((event) => event.id === id)) return json({ detail: 'Event not found' }, 404);
+      // Sorted by username, like the SQL.
+      const friends = backend.users.filter((u) => u.id !== me.id && mutual(me.id, u.id) && plansOf(u.id).has(id))
+        .sort((a, b) => a.username.localeCompare(b.username));
+      return json({ friends: friends.map(({ id: userId, username, display_name }) => ({ id: userId, username, display_name })) });
+    }
+    match = /^\/api\/friends\/(\d+)\/plans$/.exec(path);
+    if (method === 'GET' && match) {
+      const friend = backend.users.find((u) => u.id === Number(match[1]));
+      if (!friend || friend.id === me.id || !mutual(me.id, friend.id)) return json({ detail: 'Friend not found' }, 404);
+      const upcoming = backend.events.filter((event) => plansOf(friend.id).has(event.id) && !ended(event))
+        .sort((a, b) => new Date(a.start) - new Date(b.start) || a.id.localeCompare(b.id));
+      const { id: friendId, username, display_name } = friend;
+      return json({ friend: { id: friendId, username, display_name }, plans: upcoming.map((event) => ({ event })) });
+    }
+    match = /^\/api\/following\/(\d+)$/.exec(path);
+    if (match && method === 'PUT') { backend.follows.add(`${me.id}:${match[1]}`); return noContent(); }
+    if (match && method === 'DELETE') { backend.follows.delete(`${me.id}:${match[1]}`); return noContent(); }
+    if (method === 'GET' && path === '/api/users/search') {
+      const name = url.searchParams.get('username').toLowerCase();
+      return json(backend.users.filter((u) => u.username === name && u.id !== me.id).map(publicUser)
+        .map(({ email, activity_preferences, ...rest }) => rest));
+    }
+
     if (method === 'GET' && path === '/api/chat/history') return json({ messages: [] });
     if (method === 'GET' && path === '/api/following') {
-      return json(backend.users.filter((u) => backend.follows.has(`${me.id}:${u.id}`)).map(publicUser));
+      return json(backend.users.filter((u) => backend.follows.has(`${me.id}:${u.id}`))
+        .map(({ id, username, display_name }) => ({ id, username, display_name })));
     }
     if (method === 'GET' && path === '/api/followers') {
-      return json(backend.users.filter((u) => backend.follows.has(`${u.id}:${me.id}`)).map(publicUser));
+      return json(backend.users.filter((u) => backend.follows.has(`${u.id}:${me.id}`))
+        .map(({ id, username, display_name }) => ({ id, username, display_name })));
     }
     return json({ detail: `fake backend has no route for ${method} ${path}` }, 500);
   }

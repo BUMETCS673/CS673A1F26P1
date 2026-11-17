@@ -1,6 +1,6 @@
 # AI-USAGE SUMMARY
 # Authors: Daniel Winnie, Ji Wu, Yuchen Xu (original Docker app)
-# Tools: OpenAI Codex (CLI agent), prompted by Daniel Winnie; Claude Code (Claude Opus), prompted by Daniel Winnie (router registration for events/auth/chat/plans); OpenAI Codex, prompted by Ji Wu (FV-117/118 demo-router registration)
+# Tools: OpenAI Codex (CLI agent), prompted by Daniel Winnie; Claude Code (Claude Opus), prompted by Daniel Winnie (router registration for events/auth/chat/plans/friends going); OpenAI Codex, prompted by Ji Wu (FV-117/118 demo-router registration)
 # Overall AI Contribution: ~85% (Daniel's parts); 80% (Ji Wu's part)
 # AI-Assisted Areas: application factory and router registration; OpenAI Codex for FV-120 session enforcement
 # Human Contributions: Daniel Winnie: requirements and prompts, design choices (FastAPI, Docker layout, beginner-friendly comments), reviewed every change before committing, decided what to keep; Ji Wu: requirements, prompts, scope decisions, and review of FV-117/118 demo integration results
@@ -11,7 +11,9 @@
 from fastapi import APIRouter, Depends, FastAPI
 from fastapi.responses import PlainTextResponse
 
-from app.routes import auth, chat, events, filter_demo, follows, health, parser_demo, plans
+from app.routes import (
+    auth, chat, events, filter_demo, follows, friends_going, health, parser_demo, plans,
+)
 
 
 def create_app() -> FastAPI:
@@ -34,6 +36,7 @@ def create_app() -> FastAPI:
     protected.include_router(parser_demo.router)
     protected.include_router(follows.router)
     protected.include_router(plans.router)
+    protected.include_router(friends_going.router)
     application.include_router(protected, prefix="/api")
 
     @application.get("/", response_class=PlainTextResponse, include_in_schema=False)
