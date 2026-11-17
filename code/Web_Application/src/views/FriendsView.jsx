@@ -5,12 +5,16 @@
 // AI-Assisted Areas: connecting search, follower lists, and follow actions to the API.
 // Human Contributions: Junshuo Huang supplied the one-way follow and follow-back requirements.
 // Notes/Verification: Vite build and frontend tests with mocked API responses.
+// Friends' plans (Daniel Winnie, taking over "friends going" from the Iteration 2 plan): Claude Code (Claude Opus), ~90%;
+// "See plans" for mutual follows and the friend's upcoming plans panel. Verified with src/views/FriendsView.test.jsx and a three-account browser check.
 
 import React, { useEffect, useState } from 'react';
-import { followUser, getFollowers, getFollowing, searchUsers, unfollowUser } from '../api.js';
+import { followUser, getFollowers, getFollowing, getFriendPlans, searchUsers, unfollowUser } from '../api.js';
+import { formatBostonTimeRange } from '../recommendations.js';
+import { personName } from '../friendsGoing.js';
 import './FriendsView.css';
 
-function AccountRow({ account, following, followsYou, disabled, onToggle }) {
+function AccountRow({ account, following, followsYou, disabled, onToggle, onShowPlans }) {
   const action = following ? 'Unfollow' : followsYou ? 'Follow back' : 'Follow';
   const relationship = following && followsYou ? 'Mutual' : following ? 'Following' : 'Follows you';
 
@@ -21,15 +25,27 @@ function AccountRow({ account, following, followsYou, disabled, onToggle }) {
         <p className="muted-text">@{account.username}</p>
         {(following || followsYou) && <span className="category-badge">{relationship}</span>}
       </div>
-      <button
-        className={following ? 'secondary-button' : 'primary-button'}
-        type="button"
-        aria-label={`${action} @${account.username}`}
-        disabled={disabled}
-        onClick={() => onToggle(account)}
-      >
-        {action}
-      </button>
+      <div className="friends-row-actions">
+        {following && followsYou && onShowPlans && (
+          <button
+            className="secondary-button"
+            type="button"
+            aria-label={`See plans of @${account.username}`}
+            onClick={() => onShowPlans(account)}
+          >
+            See plans
+          </button>
+        )}
+        <button
+          className={following ? 'secondary-button' : 'primary-button'}
+          type="button"
+          aria-label={`${action} @${account.username}`}
+          disabled={disabled}
+          onClick={() => onToggle(account)}
+        >
+          {action}
+        </button>
+      </div>
     </div>
   );
 }
@@ -44,7 +60,66 @@ function PeopleList({ accounts, emptyMessage, renderAccount }) {
   );
 }
 
-export default function FriendsView() {
+// A mutual follow's upcoming saved events. Each one opens its details on the Events page.
+function FriendPlans({ friend, onEventSelect, onClose }) {
+  const [state, setState] = useState({ status: 'loading', plans: [] });
+
+  useEffect(() => {
+    let current = true;
+    setState({ status: 'loading', plans: [] });
+    getFriendPlans(friend.id)
+      .then((data) => { if (current) setState({ status: 'ready', plans: data.plans }); })
+      .catch((error) => {
+        if (!current) return;
+        const message = error.status === 404
+          ? `You can see ${personName(friend)}'s plans only while you follow each other.`
+          : error.message;
+        setState({ status: 'error', plans: [], message });
+      });
+    return () => { current = false; };
+  }, [friend.id]);
+
+  const name = personName(friend);
+  return (
+    <section className="panel friend-plans" aria-labelledby="friend-plans-heading">
+      <div className="section-heading">
+        <h2 id="friend-plans-heading">{name}'s upcoming plans</h2>
+        <button className="text-button" type="button" onClick={onClose}>Close</button>
+      </div>
+      {state.status === 'loading' && <p role="status">Loading {name}'s plans…</p>}
+      {state.status === 'error' && <p role="alert">{state.message}</p>}
+      {state.status === 'ready' && (state.plans.length === 0 ? (
+        <p className="muted-text">{name} has no upcoming plans.</p>
+      ) : (
+        <ul className="friends-list">
+          {state.plans.map(({ event }) => (
+            <li className="friends-row" key={event.id}>
+              <div>
+                <strong>{event.title}</strong>
+                <p className="muted-text">{formatBostonTimeRange(event.start, event.end)}</p>
+                <p className="muted-text">{event.location || 'Location unavailable'}</p>
+              </div>
+              <button
+                className="secondary-button"
+                type="button"
+                aria-label={`View details: ${event.title}`}
+                onClick={() => onEventSelect?.(event.id)}
+              >
+                View details
+              </button>
+            </li>
+          ))}
+        </ul>
+      ))}
+    </section>
+  );
+}
+
+/**
+ * Props:
+ *   onEventSelect  called with an event ID to show its details on the Events page
+ */
+export default function FriendsView({ onEventSelect }) {
   const [following, setFollowing] = useState([]);
   const [followers, setFollowers] = useState([]);
   const [listStatus, setListStatus] = useState('loading');
@@ -57,6 +132,7 @@ export default function FriendsView() {
   const [saving, setSaving] = useState(false);
   const [actionError, setActionError] = useState('');
   const [notice, setNotice] = useState('');
+  const [planFriend, setPlanFriend] = useState(null);
 
   useEffect(() => {
     let mounted = true;
@@ -111,6 +187,8 @@ export default function FriendsView() {
       if (wasFollowing) {
         await unfollowUser(account.id);
         setFollowing((previous) => previous.filter((person) => person.id !== account.id));
+        // No longer mutual, so their plans are no longer visible.
+        if (planFriend?.id === account.id) setPlanFriend(null);
         setNotice(`Unfollowed @${account.username}.`);
       } else {
         await followUser(account.id);
@@ -134,6 +212,7 @@ export default function FriendsView() {
         followsYou={followers.some((person) => person.id === account.id)}
         disabled={saving || listStatus !== 'ready'}
         onToggle={toggleFollow}
+        onShowPlans={setPlanFriend}
       />
     );
   }
@@ -177,6 +256,14 @@ export default function FriendsView() {
           <p role="alert">{listError}</p>
           <button className="secondary-button" type="button" onClick={retryLists}>Retry</button>
         </div>
+      )}
+      {planFriend && (
+        <FriendPlans
+          key={planFriend.id}
+          friend={planFriend}
+          onEventSelect={onEventSelect}
+          onClose={() => setPlanFriend(null)}
+        />
       )}
       {listStatus === 'ready' && (
         <div className="friends-columns">

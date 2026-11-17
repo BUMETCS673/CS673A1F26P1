@@ -31,6 +31,8 @@ afterEach(() => { cleanup(); vi.unstubAllGlobals(); vi.useRealTimers(); });
 
 async function logIn(username) {
   const dialog = await screen.findByRole('dialog', { hidden: true });
+  // The dialog's contents are only accessible once it has opened.
+  await waitFor(() => expect(dialog.open).toBe(true));
   fireEvent.change(within(dialog).getByLabelText('Username'), { target: { value: username } });
   fireEvent.change(within(dialog).getByLabelText('Password'), { target: { value: `${username} password` } });
   fireEvent.click(within(dialog).getByRole('button', { name: 'Log In' }));
@@ -124,5 +126,46 @@ describe('My Plans in the whole app', () => {
     fireEvent.click(await within(details).findByRole('button', { name: 'Remove from My Plans: Last week gallery night' }));
     expect(await within(details).findByText('This event has ended.')).toBeTruthy();
     expect(within(details).queryByRole('button', { name: /Save to My Plans/ })).toBeNull();
+  });
+});
+
+describe('Friends going in the whole app', () => {
+  it("shows which friends are going, and opens a friend's plan from the Friends page", async () => {
+    backend.follows = new Set(['1:2', '2:1', '3:1']); // Alex and Sam are friends; Pat follows Alex one way
+    backend.plans.set(2, new Map([['sample-3', '2026-11-16T10:00:00Z']]));
+    backend.plans.set(3, new Map([['sample-3', '2026-11-16T10:00:00Z']]));
+    render(<App />);
+    await logIn('alex');
+
+    // The details view names Sam, not Pat.
+    const card = (await within(eventsPage()).findByRole('heading', { name: 'North End food walk' })).closest('article');
+    fireEvent.click(within(card).getByRole('button', { name: 'View details' }));
+    const details = (await within(eventsPage()).findByRole('button', { name: 'Close details' })).closest('.panel');
+    expect(await within(details).findByText('Sam is going')).toBeTruthy();
+
+    // Friends page -> Sam's plans -> details on the Events page.
+    goTo('Friends');
+    const following = await screen.findByRole('region', { name: /^Following/ });
+    expect(within(screen.getByRole('region', { name: /^Followers/ })).queryByRole('button', { name: 'See plans of @pat' })).toBeNull();
+    fireEvent.click(within(following).getByRole('button', { name: 'See plans of @sam' }));
+    const panel = await screen.findByRole('region', { name: "Sam's upcoming plans" });
+    fireEvent.click(await within(panel).findByRole('button', { name: 'View details: North End food walk' }));
+    await waitFor(() => expect(eventsPage().closest('[hidden]')).toBeNull());
+    expect(screen.getByRole('button', { name: 'Events', current: 'page' })).toBeTruthy();
+    expect(await within(eventsPage()).findByText('Sam is going')).toBeTruthy();
+  });
+
+  it('Sam sees Alex going once Alex saves the event', async () => {
+    backend.follows = new Set(['1:2', '2:1']);
+    render(<App />);
+    await logIn('alex');
+    const card = (await within(eventsPage()).findByRole('heading', { name: 'Harbor sunrise run' })).closest('article');
+    fireEvent.click(within(card).getByRole('button', { name: /Save to My Plans/ }));
+    await within(card).findByText('✓ In My Plans');
+    await logOut();
+    await logIn('sam');
+    const samCard = (await within(eventsPage()).findByRole('heading', { name: 'Harbor sunrise run' })).closest('article');
+    fireEvent.click(within(samCard).getByRole('button', { name: 'View details' }));
+    expect(await within(eventsPage()).findByText('Alex is going')).toBeTruthy();
   });
 });

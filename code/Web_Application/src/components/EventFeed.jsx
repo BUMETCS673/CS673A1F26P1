@@ -2,13 +2,14 @@
 // Authors: Daniel Winnie, Jibek Kelgenbaeva
 // Tools: OpenAI Codex (CLI agent), prompted by Daniel Winnie; Claude Code (Claude Opus), prompted by Daniel Winnie (loading/error states, opening details from chat cards); ChatGPT (OpenAI GPT-6), prompted by Jibek Kelgenbaeva (FV-122/FV-123)
 // Overall AI Contribution: ~90% (Daniel's parts); 90% (Jibek's FV-122/FV-123 parts)
-// AI-Assisted Areas: event cards, feed states, Boston-local date/time formatting, event details view, Load More pagination, and empty/error handling; opening details from chat cards (FV-125); Save to My Plans on cards and details (FV-95)
+// AI-Assisted Areas: event cards, feed states, Boston-local date/time formatting, event details view, Load More pagination, and empty/error handling; opening details from chat cards (FV-125); Save to My Plans on cards and details (FV-95); friends going line in details
 // Human Contributions: Daniel Winnie: requirements, design choices, original implementation, and review; Jibek Kelgenbaeva: FV-122/FV-123 requirements, integration, testing, and verification
 // Notes/Verification: FV-122/FV-123 backend tests and manual browser verification; desktop and narrow-width checks from earlier implementation
 
 import React, { useEffect, useRef, useState } from 'react';
 import { getEventById } from '../api.js';
 import SaveButton from './SaveButton.jsx';
+import FriendsGoing from './FriendsGoing.jsx';
 
 const BOSTON_TIMEZONE = 'America/New_York';
 
@@ -226,6 +227,7 @@ export default function EventFeed({
               <p><strong>Start:</strong> {formatBostonTime(selectedEvent.start)}</p>
               <p><strong>End:</strong> {formatBostonTime(selectedEvent.end)}</p>
               <p><strong>Description:</strong> {selectedEvent.description || 'unavailable'}</p>
+              <FriendsGoing eventId={selectedEvent.id} />
               <SaveButton
                 eventId={selectedEvent.id}
                 eventTitle={selectedEvent.title}

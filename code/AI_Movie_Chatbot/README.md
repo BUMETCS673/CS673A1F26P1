@@ -187,6 +187,21 @@ SQL lives in `app/plans.py`; tests in `tests/test_plans.py` and
 (`src/components/SaveButton.jsx`) appears on event cards and in the details
 view, and every copy shares one state (`src/plans.jsx`).
 
+### Friends going
+
+A friend is a **mutual follow** (you follow them and they follow you). Both
+endpoints use the session cookie and check the mutual follow on every request,
+so unfollowing from either side removes access immediately.
+
+| Endpoint | Result |
+| --- | --- |
+| `GET /api/events/{event_id}/friends-going` | 200 with `{ friends: [{ id, username, display_name }] }`: friends who saved the event, by username. Empty when nobody is going; 404 for an unknown event. |
+| `GET /api/friends/{user_id}/plans` | 200 with `{ friend, plans: [{ event }] }`: that friend's upcoming saved events in start order. 404 for anyone who is not a mutual follow (one-way followers, unknown accounts, yourself), so it never reveals whether an account exists. |
+
+The event details view shows "Sam is going" (`src/components/FriendsGoing.jsx`),
+and the Friends page has **See plans** for mutual follows. Tests:
+`tests/test_friends_going.py` and `tests/live_friends_going.py` (three accounts).
+
 ### FV-118 / FV-124 request parsing (API only)
 
 The chat UI now uses `POST /api/chat` above; this endpoint stays available in

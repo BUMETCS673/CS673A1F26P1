@@ -6,6 +6,7 @@
  * AI-Assisted Areas: Friends search layout and responsive follow lists.
  * Human Contributions: Junshuo Huang supplied the Friends page requirements.
  * Notes/Verification: Vite build and frontend tests with mocked API responses.
+ * Friends' plans panel and row actions (Daniel Winnie): Claude Code (Claude Opus), ~90%.
  */
 
 .friends-view { max-width: 920px; display: grid; gap: 16px; }
@@ -19,6 +20,8 @@
 .friends-search { grid-template-columns: minmax(0, 1fr) auto; }
 .friends-columns { grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: start; }
 .friends-list { padding: 0; margin: 0; list-style: none; }
+.friends-row-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.friend-plans .section-heading { margin-bottom: 4px; }
 .friends-view h2 { margin-bottom: 8px; }
 .friends-view form + p { margin-top: 12px; }
 
