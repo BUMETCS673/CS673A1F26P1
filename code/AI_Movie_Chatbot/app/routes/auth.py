@@ -2,7 +2,7 @@
 # Authors: Daniel Winnie
 # Tools: Claude Code (Claude Opus), prompted by Daniel Winnie
 # Overall AI Contribution: ~90%
-# AI-Assisted Areas: register/login/me/logout routes, validation models, session cookie, shared require_user check; Codex for FV-120 invalid-session handling
+# AI-Assisted Areas: register/login/me/logout routes, PATCH /me profile update (FV-103), validation models, session cookie, shared require_user check; Codex for FV-120 invalid-session handling
 # Human Contributions: Daniel Winnie: requirements and prompts, design choices (FastAPI, Docker layout, beginner-friendly comments), reviewed every change before committing, decided what to keep
 # Notes/Verification: tests/test_auth.py, tests/live_auth.py, manual register/login/logout in the browser
 
@@ -34,6 +34,18 @@ EMAIL_PATTERN = re.compile(r"[^@\s]+@[^@\s]+\.[^@\s]+")
 DATABASE_UNAVAILABLE = "The account service is unavailable. Check that the database is running."
 
 
+def _clean_display_name(value: str) -> str:
+    if not value.strip():
+        raise ValueError("Display name is required.")
+    return value.strip()
+
+
+def _clean_preferences(value: list[str]) -> list[str]:
+    if not value:
+        raise ValueError("Choose at least one activity preference.")
+    return list(dict.fromkeys(value))
+
+
 class RegisterRequest(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
@@ -54,9 +66,7 @@ class RegisterRequest(BaseModel):
     @field_validator("display_name")
     @classmethod
     def check_display_name(cls, value: str) -> str:
-        if not value.strip():
-            raise ValueError("Display name is required.")
-        return value.strip()
+        return _clean_display_name(value)
 
     @field_validator("email")
     @classmethod
@@ -76,9 +86,32 @@ class RegisterRequest(BaseModel):
     @field_validator("activity_preferences")
     @classmethod
     def check_preferences(cls, value: list[str]) -> list[str]:
-        if not value:
+        return _clean_preferences(value)
+
+
+class ProfileUpdate(BaseModel):
+    """FV-103: the fields a user may change. Leave a field out to keep it; the same
+    rules as registration apply. Username, email, and password cannot change here
+    (extra fields are rejected)."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    display_name: str | None = Field(default=None, max_length=100)
+    activity_preferences: list[ActivityPreference] | None = Field(default=None, max_length=5)
+
+    @field_validator("display_name")
+    @classmethod
+    def check_display_name(cls, value: str | None) -> str:
+        if value is None:
+            raise ValueError("Display name is required.")
+        return _clean_display_name(value)
+
+    @field_validator("activity_preferences")
+    @classmethod
+    def check_preferences(cls, value: list[str] | None) -> list[str]:
+        if value is None:
             raise ValueError("Choose at least one activity preference.")
-        return list(dict.fromkeys(value))
+        return _clean_preferences(value)
 
 
 class LoginRequest(BaseModel):
@@ -194,6 +227,27 @@ def require_user(session: str | None = Cookie(default=None)) -> dict:
 def current_user(user: dict = Depends(require_user)) -> dict:
     """Return the user for this browser's session, so a reload stays logged in."""
     return user
+
+
+@router.patch("/me", response_model=UserResponse,
+              responses={401: {"description": "Not logged in"},
+                         422: {"description": "Invalid or empty update"},
+                         503: {"description": "Database unavailable"}})
+def update_profile(update: ProfileUpdate, user: dict = Depends(require_user)) -> dict:
+    """FV-103: change the signed-in user's display name and/or activity preferences.
+
+    Only the session's own account is changed; there is no user ID in the request.
+    """
+    changes = update.model_dump(exclude_unset=True)
+    if not changes:
+        raise HTTPException(status_code=422, detail="Nothing to update.")
+    try:
+        updated = users.update_profile(user["id"], **changes)
+    except (psycopg.Error, DatabaseConfigurationError):
+        raise _database_unavailable() from None
+    if updated is None:  # the account was deleted after the session check
+        raise HTTPException(status_code=401, detail="Not logged in.")
+    return updated
 
 
 @router.post("/logout", status_code=204, response_class=Response)

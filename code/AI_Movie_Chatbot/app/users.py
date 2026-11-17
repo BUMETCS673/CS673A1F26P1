@@ -2,7 +2,7 @@
 # Authors: Daniel Winnie
 # Tools: Claude Code (Claude Opus), prompted by Daniel Winnie
 # Overall AI Contribution: ~90%
-# AI-Assisted Areas: account and session SQL (parameterized queries, token hashing)
+# AI-Assisted Areas: account and session SQL (parameterized queries, token hashing); profile update (FV-103)
 # Human Contributions: Daniel Winnie: requirements and prompts, design choices (FastAPI, Docker layout, beginner-friendly comments), reviewed every change before committing, decided what to keep
 # Notes/Verification: tests/live_auth.py against PostgreSQL; Bandit SAST (B608 reviewed: constant column list only)
 
@@ -129,3 +129,18 @@ def get_session_user(token: str) -> dict | None:
 def delete_session(token: str) -> None:
     with get_connection() as connection:
         connection.execute("DELETE FROM user_sessions WHERE token_hash = %s", (_token_hash(token),))
+
+
+def update_profile(user_id: int, display_name: str | None = None,
+                   activity_preferences: list[str] | None = None) -> dict | None:
+    """FV-103: change only the given fields of this one account; None if it no longer exists."""
+    with get_connection() as connection:
+        with connection.cursor() as cursor:
+            cursor.execute(
+                "UPDATE users SET display_name = COALESCE(%s, display_name), "
+                "activity_preferences = COALESCE(%s, activity_preferences) "
+                f"WHERE id = %s RETURNING {USER_COLUMNS}",  # nosec B608 - constant column list; values are parameters
+                (display_name, activity_preferences, user_id),
+            )
+            row = cursor.fetchone()
+    return _user(row) if row else None
