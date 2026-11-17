@@ -1,8 +1,10 @@
 // AI-USAGE SUMMARY
 // Author: Junshuo Huang
 // Tool: ChatGPT (Codex)
+// Overall AI Contribution: 100% of the initial code draft.
 // AI-Assisted Areas: username search, follow state, and standalone React preview
 // Human Contributions: Junshuo Huang defined the standalone Docker preview and follow-back workflow.
+// Notes/Verification: Junshuo verified the mock follow workflow in Docker.
 
 import React, { useState } from 'react';
 import { createRoot } from 'react-dom/client';
