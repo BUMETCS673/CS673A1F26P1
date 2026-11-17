@@ -21,8 +21,8 @@ from zoneinfo import ZoneInfo
 
 from fastapi.testclient import TestClient
 
-from app import chat_history
-from app.chat import matches_place
+from app import chat, chat_history
+from app.place_matching import location_matches
 from app.main import create_app
 from app.routes import events as events_route
 from app.routes.auth import require_user
@@ -115,13 +115,55 @@ class ChatApiTests(unittest.TestCase):
         self.assertEqual(self.client.post("/api/chat", json={"message": "music"}).status_code, 401)
 
 
+class PreferenceOrderInChatTests(unittest.TestCase):
+    """FV-127 wired into the chat: the signed-in user's preferences order generic requests."""
+
+    # Same fixture setup as ChatApiTests, without inheriting (and rerunning) its tests.
+    setUp, ask, ids = ChatApiTests.setUp, ChatApiTests.ask, ChatApiTests.ids
+
+    def prefer(self, *categories):
+        self.application.dependency_overrides[require_user] = lambda: {
+            "id": 1, "activity_preferences": list(categories)}
+
+    def test_generic_request_puts_preferred_categories_first(self):
+        self.prefer("Food")
+        ids = self.ids("events after 7pm")
+        # fixture-14 (Food) moves to the front; the rest keep start order.
+        self.assertEqual(ids, ["fixture-14", "fixture-05", "fixture-06", "fixture-10", "fixture-11"])
+
+    def test_explicit_category_ignores_preferences(self):
+        self.prefer("Food")
+        self.assertEqual(self.ids("music"), ["fixture-06", "fixture-10"])
+
+    def test_no_preferences_keeps_start_order(self):
+        self.prefer()
+        self.assertEqual(self.ids("events after 7pm"),
+                         ["fixture-05", "fixture-06", "fixture-10", "fixture-11", "fixture-14"])
+
+    def test_preferences_apply_before_the_ten_result_cut(self):
+        events = list(events_route.load_sample_events())
+        # No constraints: all 12 upcoming fixtures match; without preferences the last two are cut.
+        plain = chat.find_matches({}, events, NOW)
+        self.assertEqual(len(plain), chat.MAX_RESULTS)
+        self.assertNotIn("fixture-14", [event["id"] for event in plain])
+        preferred = [event["id"] for event in chat.find_matches({}, events, NOW, ["Food"])]
+        self.assertEqual(preferred[:3], ["fixture-03", "fixture-09", "fixture-14"])
+        self.assertEqual(len(preferred), chat.MAX_RESULTS)
+
+    def test_a_profile_change_applies_to_the_next_request(self):
+        self.prefer("Music")
+        self.assertEqual(self.ids("events after 7pm")[:2], ["fixture-06", "fixture-10"])
+        self.prefer("Social")
+        self.assertEqual(self.ids("events after 7pm")[:2], ["fixture-05", "fixture-11"])
+
+
 class PlaceMatchTests(unittest.TestCase):
     def test_events_without_location_never_match(self):
-        self.assertFalse(matches_place({"location": None}, "Fenway"))
-        self.assertFalse(matches_place({"location": ""}, "Fenway"))
+        self.assertFalse(location_matches(None, "Fenway"))
+        self.assertFalse(location_matches("", "Fenway"))
 
     def test_extra_spaces_are_ignored(self):
-        self.assertTrue(matches_place({"location": "Back  Bay, Boston"}, " back bay "))
+        self.assertTrue(location_matches("Back  Bay, Boston", " back bay "))
 
 
 if __name__ == "__main__":

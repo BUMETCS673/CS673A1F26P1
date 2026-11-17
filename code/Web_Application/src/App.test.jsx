@@ -197,3 +197,25 @@ describe('Profile in the whole app', () => {
   });
 });
 
+describe('Chat cards in the whole app', () => {
+  it('saves an event straight from a chat result and shows it in My Plans', async () => {
+    render(<App />);
+    await logIn('alex');
+    fireEvent.change(await screen.findByLabelText('Your request'), { target: { value: 'food please' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Send' }));
+    const results = await screen.findByRole('region', { name: 'Recommendation results' });
+    fireEvent.click(await within(results).findByRole('button', { name: 'Save to My Plans: North End food walk' }));
+    expect(await within(results).findByText('✓ In My Plans')).toBeTruthy();
+    // The event list's card for the same event shows it too.
+    const card = within(eventsPage()).getAllByRole('heading', { name: 'North End food walk' })
+      .map((heading) => heading.closest('article')).find(Boolean);
+    expect(within(card).getByText('✓ In My Plans')).toBeTruthy();
+    // Clicking the card itself still opens the details.
+    fireEvent.click(within(results).getByRole('button', { name: /^Food North End food walk/ }));
+    const details = (await within(eventsPage()).findByRole('button', { name: 'Close details' })).closest('.panel');
+    expect(await within(details).findByText('North End food walk')).toBeTruthy();
+    goTo('My Plans');
+    expect(await within(myPlansPage()).findByRole('heading', { name: 'North End food walk' })).toBeTruthy();
+  });
+});
+

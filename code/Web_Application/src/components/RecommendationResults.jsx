@@ -2,12 +2,13 @@
 // Authors: Daniel Winnie
 // Tools: Claude Code (Claude Opus), prompted by Daniel Winnie
 // Overall AI Contribution: ~90%
-// AI-Assisted Areas: FV-125 recommendation results component (event cards, clarification, no matches)
+// AI-Assisted Areas: FV-125 recommendation results component (event cards, clarification, no matches); Save to My Plans on each card (FV-95)
 // Human Contributions: Daniel Winnie: requirements and prompts, design choices, reviewed every change before committing, decided what to keep
 // Notes/Verification: src/components/RecommendationResults.test.jsx (npm test); standalone preview at /src/previews/recommendations/
 
 import React from 'react';
 import { describeConditions, formatBostonTimeRange, bostonDateKey, resultKind } from '../recommendations.js';
+import SaveButton from './SaveButton.jsx';
 import './RecommendationResults.css';
 
 // Example requests the FV-124 parser understands. Clicking one calls onSuggestion.
@@ -45,9 +46,11 @@ function Suggestions({ onSuggestion }) {
 // Each card is one button so the whole card is clickable and keyboard reachable.
 // Its accessible name is its visible text, so screen readers hear the title, time,
 // and place. It reports only the shared event ID; the details view looks up the rest.
+// The Save button sits below the card (a button cannot contain another button) and
+// only appears inside the app, where a PlansProvider exists.
 function RecommendationCard({ event, onEventSelect }) {
   return (
-    <li>
+    <li className="recommendation-item">
       <button
         type="button"
         className="recommendation-card"
@@ -65,6 +68,7 @@ function RecommendationCard({ event, onEventSelect }) {
         </span>
         {event.location && <span className="recommendation-card-line">{event.location}</span>}
       </button>
+      <SaveButton eventId={event.id} eventTitle={event.title} />
     </li>
   );
 }

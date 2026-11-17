@@ -78,12 +78,16 @@ def history_unavailable() -> HTTPException:
 def send_chat(request: ChatRequest, user: CurrentUser) -> dict:
     """Parse the request and return up to 10 upcoming events that match all of it.
 
+    Without a category in the request, the user's preferred categories come first.
+
     `needs_clarification: true` with no events means the request was not understood;
     an understood request with no events means nothing matches. The exchange is saved
     to the user's history first; if saving fails, the reply is not shown (503).
     """
     now = events_route.current_time()
-    reply = chat.answer(request.message, list(events_route.load_sample_events()), now)
+    # Preferences come from the database on every request, so a Profile change applies at once.
+    reply = chat.answer(request.message, list(events_route.load_sample_events()), now,
+                        user.get("activity_preferences"))
     try:
         chat_history.save_exchange(
             user["id"], request.message, reply["interpretation"],

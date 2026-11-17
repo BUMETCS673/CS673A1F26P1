@@ -183,6 +183,21 @@ export function createBackend({ events = EVENTS, now = () => NOW } = {}) {
     }
 
     if (method === 'GET' && path === '/api/chat/history') return json({ messages: [] });
+    if (method === 'POST' && path === '/api/chat') {
+      // A tiny stand-in for the parser: a category word only (the real one is tested in Python).
+      const category = ['Music', 'Arts', 'Food', 'Outdoors', 'Social']
+        .find((name) => body.message.toLowerCase().includes(name.toLowerCase())) ?? null;
+      const events = category === null ? [] : backend.events
+        .filter((event) => event.category === category && !ended(event))
+        .sort((a, b) => new Date(a.start) - new Date(b.start));
+      return json({
+        interpretation: {
+          category, date: null, time: null, time_operator: null, location: null,
+          location_operator: null, timezone: 'America/New_York', needs_clarification: category === null,
+        },
+        events,
+      });
+    }
     if (method === 'GET' && path === '/api/following') {
       return json(backend.users.filter((u) => backend.follows.has(`${me.id}:${u.id}`))
         .map(({ id, username, display_name }) => ({ id, username, display_name })));
