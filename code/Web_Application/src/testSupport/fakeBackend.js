@@ -95,6 +95,22 @@ export function createBackend({ events = EVENTS, now = () => NOW } = {}) {
     if (!me) return json({ detail: 'Not logged in.' }, 401);
 
     if (method === 'GET' && path === '/api/auth/me') return json(publicUser(me));
+    if (method === 'PATCH' && path === '/api/auth/me') {
+      const allowed = ['display_name', 'activity_preferences'];
+      const keys = Object.keys(body ?? {});
+      if (keys.length === 0 || keys.some((key) => !allowed.includes(key))) {
+        return json({ detail: [{ msg: 'Extra inputs are not permitted' }] }, 422);
+      }
+      if ('display_name' in body && !String(body.display_name ?? '').trim()) {
+        return json({ detail: [{ msg: 'Value error, Display name is required.' }] }, 422);
+      }
+      if ('activity_preferences' in body && !body.activity_preferences?.length) {
+        return json({ detail: [{ msg: 'Value error, Choose at least one activity preference.' }] }, 422);
+      }
+      if ('display_name' in body) me.display_name = body.display_name.trim();
+      if ('activity_preferences' in body) me.activity_preferences = [...new Set(body.activity_preferences)];
+      return json(publicUser(me));
+    }
 
     if (method === 'GET' && path === '/api/events') {
       const limit = Number(url.searchParams.get('limit') ?? 10);

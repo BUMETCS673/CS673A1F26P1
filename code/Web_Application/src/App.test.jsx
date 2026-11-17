@@ -169,3 +169,31 @@ describe('Friends going in the whole app', () => {
     expect(await within(eventsPage()).findByText('Alex is going')).toBeTruthy();
   });
 });
+
+describe('Profile in the whole app', () => {
+  it('updates the header right away and keeps the change after signing in again', async () => {
+    render(<App />);
+    await logIn('alex');
+    goTo('Profile');
+    fireEvent.change(await screen.findByLabelText('Display name'), { target: { value: 'Alex Park' } });
+    fireEvent.click(screen.getByRole('checkbox', { name: 'Outdoors' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Save changes' }));
+    expect((await screen.findByRole('status')).textContent).toBe('Profile saved.');
+    expect(screen.getByText('Signed in as', { exact: false }).textContent).toBe('Signed in as Alex Park');
+
+    // Leaving and reopening the page shows the saved values.
+    goTo('Events');
+    goTo('Profile');
+    expect(screen.getByLabelText('Display name').value).toBe('Alex Park');
+    expect(screen.getByRole('checkbox', { name: 'Outdoors' }).checked).toBe(true);
+
+    await logOut();
+    await logIn('alex');
+    expect(screen.getByText('Signed in as', { exact: false }).textContent).toBe('Signed in as Alex Park');
+    goTo('Profile');
+    expect(screen.getByLabelText('Display name').value).toBe('Alex Park');
+    // Sam is unchanged.
+    expect(backend.users.find((user) => user.id === 2).display_name).toBe('Sam');
+  });
+});
+

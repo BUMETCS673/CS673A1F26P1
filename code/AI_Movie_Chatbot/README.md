@@ -113,6 +113,17 @@ Register new signed-in routers under `protected` in `app/main.py`. If a
 handler also needs the user record, inject `Depends(require_user)` from
 `app/routes/auth.py`.
 
+### Profile (FV-103)
+
+`PATCH /api/auth/me` changes the signed-in user's `display_name` and/or
+`activity_preferences` (leave a field out to keep it) and returns the updated
+account. The registration rules apply: a non-blank display name of at most 100
+characters, and one to five of Music, Arts, Food, Outdoors, Social (duplicates
+removed). An empty body, any other field (username, email, password, an ID), or
+an invalid value returns 422 and changes nothing. There is no user ID in the
+request, so only the session's own account can change. Tests:
+`tests/test_profile.py` and `tests/live_profile.py` (two accounts).
+
 ### Following and followers (FV-92)
 
 When A follows B, B appears in A's Following list, and A appears in B's

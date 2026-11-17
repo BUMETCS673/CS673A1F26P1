@@ -74,6 +74,8 @@ export const getFriendsGoing = (eventId) =>
 export const getFriendPlans = (userId) => request(`/api/friends/${encodeURIComponent(userId)}/plans`);
 
 export const getCurrentUser = () => request('/api/auth/me');
+// FV-103: { display_name, activity_preferences }; returns the updated account.
+export const updateProfile = (changes) => request('/api/auth/me', { method: 'PATCH', body: changes });
 export const register = (account) => request('/api/auth/register', { method: 'POST', body: account });
 export const logIn = (credentials) => request('/api/auth/login', { method: 'POST', body: credentials });
 export const logOut = () => request('/api/auth/logout', { method: 'POST' });
