@@ -1,12 +1,12 @@
 // AI-USAGE SUMMARY
 // Authors: Daniel Winnie, Jibek Kelgenbaeva
-// Tools: OpenAI Codex (CLI agent), prompted by Daniel Winnie; Claude Code (Claude Opus), prompted by Daniel Winnie (loading/error states); ChatGPT (OpenAI GPT-6), prompted by Jibek Kelgenbaeva (FV-122/FV-123)
+// Tools: OpenAI Codex (CLI agent), prompted by Daniel Winnie; Claude Code (Claude Opus), prompted by Daniel Winnie (loading/error states, opening details from chat cards); ChatGPT (OpenAI GPT-6), prompted by Jibek Kelgenbaeva (FV-122/FV-123)
 // Overall AI Contribution: ~90% (Daniel's parts); 90% (Jibek's FV-122/FV-123 parts)
-// AI-Assisted Areas: event cards, feed states, Boston-local date/time formatting, event details view, Load More pagination, and empty/error handling
+// AI-Assisted Areas: event cards, feed states, Boston-local date/time formatting, event details view, Load More pagination, and empty/error handling; opening details from chat cards (FV-125)
 // Human Contributions: Daniel Winnie: requirements, design choices, original implementation, and review; Jibek Kelgenbaeva: FV-122/FV-123 requirements, integration, testing, and verification
 // Notes/Verification: FV-122/FV-123 backend tests and manual browser verification; desktop and narrow-width checks from earlier implementation
 
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { getEventById } from '../api.js';
 
 const BOSTON_TIMEZONE = 'America/New_York';
@@ -40,23 +40,40 @@ export default function EventFeed({
   onRetry,
   hasMore,
   onLoadMore,
+  detailsRequest,
 }) {
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [detailsLoading, setDetailsLoading] = useState(false);
   const [detailsError, setDetailsError] = useState('');
+  const detailsPanel = useRef(null);
+  const latestRequest = useRef(0);
+
+  // FV-125: a chat result card opens the same details view by event ID.
+  useEffect(() => {
+    if (!detailsRequest) return;
+    openDetails(detailsRequest.id).then(() => {
+      detailsPanel.current?.scrollIntoView?.({ behavior: 'smooth', block: 'nearest' });
+    });
+  }, [detailsRequest]);
 
   async function openDetails(eventId) {
+    // Only the most recent click may fill the panel, if two answers arrive out of order.
+    const requestNumber = ++latestRequest.current;
     setSelectedEvent(null);
     setDetailsError('');
     setDetailsLoading(true);
 
     try {
       const event = await getEventById(eventId);
-      setSelectedEvent(event);
-    } catch {
-      setDetailsError("Couldn't load event details.");
+      if (requestNumber === latestRequest.current) setSelectedEvent(event);
+    } catch (error) {
+      if (requestNumber === latestRequest.current) {
+        setDetailsError(error.status === 404
+          ? 'This event is no longer available.'
+          : "Couldn't load event details.");
+      }
     } finally {
-      setDetailsLoading(false);
+      if (requestNumber === latestRequest.current) setDetailsLoading(false);
     }
   }
 
@@ -181,7 +198,7 @@ export default function EventFeed({
       )}
 
       {(selectedEvent || detailsLoading || detailsError) && (
-        <div className="panel" aria-live="polite">
+        <div className="panel" aria-live="polite" ref={detailsPanel}>
           <button
             className="secondary-button"
             type="button"

@@ -2,8 +2,10 @@
  * AI-USAGE SUMMARY
  * Author: Junshuo Huang
  * Tool: ChatGPT (Codex)
+ * Overall AI Contribution: 100% of the initial code draft.
  * AI-Assisted Areas: standalone FV-92 preview layout and styles
  * Human Contributions: Junshuo Huang defined the standalone Docker preview and follow-back workflow.
+ * Notes/Verification: Junshuo verified the mock follow workflow in Docker.
  */
 
 * { box-sizing: border-box; }

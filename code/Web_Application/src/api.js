@@ -1,11 +1,14 @@
+// AI-USAGE SUMMARY
+// Authors: Daniel Winnie, Jibek Kelgenbaeva
+// Tools: Claude Code (Claude Opus), prompted by Daniel Winnie; ChatGPT (OpenAI), prompted by Jibek Kelgenbaeva (FV-122/FV-123)
+// Overall AI Contribution: ~90% (Daniel's parts); 90% (Jibek's FV-122/FV-123 parts)
+// AI-Assisted Areas: fetch wrappers for the Python API (including sendChat, FV-125, and chat history, FV-121); paginated event requests and event-details API requests (Jibek)
+// Human Contributions: Daniel Winnie: requirements and prompts, design choices (FastAPI, Docker layout, beginner-friendly comments), reviewed every change before committing, decided what to keep; Jibek Kelgenbaeva: FV-122/FV-123 API integration requirements, testing, and verification
+// Notes/Verification: manual browser testing on localhost:3000 (desktop and narrow widths); FV-122/FV-123 API integration verification
 
- // AI-USAGE SUMMARY
- // Authors: Daniel Winnie, Jibek Kelgenbaeva
- // Tools: Claude Code (Claude Opus), prompted by Daniel Winnie; ChatGPT (OpenAI), prompted by Jibek Kelgenbaeva (FV-122/FV-123)
- // Overall AI Contribution: ~90% (Daniel's parts); 90% (Jibek's FV-122/FV-123 parts)
- // AI-Assisted Areas: fetch wrappers for the Python API, paginated event requests, and event-details API requests
- // Human Contributions: Daniel Winnie: requirements, prompts, FastAPI integration design, and review; Jibek Kelgenbaeva: FV-122/FV-123 API integration requirements, testing, and verification
- // Notes/Verification: manual browser testing and FV-122/FV-123 API integration verification
+// Follow API wrappers (Junshuo Huang, FV-92): OpenAI Codex drafted the code from the existing API contract.
+// Overall AI Contribution (FV-92): 100% of the initial code draft.
+// Notes/Verification (FV-92): frontend tests with mocked API responses.
 
 // Small wrappers around the Python API. Relative URLs go through Vite's /api proxy,
 // and the browser sends the HttpOnly session cookie automatically.
@@ -36,11 +39,28 @@ function errorMessage(detail) {
   return 'Something went wrong. Please try again.';
 }
 
+export const searchUsers = (username) =>
+  request(`/api/users/search?${new URLSearchParams({ username })}`);
+
+export const getFollowing = () => request('/api/following');
+export const getFollowers = () => request('/api/followers');
+export const followUser = (id) => request(`/api/following/${id}`, { method: 'PUT' });
+export const unfollowUser = (id) => request(`/api/following/${id}`, { method: 'DELETE' });
+
 export const getEvents = (limit = 5, offset = 0) =>
   request(`/api/events?limit=${limit}&offset=${offset}`);
 
 export const getEventById = (id) =>
   request(`/api/events/${encodeURIComponent(id)}`);
+
+// FV-125: { interpretation, events } for a free-text request. `signal` lets the
+// chat cancel a request when it is cleared or the user logs out.
+export const sendChat = (message, signal) =>
+  request('/api/chat', { method: 'POST', body: { message }, signal });
+
+// FV-121: the signed-in user's last 50 exchanges, and "Clear history".
+export const getChatHistory = () => request('/api/chat/history');
+export const clearChatHistory = () => request('/api/chat/history', { method: 'DELETE' });
 
 export const getCurrentUser = () => request('/api/auth/me');
 export const register = (account) => request('/api/auth/register', { method: 'POST', body: account });

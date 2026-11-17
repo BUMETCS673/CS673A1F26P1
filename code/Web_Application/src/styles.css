@@ -1,12 +1,15 @@
 /*
  * AI-USAGE SUMMARY
- * Authors: Daniel Winnie, Ji Wu, Jibek Kelgenbaeva
- * Tools: OpenAI Codex (CLI agent), prompted by Daniel Winnie; Claude Code (Claude Opus), prompted by Daniel Winnie; OpenAI Codex, prompted by Ji Wu (chat demo styles) ; ChatGPT (OpenAI GPT-6), prompted by Jibek Kelgenbaeva (FV-110 responsive CSS)
+ * Authors: Daniel Winnie, Ji Wu, Jibek Kelgenbaeva, Junshuo Huang
+ * Tools: OpenAI Codex (CLI agent), prompted by Daniel Winnie; Claude Code (Claude Opus), prompted by Daniel Winnie; OpenAI Codex, prompted by Ji Wu (chat demo styles); ChatGPT (OpenAI GPT-6), prompted by Jibek Kelgenbaeva (FV-110 responsive CSS)
  * Overall AI Contribution: ~85% (Daniel's parts); 80% (Ji Wu's part); 90% (Jibek's FV-110 CSS additions)
  * AI-Assisted Areas: layout and colors; chat demo styles (Ji Wu); responsive phone/tablet layouts, touch targets, event cards, and chat layout (Jibek)
  * Human Contributions: Daniel Winnie: requirements and prompts, design choices (FastAPI, Docker layout, beginner-friendly comments), reviewed every change before committing, decided what to keep; Ji Wu: requirements, prompts, scope decisions, and review of chat demo styling results; Jibek Kelgenbaeva: FV-110 requirements, integration, browser testing, and verification
  * Notes/Verification: FV-110 manual testing passed in Chrome, Firefox, and Safari desktop at 360, 390, 768, and 1280px; physical iPhone Safari testing passed; npm run build passed. Edge desktop and Android Chrome not tested.
-  */
+ * Navigation (Junshuo Huang): OpenAI Codex drafted the navigation button styles from the team requirements.
+ * Overall AI Contribution (navigation): 100% of the initial code draft.
+ * Notes/Verification (navigation): Vite build and navigation smoke test.
+ */
 
 /* Basic layout and colors. No UI library is required to change this scaffold. */
 * { box-sizing: border-box; }
@@ -40,10 +43,11 @@ a { color: inherit; }
   border-bottom: 2px solid #9eb2bc;
 }
 .brand { font-size: 1.2rem; font-weight: bold; text-decoration: none; }
+.top-bar > .brand { background: transparent; color: inherit; padding: 0; text-align: left; }
 .brand span { display: block; color: #637780; font-size: .75rem; font-weight: normal; }
 .top-bar nav { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
 .top-bar nav button { color: #4f626b; background: transparent; }
-.nav-current { padding: 9px 14px; background: #e6f2ee; border-radius: 8px; text-decoration: none; font-weight: bold; }
+.top-bar nav button.nav-current { padding: 9px 14px; background: #e6f2ee; border-radius: 8px; text-decoration: none; font-weight: bold; }
 .dashboard { max-width: 1400px; margin: 0 auto; padding: 32px 24px 48px; }
 .page-heading > p { margin-top: 10px; }
 .eyebrow { color: #256354; font-size: .8rem; font-weight: bold; letter-spacing: .08em; text-transform: uppercase; }
