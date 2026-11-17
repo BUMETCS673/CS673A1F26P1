@@ -21,6 +21,7 @@ from zoneinfo import ZoneInfo
 
 from fastapi.testclient import TestClient
 
+from app import chat_history
 from app.chat import matches_place
 from app.main import create_app
 from app.routes import events as events_route
@@ -38,6 +39,10 @@ class ChatApiTests(unittest.TestCase):
             patcher = mock.patch.object(events_route, target, value)
             patcher.start()
             self.addCleanup(patcher.stop)
+        # Saving history is covered by test_chat_history.py; no database here.
+        saver = mock.patch.object(chat_history, "save_exchange")
+        saver.start()
+        self.addCleanup(saver.stop)
         self.application = create_app()
         self.application.dependency_overrides[require_user] = lambda: {"id": 1}
         self.client = TestClient(self.application)
