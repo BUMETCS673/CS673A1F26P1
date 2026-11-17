@@ -2,7 +2,7 @@
 // Authors: Daniel Winnie, Ji Wu
 // Tools: OpenAI Codex (CLI agent), prompted by Daniel Winnie; Claude Code (Claude Opus), prompted by Daniel Winnie (auth + API events); OpenAI Codex, prompted by Ji Wu (Chatbox demo integration)
 // Overall AI Contribution: ~85% (Daniel's parts); 80% (Ji Wu's part)
-// AI-Assisted Areas: dashboard layout, auth state, event loading and filtering; Chatbox demo integration (Ji Wu)
+// AI-Assisted Areas: dashboard layout, auth state, event loading and filtering; Chatbox demo integration (Ji Wu); chat cards open event details (FV-125)
 // Human Contributions: Daniel Winnie: requirements and prompts, design choices (FastAPI, Docker layout, beginner-friendly comments), reviewed every change before committing, decided what to keep; Ji Wu: requirements, prompts, scope decisions, and review of Chatbox demo integration results
 // Notes/Verification: manual browser testing on localhost:3000 (desktop and narrow widths)
 // Navigation extraction (Junshuo Huang): OpenAI Codex drafted the move.
@@ -23,6 +23,9 @@ export default function EventsView() {
     nextOffset: null,
   });
   const [attempt, setAttempt] = useState(0);
+  // A chat card asks the event feed to open its details view. A new object each
+  // time, so clicking the same card twice opens it again.
+  const [detailsRequest, setDetailsRequest] = useState(null);
 
   useEffect(() => {
     let current = true;
@@ -128,7 +131,7 @@ export default function EventsView() {
         <p>Browse events, narrow your choices, and plan with a chat.</p>
         <p className="prototype-note">
           Demo: accounts are stored in the project database; the fictional events come from the Python API.
-          Choose a chat action to try request parsing or sample event filtering.
+          Ask the chat for events in your own words, then click a result to see its details.
         </p>
       </div>
 
@@ -140,6 +143,7 @@ export default function EventsView() {
           onRetry={() => setAttempt((count) => count + 1)}
           hasMore={catalog.nextOffset !== null}
           onLoadMore={loadMore}
+          detailsRequest={detailsRequest}
         />
         <aside className="dashboard-sidebar" aria-label="Filters and event chat">
           <FilterPanel
@@ -150,7 +154,7 @@ export default function EventsView() {
             onDateChange={setDate}
             onClear={clearFilters}
           />
-          <ChatPanel events={catalog.events} />
+          <ChatPanel onEventSelect={(id) => setDetailsRequest({ id })} />
         </aside>
       </div>
     </main>

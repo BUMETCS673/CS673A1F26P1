@@ -1,82 +1,82 @@
 // AI-USAGE SUMMARY
-// Authors: Daniel Winnie (scaffold), Ji Wu (demo actions)
-// Tools: OpenAI Codex (CLI agent), prompted by Daniel Winnie; OpenAI Codex, prompted by Ji Wu (FV-117/118 demo actions)
-// Overall AI Contribution: Daniel's scaffold ~90%; Ji Wu's demo actions 80%
-// AI-Assisted Areas: chat panel scaffold; parse/filter demo actions; FV-124 parser examples
-// Human Contributions: Ji Wu: requirements, prompts, scope decisions, and review of Chatbox demo results; Daniel Winnie: requirements and prompts, design choices (FastAPI, Docker layout, beginner-friendly comments), reviewed every change before committing, decided what to keep
-// Merge fix (Daniel Winnie, Claude Code): filter demo accepts catalog start/end events
-// Notes/Verification: manual browser testing on localhost:3000 (desktop and narrow widths); verified in the browser by Ji Wu (PR #11)
+// Authors: Daniel Winnie (scaffold, FV-125 integration), Ji Wu (earlier parse/filter demo actions)
+// Tools: OpenAI Codex (CLI agent), prompted by Daniel Winnie; OpenAI Codex, prompted by Ji Wu (FV-117/118 demo actions); Claude Code (Claude Opus), prompted by Daniel Winnie (FV-125 chat integration)
+// Overall AI Contribution: ~90%
+// AI-Assisted Areas: chat panel scaffold; FV-125: send requests to POST /api/chat and show RecommendationResults; FV-121: load saved history, Clear history
+// Human Contributions: Daniel Winnie: requirements and prompts, design choices, reviewed every change before committing, decided what to keep; Ji Wu: requirements and review of the earlier demo actions this replaces
+// Notes/Verification: src/components/ChatPanel.test.jsx (npm test); manual browser testing on localhost:3000
 
 import React, { useEffect, useRef, useState } from 'react';
+import RecommendationResults from './RecommendationResults.jsx';
+import { clearChatHistory, getChatHistory, sendChat } from '../api.js';
 
-// The filter demo (FV-117) expects date/time fields; the catalog (FV-122/123) sends
-// start/end times. Convert each event to the demo's Boston date and clock time.
-const bostonParts = new Intl.DateTimeFormat('en-US', {
-  timeZone: 'America/New_York', year: 'numeric', month: '2-digit', day: '2-digit',
-  hour: 'numeric', minute: '2-digit',
-});
-export function toFilterDemoEvent(event) {
-  const parts = Object.fromEntries(bostonParts.formatToParts(new Date(event.start))
-    .map(({ type, value }) => [type, value]));
-  return {
-    id: event.id,
-    title: event.title,
-    category: event.category,
-    date: `${parts.year}-${parts.month}-${parts.day}`,
-    time: `${parts.hour}:${parts.minute} ${parts.dayPeriod}`,
-    location: event.location || 'Location unavailable',
-    description: event.description,
-  };
-}
-
-const welcomeMessages = {
-  parse: {
-    sender: 'Assistant',
-    text: "Try 'music', 'Saturday', or 'music in Boston next Friday after 6 pm'. Supported categories: Music, Arts, Food, Outdoors, Social. This action shows how your request was interpreted. To filter the sample events, choose Filter sample events under Chat action.",
-  },
-  filter: {
-    sender: 'Assistant',
-    text: 'Enter JSON conditions, for example {"category":"Music","date":"2026-11-21"}. Use {"category":"Music"} for any date, {"date":"2026-11-21"} for any category, or {} for all samples. To parse text instead, choose Parse request under Chat action.',
-  },
+const WELCOME = {
+  sender: 'Assistant',
+  text: "Ask for Boston events in your own words, for example 'music this friday after 6pm' "
+    + "or 'food near North End'. Categories: Music, Arts, Food, Outdoors, Social.",
 };
 
-export default function ChatPanel({ events }) {
-  const [mode, setMode] = useState('parse');
+// One saved exchange becomes the user's message and the assistant's reply.
+export function historyToMessages(history) {
+  return history.flatMap((entry) => [
+    { sender: 'You', text: entry.request_text },
+    {
+      sender: 'Assistant',
+      response: { interpretation: entry.interpretation, events: entry.events },
+      unavailableCount: entry.unavailable_count,
+    },
+  ]);
+}
+
+function unavailableNote(count) {
+  if (!count) return null;
+  return count === 1
+    ? '1 earlier result has ended or is no longer available.'
+    : `${count} earlier results have ended or are no longer available.`;
+}
+
+/**
+ * The event chat. Each request goes to POST /api/chat; the reply is shown as event
+ * cards, a clarification prompt, or a no-matches message (RecommendationResults).
+ * Each exchange is saved on the server, and the last 50 are loaded when it opens.
+ *
+ * Props:
+ *   onEventSelect  called with an event ID when a result card is clicked
+ */
+export default function ChatPanel({ onEventSelect }) {
   const [draft, setDraft] = useState('');
-  const [messages, setMessages] = useState([welcomeMessages.parse]);
+  const [messages, setMessages] = useState([WELCOME]);
   const [isSending, setIsSending] = useState(false);
+  const [historyStatus, setHistoryStatus] = useState('loading');
+  const [isClearing, setIsClearing] = useState(false);
   const pendingRequest = useRef(null);
   const conversation = useRef(null);
-  const isFilter = mode === 'filter';
 
   useEffect(() => () => pendingRequest.current?.abort(), []);
+
+  // Load this account's saved history once. The dashboard remounts the chat
+  // when the signed-in account changes, so another user's history never shows.
+  useEffect(() => {
+    let current = true;
+    getChatHistory()
+      .then((data) => {
+        if (!current) return;
+        // Keep anything typed while history was loading after the saved messages.
+        setMessages((previous) => [WELCOME, ...historyToMessages(data.messages), ...previous.slice(1)]);
+        setHistoryStatus('ready');
+      })
+      .catch(() => { if (current) setHistoryStatus('error'); });
+    return () => { current = false; };
+  }, []);
   useEffect(() => {
     if (conversation.current) {
       conversation.current.scrollTop = conversation.current.scrollHeight;
     }
   }, [messages, isSending]);
 
-  async function handleSubmit(event) {
-    event.preventDefault();
-    const request = draft.trim();
+  async function send(text) {
+    const request = text.trim();
     if (!request || pendingRequest.current) return;
-    let filters;
-    if (isFilter) {
-      try {
-        filters = JSON.parse(request);
-        if (!filters || Array.isArray(filters) || typeof filters !== 'object'
-            || Object.keys(filters).some((key) => !['category', 'date'].includes(key))
-            || Object.values(filters).some((value) => value !== null && typeof value !== 'string')) {
-          throw new Error('Invalid filter conditions');
-        }
-      } catch {
-        setMessages((previous) => [...previous, { sender: 'You', text: request }, {
-          sender: 'Assistant', error: true,
-          text: 'Enter a JSON object with only category and/or date, for example {"category":"Music","date":"2026-11-21"}. Choose Parse request to interpret text instead.',
-        }]);
-        return;
-      }
-    }
     const controller = new AbortController();
     pendingRequest.current = controller;
     const timeout = setTimeout(() => controller.abort('timeout'), 15000);
@@ -84,36 +84,17 @@ export default function ChatPanel({ events }) {
     setDraft('');
     setIsSending(true);
     try {
-      // Parsing sends only text; filtering sends explicit conditions and samples.
-      const response = await fetch(isFilter ? '/api/demo/filter-events' : '/api/demo/parse-event-request', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(isFilter ? { ...filters, events: events.map(toFilterDemoEvent) } : { message: request }),
-        signal: controller.signal,
-      });
-      if (isFilter && response.status === 422) {
-        throw new Error('Use category up to 50 characters and date up to 10 characters.');
-      }
-      if (!response.ok) throw new Error('Demo request failed');
-      const result = await response.json();
+      const response = await sendChat(request, controller.signal);
       if (controller.signal.aborted) return;
-      setMessages((previous) => [...previous, isFilter ? {
-        sender: 'Assistant', text: result.message,
-        filters: { category: result.category, date: result.date }, events: result.events,
-      } : {
-        sender: 'Assistant',
-        text: result.needs_clarification
-          ? "Please clarify. Try one category, a date or weekday, a time such as 'after 6 pm', or a location such as 'in Boston'."
-          : 'Request recognized. Parsed conditions:',
-        interpretation: result,
-      }]);
+      setMessages((previous) => [...previous, { sender: 'Assistant', response }]);
     } catch (error) {
-      // Clear chat, action changes, and logout cancel silently; show other failures.
+      // Clearing the chat or logging out cancels silently; show other failures.
       if (controller.signal.aborted && controller.signal.reason !== 'timeout') return;
       setMessages((previous) => [...previous, {
         sender: 'Assistant', error: true,
-        text: error.message.startsWith('Use category') ? error.message
-          : 'Could not reach the demo service. Check that the Python backend is running, then try your request again.',
+        text: controller.signal.aborted
+          ? 'The server took too long to answer. Please try again.'
+          : error.message,
       }]);
     } finally {
       clearTimeout(timeout);
@@ -124,87 +105,76 @@ export default function ChatPanel({ events }) {
     }
   }
 
-  function resetChat(nextMode) {
-    pendingRequest.current?.abort();
-    pendingRequest.current = null;
-    setIsSending(false);
-    setMessages([welcomeMessages[nextMode]]);
-    setDraft('');
+  function handleSubmit(event) {
+    event.preventDefault();
+    send(draft);
   }
 
-  function changeMode(event) {
-    const nextMode = event.target.value;
-    setMode(nextMode);
-    resetChat(nextMode);
+  async function clearHistory() {
+    setIsClearing(true);
+    try {
+      await clearChatHistory();
+      pendingRequest.current?.abort();
+      pendingRequest.current = null;
+      setIsSending(false);
+      setMessages([WELCOME]);
+      setDraft('');
+      setHistoryStatus('ready');
+    } catch (error) {
+      setMessages((previous) => [...previous, {
+        sender: 'Assistant', error: true, text: `History was not cleared. ${error.message}`,
+      }]);
+    } finally {
+      setIsClearing(false);
+    }
   }
 
   return (
     <section className="panel chat-panel" aria-labelledby="chat-title">
       <div className="section-heading">
         <h2 id="chat-title">Plan with a chat</h2>
-        <span className="placeholder-badge">{isFilter ? 'Filter demo' : 'Parser demo'}</span>
       </div>
-      <p className="muted-text">{isFilter
-        ? 'Explicit JSON filters · sample events only'
-        : 'Request parsing · choose Filter sample events to search the samples'}</p>
-      <label htmlFor="chat-action">Chat action</label>
-      <select id="chat-action" value={mode} onChange={changeMode}>
-        <option value="parse">Parse request</option>
-        <option value="filter">Filter sample events</option>
-      </select>
+      <p className="muted-text">Describe what you want · results from the fictional Boston catalog</p>
+      {historyStatus === 'error' && (
+        <p className="muted-text" role="alert">Earlier messages couldn't be loaded. New messages still work.</p>
+      )}
       <div className="chat-messages" role="log" aria-label="Event conversation" ref={conversation}>
+        {historyStatus === 'loading' && <p role="status">Loading earlier messages…</p>}
         {messages.map((message, index) => (
           <div className={`chat-message ${message.sender === 'You' ? 'from-user' : ''}`} key={index}>
             <strong>{message.sender}</strong>
-            <p role={message.error ? 'alert' : undefined}>{message.text}</p>
-            {message.interpretation && (
-              <pre className="parsed-request" aria-label="Parsed request">
-                {JSON.stringify(message.interpretation, null, 2)}
-              </pre>
+            {message.text && <p role={message.error ? 'alert' : undefined}>{message.text}</p>}
+            {message.response && (
+              <RecommendationResults
+                response={message.response}
+                onEventSelect={onEventSelect}
+                onSuggestion={isSending ? undefined : send}
+              />
             )}
-            {message.filters && (
-              <p className="interpreted-request">
-                Filters: {message.filters.category ?? 'any category'}
-                {message.filters.date ? ` on ${message.filters.date}` : ' · any date'}
-              </p>
-            )}
-            {message.events?.length > 0 && (
-              <ul className="chat-event-results">
-                {message.events.map((match) => (
-                  <li key={match.id}>
-                    <article aria-label={`Matched event: ${match.title}`}>
-                      <h3>{match.title}</h3>
-                      <p><span className="category-badge">{match.category}</span></p>
-                      <p>{match.date} · {match.time} (Boston local time)</p>
-                      <p>{match.location}</p>
-                      <details>
-                        <summary>View sample details</summary>
-                        <p>{match.description}</p>
-                      </details>
-                    </article>
-                  </li>
-                ))}
-              </ul>
+            {unavailableNote(message.unavailableCount) && (
+              <p className="muted-text">{unavailableNote(message.unavailableCount)}</p>
             )}
           </div>
         ))}
-        {isSending && <p role="status">{isFilter ? 'Searching sample events…' : 'Parsing request…'}</p>}
+        {isSending && <p role="status">Finding events…</p>}
       </div>
       <form onSubmit={handleSubmit}>
-        <label htmlFor="chat-request">{isFilter ? 'Filter conditions (JSON)' : 'Request text'}</label>
+        <label htmlFor="chat-request">Your request</label>
         <input
           id="chat-request"
           type="text"
-          placeholder={isFilter ? '{"category":"Music","date":"2026-11-21"}' : 'Music on 2026-11-21'}
+          placeholder="music this friday after 6pm"
           maxLength={1000}
           value={draft}
           onChange={(event) => setDraft(event.target.value)}
         />
         <div className="buttons">
           <button className="primary-button" type="submit" disabled={!draft.trim() || isSending}>
-            {isSending ? (isFilter ? 'Filtering…' : 'Parsing…') : (isFilter ? 'Filter sample events' : 'Parse request')}
+            {isSending ? 'Sending…' : 'Send'}
           </button>
-          <button className="text-button" type="button" onClick={() => resetChat(mode)}>Clear chat</button>
+          <button className="text-button" type="button" onClick={clearHistory} disabled={isClearing}>
+            {isClearing ? 'Clearing…' : 'Clear history'}
+          </button>
         </div>
       </form>
     </section>
