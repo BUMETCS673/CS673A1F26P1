@@ -1,0 +1,14 @@
+/*
+ * AI-USAGE SUMMARY
+ * Authors: Daniel Winnie (taking over FV-95 from the Iteration 2 plan)
+ * Tools: Claude Code (Claude Opus), prompted by Daniel Winnie
+ * Overall AI Contribution: ~90%
+ * AI-Assisted Areas: Save to My Plans button styles (FV-95)
+ * Human Contributions: Daniel Winnie: requirements and prompts, design choices, reviewed every change before committing, decided what to keep
+ * Notes/Verification: browser check at 360, 768, and 1280px
+ */
+
+/* Shared by every Save button (event details, chat cards, My Plans). */
+.save-plan { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.plan-saved { color: #256354; font-weight: bold; font-size: .9rem; }
+.save-plan-error { flex-basis: 100%; color: #9b2828; font-size: .86rem; }

@@ -1,0 +1,27 @@
+/*
+ * AI-USAGE SUMMARY
+ * Authors: Daniel Winnie (taking over FV-95 from the Iteration 2 plan)
+ * Tools: Claude Code (Claude Opus), prompted by Daniel Winnie
+ * Overall AI Contribution: ~90%
+ * AI-Assisted Areas: My Plans layout (FV-95)
+ * Human Contributions: Daniel Winnie: requirements and prompts, design choices, reviewed every change before committing, decided what to keep
+ * Notes/Verification: browser check at 360, 768, and 1280px
+ */
+
+.my-plans { max-width: 920px; }
+.my-plans-content { display: grid; gap: 24px; margin-top: 24px; }
+.plan-unavailable { margin-top: 12px; }
+.plan-day { margin-top: 14px; }
+.plan-day-heading { margin-bottom: 8px; color: #256354; font-size: 1rem; }
+.plan-list { display: grid; gap: 12px; margin: 0; padding: 0; list-style: none; }
+.plan-past h2 { margin-bottom: 12px; }
+.plan-item { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-start; gap: 12px 20px; }
+.plan-item-text { flex: 1 1 260px; min-width: 0; overflow-wrap: anywhere; }
+.plan-item-text h3, .plan-item-text h4 { margin-bottom: 4px; font-size: 1.12rem; }
+.plan-item-text p { color: #576b75; font-size: .9rem; }
+.plan-item-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+
+@media (max-width: 480px) {
+  .plan-item-actions, .plan-item-actions .save-plan { width: 100%; }
+  .plan-item-actions button { flex: 1 1 auto; }
+}

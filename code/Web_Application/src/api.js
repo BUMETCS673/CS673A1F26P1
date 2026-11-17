@@ -2,7 +2,7 @@
 // Authors: Daniel Winnie, Jibek Kelgenbaeva
 // Tools: Claude Code (Claude Opus), prompted by Daniel Winnie; ChatGPT (OpenAI), prompted by Jibek Kelgenbaeva (FV-122/FV-123)
 // Overall AI Contribution: ~90% (Daniel's parts); 90% (Jibek's FV-122/FV-123 parts)
-// AI-Assisted Areas: fetch wrappers for the Python API (including sendChat, FV-125, and chat history, FV-121); paginated event requests and event-details API requests (Jibek)
+// AI-Assisted Areas: fetch wrappers for the Python API (including sendChat, FV-125, and chat history, FV-121; My Plans, FV-95); paginated event requests and event-details API requests (Jibek)
 // Human Contributions: Daniel Winnie: requirements and prompts, design choices (FastAPI, Docker layout, beginner-friendly comments), reviewed every change before committing, decided what to keep; Jibek Kelgenbaeva: FV-122/FV-123 API integration requirements, testing, and verification
 // Notes/Verification: manual browser testing on localhost:3000 (desktop and narrow widths); FV-122/FV-123 API integration verification
 
@@ -61,6 +61,12 @@ export const sendChat = (message, signal) =>
 // FV-121: the signed-in user's last 50 exchanges, and "Clear history".
 export const getChatHistory = () => request('/api/chat/history');
 export const clearChatHistory = () => request('/api/chat/history', { method: 'DELETE' });
+
+// FV-95: My Plans. Saving or removing twice is harmless; saving an unknown event is
+// 404 and an event that already ended is 409.
+export const getPlans = () => request('/api/plans');
+export const savePlan = (id) => request(`/api/plans/${encodeURIComponent(id)}`, { method: 'PUT' });
+export const removePlan = (id) => request(`/api/plans/${encodeURIComponent(id)}`, { method: 'DELETE' });
 
 export const getCurrentUser = () => request('/api/auth/me');
 export const register = (account) => request('/api/auth/register', { method: 'POST', body: account });
