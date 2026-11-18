@@ -3,30 +3,32 @@
 A web application that helps students, local residents, and tourists find
 activities in Boston and nearby areas and make plans with friends. Users create
 an account, browse upcoming events, filter them by category and date, and ask a
-chat assistant for events in plain language. Later iterations add friends,
-group chats, shared calendars, and notifications.
+chat assistant for events in plain language. Users can save events to My Plans,
+follow friends, and see which friends are going. Later iterations add group
+chats, shared calendars, and notifications.
 
 The project started as an "AI Movie Recommendation Chat Bot" (Iteration 0) and
 changed direction to event planning at the 10/23 team meeting. Some folder and
 database names, such as `AI_Movie_Chatbot/` and `movie_users`, keep the old
 name so existing setups keep working.
 
-| Folder | Iteration 1 deliverable |
+| Folder | Iteration 2 deliverable |
 | --- | --- |
 | [`code/`](code/) | Runnable source code and tests |
 | [`doc/`](doc/) | Presentation, SPPP, risk management, SDD, STD, progress report, meeting minutes |
-| [`demo/`](demo/) | Iteration demo video |
+| [`demo/`](demo/) | Link to the iteration presentation and demo video |
 | `README.md` | This file |
 
-## Status: Iteration 1
+## Status: Iteration 2
 
-| Works now | Planned next (Iteration 2+) |
+| Works now | Planned next (Iteration 3) |
 | --- | --- |
-| Register with a display name, email, password, and activity preferences; log in and log out (scrypt password hashes, server-side sessions, HttpOnly cookie) | Friends, private and group chat |
-| Event feed of six fictional Boston sample events, served by the Python API and ordered by date and time | Personal and group calendars, custom events |
-| Category and date filters | A real Boston event data source |
-| Chat panel: rule-based request parser (`Music on 2026-11-01`) and filter demo, no AI key needed | An AI service for natural-language recommendations |
-| Swagger API docs, database health check, one-command Docker startup | Notifications, online deployment |
+| Register, log in, and log out (scrypt password hashes, server-side sessions, HttpOnly cookie); login required on every event, chat, plan, and friend route | Group chats and private messaging |
+| Events, My Plans, Friends, and Profile views; a reload keeps you signed in | Personal and group calendars, custom events |
+| 38-event fictional Boston demo catalog with Load More and an event details view in Boston time | A real Boston event data source |
+| Chat that understands category, date, weekday, time, and place ("music this friday after 6pm near Fenway"), with event cards, clarification, honest "no matches", and per-account chat history | An AI service for natural-language recommendations |
+| My Plans, follow and follow back, "friends going" for mutual follows, editable display name and preferences | Notifications, online deployment |
+| Responsive layout for phone, tablet, and desktop; automatic PR checks (Python, live PostgreSQL, frontend tests, and build) | |
 
 Everything runs locally in Docker; nothing is deployed online yet.
 
@@ -71,7 +73,7 @@ the database. The design is described in the SDD (see Documents).
 | [`code/AI_Movie_Chatbot/`](code/AI_Movie_Chatbot/README.md) | Python FastAPI backend: `app/routes/` (health, events, auth, demo parser/filter), `app/users.py` and `app/passwords.py` (accounts), `app/data/sample_events.json`, nginx config, and `tests/` |
 | [`code/User_Database/`](code/User_Database/README.md) | PostgreSQL service: `init.sql` and versioned `migrations/` |
 | `code/start_project.sh`, `code/stop_project.sh` | Start everything with one command; remove everything (including data) |
-| [`doc/`](doc/) | Iteration documents; Iteration 0's submission is in [`doc/iteration0/`](doc/iteration0/) |
+| [`doc/`](doc/) | Iteration 2 documents; earlier submissions are in [`doc/iteration1/`](doc/iteration1/) and [`doc/iteration0/`](doc/iteration0/) |
 | `demo/`, `misc/` | Demo videos; other material |
 
 ## Tests
@@ -79,9 +81,13 @@ the database. The design is described in the SDD (see Documents).
 From `code/AI_Movie_Chatbot/`, with Python 3.12 and `requirements-dev.txt` installed:
 
 ```bash
-python -m unittest discover -s tests -v                        # 65 unit tests, no database needed
-python -m unittest discover -s tests -p "live_*.py" -v          # live checks against the running PostgreSQL
+python -m unittest discover -s tests -v                        # 214 unit tests, no database needed
+python -m unittest discover -s tests -p "live_*.py" -v          # 21 live tests against the running PostgreSQL
 ```
+
+From `code/Web_Application/`: `npm ci && npm test && npm run build` (99 frontend tests).
+Browser checks of the full demo story are in [`code/browser_checks/`](code/browser_checks/).
+Every pull request runs these suites automatically (`.github/workflows/pr-checks.yml`).
 
 Static analysis: `bandit -r code/AI_Movie_Chatbot/app` reports no open findings.
 
@@ -120,4 +126,4 @@ Team documents are written in the team Google Drive and exported to
 
 Introductions are in [team.md](team.md).
 
-<!-- AI-USAGE: README rewritten with Claude Code (Claude Opus) from the repository, SPPP, and Jira; facts checked against the code and test run by Daniel Winnie. -->
+<!-- AI-USAGE: README rewritten with Claude Code (Claude Opus) from the repository, SPPP, and Jira; facts checked against the code and test run by Daniel Winnie. Iteration 2 status and test counts updated with Claude Code on 11/18/2026 from the CI run on 6a7e432. -->

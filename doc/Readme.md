@@ -1,22 +1,28 @@
-This folder contains all required documents, including SPPP, SDD, STD, meetingminutes and progressreport
+This folder contains all required documents, including SPPP, SDD, STD, meeting minutes and progress report.
 
-## Iteration 1 deliverables
+## Iteration 2 deliverables
 
-Export each document from the team Google Drive using these names (Team 1):
+Exported from the team Google Drive on 11/18/2026 (Team 1):
 
-| File | Document | In repository |
-| --- | --- | --- |
-| `CS673_presentation1_team1` | Iteration 1 presentation | Not yet |
-| `CS673_SPPP_team1` | Software Project Proposal and Plan (updated) | Not yet |
-| `CS673_SPPP_RiskManagment_team1` | Risk management sheet (updated) | Not yet |
-| `CS673_SDD_team1` | Software Design Document (new) | Not yet |
-| `CS673_STD_team1` | Software Test Document (new) | Not yet |
-| `CS673_progressreport_team1` | Progress report (updated) | Not yet |
-| `CS673_meetingminutes_team1` | Meeting minutes (updated) | Not yet |
+| File | Document |
+| --- | --- |
+| [`CS673_presentation2_team1.pptx`](CS673_presentation2_team1.pptx) | Iteration 2 presentation |
+| [`CS673_SPPP_team1.docx`](CS673_SPPP_team1.docx) | Software Project Proposal and Plan (updated) |
+| [`CS673_SPPP_RiskManagment_team1.xlsx`](CS673_SPPP_RiskManagment_team1.xlsx) | Risk management sheet (updated) |
+| [`CS673_SDD_team1.docx`](CS673_SDD_team1.docx) | Software Design Document (updated) |
+| [`CS673_STD_team1.docx`](CS673_STD_team1.docx) | Software Test Document (updated) |
+| [`CS673_progressreport_team1.xlsx`](CS673_progressreport_team1.xlsx) | Progress report (updated) |
+| [`CS673_meetingminutes_team1.docx`](CS673_meetingminutes_team1.docx) | Meeting minutes (updated) |
 
-The demo video, `CS673_iteration1demo_team1`, goes in [`../demo/`](../demo/).
+The Iteration 2 presentation and demo video is linked from [`../demo/Readme.md`](../demo/Readme.md).
+
+Supporting test records used by the STD: [`FV-108-FV-109-security-and-speed.md`](FV-108-FV-109-security-and-speed.md)
+and [`FV-110-browser-testing.md`](FV-110-browser-testing.md). The other Markdown files are the team's
+Iteration 2 planning notes.
 
 ## Earlier iterations
 
-[`iteration0/`](iteration0/) holds the Iteration 0 submission (SPPP, risk management,
-progress report, meeting minutes, and presentation) as it was submitted.
+- [`iteration1/`](iteration1/) holds the Iteration 1 documents (presentation, SPPP, risk management,
+  SDD, STD, progress report, meeting minutes) as they were submitted on 10/28/2026.
+- [`iteration0/`](iteration0/) holds the Iteration 0 submission (SPPP, risk management,
+  progress report, meeting minutes, and presentation) as it was submitted.
